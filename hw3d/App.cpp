@@ -39,7 +39,7 @@ void App::DoFrame()
 
 		switch( e->GetCode() )
 		{
-		case VK_ESCAPE:
+		/*case VK_ESCAPE:
 			if( wnd.CursorEnabled() )
 			{
 				wnd.DisableCursor();
@@ -50,38 +50,91 @@ void App::DoFrame()
 				wnd.EnableCursor();
 				wnd.mouse.DisableRaw();
 			}
-			break;
+			break;*/
 		case VK_F1:
 			showDemoWindow = true;
 			break;
 		}
 	}
 
+	static float cameraSpeed = 1.0f;
+
+	
+
+	while (!wnd.mouse.IsEmpty())
+	{
+		const auto e = wnd.mouse.Read();
+
+		if (e->RightIsPressed())
+		{
+			wnd.DisableCursor();
+			wnd.mouse.EnableRaw();
+			switch (e->GetType())
+			{
+			case Mouse::Event::Type::WheelUp:
+			{
+				cameraSpeed += 0.3;
+				break;
+			}
+			case Mouse::Event::Type::WheelDown:
+			{
+				cameraSpeed -= 0.3;
+				break;
+			}
+			}
+
+			cameraSpeed = std::clamp(cameraSpeed, 0.3f, 9.9f);
+
+			wnd.SetTitle(std::to_string(cameraSpeed));
+
+		}
+		else
+		{
+			wnd.EnableCursor();
+			wnd.mouse.DisableRaw();
+			switch (e->GetType())
+			{
+			case Mouse::Event::Type::WheelUp:
+			{
+				cam.Translate({ 0.0f,0.0f,10.0f * dt });
+				break;
+			}
+			case Mouse::Event::Type::WheelDown:
+			{
+				cam.Translate({ 0.0f,0.0f,10.0f * -dt });
+				break;
+			}
+			}
+		}
+
+		
+	}
+
 	if( !wnd.CursorEnabled() )
 	{
 		if( wnd.kbd.KeyIsPressed( 'W' ) )
 		{
-			cam.Translate( { 0.0f,0.0f,dt } );
+			cam.Translate( { 0.0f,0.0f,dt * cameraSpeed } );
 		}
 		if( wnd.kbd.KeyIsPressed( 'A' ) )
 		{
-			cam.Translate( { -dt,0.0f,0.0f } );
+			cam.Translate( { -dt * cameraSpeed,0.0f,0.0f } );
 		}
 		if( wnd.kbd.KeyIsPressed( 'S' ) )
 		{
-			cam.Translate( { 0.0f,0.0f,-dt } );
+			cam.Translate( { 0.0f,0.0f,-dt * cameraSpeed } );
 		}
 		if( wnd.kbd.KeyIsPressed( 'D' ) )
 		{
-			cam.Translate( { dt,0.0f,0.0f } );
+			cam.Translate( { dt * cameraSpeed,0.0f,0.0f } );
 		}
 		if( wnd.kbd.KeyIsPressed( 'E' ) )
 		{
-			cam.Translate( { 0.0f,dt,0.0f } );
+			cam.Translate( { 0.0f,dt * cameraSpeed,0.0f } );
 		}
 		if( wnd.kbd.KeyIsPressed( 'Q' ) )
 		{
-			cam.Translate( { 0.0f,-dt,0.0f } );
+			cam.Translate( { 0.0f,-dt * cameraSpeed,0.0f } );
 		}
 	}
 
