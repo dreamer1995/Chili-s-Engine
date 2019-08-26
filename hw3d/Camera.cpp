@@ -52,10 +52,26 @@ void Camera::Reset() noexcept
 	yaw = 0.0f;
 }
 
+void Camera::LookZero() noexcept
+{
+	yaw = atan2(pos.x, pos.z) + PI;
+	pitch = atan2(pos.y, sqrt(pos.x*pos.x + pos.z* pos.z));
+}
+
 void Camera::Rotate( float dx,float dy ) noexcept
 {
+
 	yaw = wrap_angle( yaw + dx * rotationSpeed );
 	pitch = std::clamp( pitch + dy * rotationSpeed,0.995f * -PI / 2.0f,0.995f * PI / 2.0f );
+}
+
+void Camera::RotateAround(float dx, float dy) noexcept
+{
+	dx::XMStoreFloat3(&pos,
+		dx::XMVector3Transform(dx::XMLoadFloat3(&pos),
+			dx::XMMatrixRotationRollPitchYaw(dy * rotationSpeed, dx * rotationSpeed, 0.0f)));
+	
+	LookZero();
 }
 
 void Camera::Translate( DirectX::XMFLOAT3 translation ) noexcept

@@ -85,8 +85,6 @@ void App::DoFrame()
 
 			cameraSpeed = std::clamp(cameraSpeed, 0.3f, 9.9f);
 
-			wnd.SetTitle(std::to_string(cameraSpeed));
-
 		}
 		else
 		{
@@ -96,12 +94,12 @@ void App::DoFrame()
 			{
 			case Mouse::Event::Type::WheelUp:
 			{
-				cam.Translate({ 0.0f,0.0f,10.0f * dt });
+				cam.Translate({0.0f,0.0f,10.0f * dt});
 				break;
 			}
 			case Mouse::Event::Type::WheelDown:
 			{
-				cam.Translate({ 0.0f,0.0f,10.0f * -dt });
+				cam.Translate({0.0f,0.0f,10.0f * -dt});
 				break;
 			}
 			}
@@ -128,21 +126,43 @@ void App::DoFrame()
 		{
 			cam.Translate( { dt * cameraSpeed,0.0f,0.0f } );
 		}
-		if( wnd.kbd.KeyIsPressed( 'E' ) )
+		if(wnd.kbd.KeyIsPressed( 'E' ))
 		{
 			cam.Translate( { 0.0f,dt * cameraSpeed,0.0f } );
 		}
-		if( wnd.kbd.KeyIsPressed( 'Q' ) )
+		if(wnd.kbd.KeyIsPressed( 'Q' ))
 		{
 			cam.Translate( { 0.0f,-dt * cameraSpeed,0.0f } );
 		}
 	}
 
+	if (wnd.kbd.KeyIsPressed('F'))
+	{
+		cam.LookZero();
+	}
+	
+
+	if (wnd.kbd.KeyIsPressed(VK_MENU))
+	{
+		wnd.DisableCursor();
+		wnd.mouse.EnableRaw();
+	}
+	else
+	{
+		wnd.EnableCursor();
+		wnd.mouse.DisableRaw();
+	}
+
 	while( const auto delta = wnd.mouse.ReadRawDelta() )
 	{
-		if( !wnd.CursorEnabled() )
+		
+		if(!wnd.CursorEnabled() && wnd.mouse.RightIsPressed() && !wnd.kbd.KeyIsPressed(VK_MENU))
 		{
 			cam.Rotate( (float)delta->x,(float)delta->y );
+		}
+		else if (!wnd.CursorEnabled() && wnd.kbd.KeyIsPressed(VK_MENU))
+		{
+			cam.RotateAround((float)delta->x, (float)delta->y);
 		}
 	}
 		
