@@ -63,6 +63,11 @@ bool Mouse::RightIsPressed() const noexcept
 	return rightIsPressed;
 }
 
+bool Mouse::WheelIsPressed() const noexcept
+{
+	return wheelIsPressed;
+}
+
 std::optional<Mouse::Event> Mouse::Read() noexcept
 {
 	if( buffer.size() > 0u )
@@ -152,6 +157,22 @@ void Mouse::OnRightReleased( int x,int y ) noexcept
 	rightIsPressed = false;
 
 	buffer.push( Mouse::Event( Mouse::Event::Type::RRelease,*this ) );
+	TrimBuffer();
+}
+
+void Mouse::OnWheelPressed(int x, int y) noexcept
+{
+	wheelIsPressed = true;
+
+	buffer.push(Mouse::Event(Mouse::Event::Type::WheelPress, *this));
+	TrimBuffer();
+}
+
+void Mouse::OnWheelReleased(int x, int y) noexcept
+{
+	wheelIsPressed = false;
+
+	buffer.push(Mouse::Event(Mouse::Event::Type::WheelRelease, *this));
 	TrimBuffer();
 }
 

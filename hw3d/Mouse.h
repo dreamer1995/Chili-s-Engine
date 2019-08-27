@@ -44,11 +44,14 @@ public:
 			Move,
 			Enter,
 			Leave,
+			WheelPress,
+			WheelRelease
 		};
 	private:
 		Type type;
 		bool leftIsPressed;
 		bool rightIsPressed;
+		bool wheelIsPressed;
 		int x;
 		int y;
 	public:
@@ -57,6 +60,7 @@ public:
 			type( type ),
 			leftIsPressed( parent.leftIsPressed ),
 			rightIsPressed( parent.rightIsPressed ),
+			wheelIsPressed(parent.rightIsPressed),
 			x( parent.x ),
 			y( parent.y )
 		{}
@@ -84,6 +88,10 @@ public:
 		{
 			return rightIsPressed;
 		}
+		bool WheelIsPressed() const noexcept
+		{
+			return wheelIsPressed;
+		}
 	};
 public:
 	Mouse() = default;
@@ -96,6 +104,7 @@ public:
 	bool IsInWindow() const noexcept;
 	bool LeftIsPressed() const noexcept;
 	bool RightIsPressed() const noexcept;
+	bool WheelIsPressed() const noexcept;
 	std::optional<Mouse::Event> Read() noexcept;
 	bool IsEmpty() const noexcept
 	{
@@ -116,6 +125,8 @@ private:
 	void OnRightReleased( int x,int y ) noexcept;
 	void OnWheelUp( int x,int y ) noexcept;
 	void OnWheelDown( int x,int y ) noexcept;
+	void OnWheelPressed(int x, int y) noexcept;
+	void OnWheelReleased(int x, int y) noexcept;
 	void TrimBuffer() noexcept;
 	void TrimRawInputBuffer() noexcept;
 	void OnWheelDelta( int x,int y,int delta ) noexcept;
@@ -125,6 +136,7 @@ private:
 	int y;
 	bool leftIsPressed = false;
 	bool rightIsPressed = false;
+	bool wheelIsPressed = false;
 	bool isInWindow = false;
 	int wheelDeltaCarry = 0;
 	bool rawEnabled = false;

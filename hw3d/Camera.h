@@ -12,6 +12,7 @@ public:
 	void RotateAround(float dx, float dy) noexcept;
 	void Translate( DirectX::XMFLOAT3 translation ) noexcept;
 	void LookZero() noexcept;
+	void KeepLookFront(DirectX::XMFLOAT3 position) noexcept;
 private:
 	DirectX::XMFLOAT3 pos;
 	float pitch;

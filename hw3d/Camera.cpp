@@ -58,6 +58,13 @@ void Camera::LookZero() noexcept
 	pitch = atan2(pos.y, sqrt(pos.x*pos.x + pos.z* pos.z));
 }
 
+void Camera::KeepLookFront(DirectX::XMFLOAT3 position) noexcept
+{
+	DirectX::XMFLOAT3 delta = { pos.x - position.x,pos.y - position.y, pos.z - position.z };
+	yaw = atan2(delta.x, delta.z) + PI;
+	pitch = atan2(delta.y, sqrt(delta.x*delta.x + delta.z* delta.z));
+}
+
 void Camera::Rotate( float dx,float dy ) noexcept
 {
 
@@ -67,11 +74,21 @@ void Camera::Rotate( float dx,float dy ) noexcept
 
 void Camera::RotateAround(float dx, float dy) noexcept
 {
+	using namespace dx;
+	// apply the camera rotations to a base vector
+	DirectX::XMFLOAT3 lookVector, destination = pos;
+	dx::XMStoreFloat3(&lookVector, XMVector3Transform(XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f), XMMatrixRotationRollPitchYaw(pitch, yaw, 0.0f)));
+	dx::XMStoreFloat3(&destination,
+		dx::XMVector3Transform(dx::XMLoadFloat3(&destination),
+			dx::XMMatrixTranslation(lookVector.x, lookVector.y, lookVector.z) *
+			dx::XMMatrixRotationRollPitchYaw(std::clamp(dy * rotationSpeed, 0.5f * -PI / 2.0f, 0.5f * PI / 2.0f),
+				wrap_angle(dx * rotationSpeed), 0.0f)));
 	dx::XMStoreFloat3(&pos,
 		dx::XMVector3Transform(dx::XMLoadFloat3(&pos),
-			dx::XMMatrixRotationRollPitchYaw(dy * rotationSpeed, dx * rotationSpeed, 0.0f)));
-	
-	LookZero();
+			dx::XMMatrixRotationRollPitchYaw(std::clamp(dy * rotationSpeed, 0.5f * -PI / 2.0f, 0.5f * PI / 2.0f),
+				wrap_angle(dx * rotationSpeed), 0.0f)));
+
+	KeepLookFront(destination);
 }
 
 void Camera::Translate( DirectX::XMFLOAT3 translation ) noexcept

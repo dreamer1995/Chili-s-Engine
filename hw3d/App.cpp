@@ -27,85 +27,116 @@ void App::DoFrame()
 	light.Bind( wnd.Gfx(),cam.GetMatrix() );
 		
 	nano.Draw( wnd.Gfx() );
-	nano2.Draw( wnd.Gfx() );
+	//nano2.Draw( wnd.Gfx() );
 	light.Draw( wnd.Gfx() );
 
-	while( const auto e = wnd.kbd.ReadKey() )
+	while (const auto e = wnd.kbd.ReadKey())
 	{
-		if( !e->IsPress() )
+		if (!e->IsPress())
 		{
 			continue;
 		}
 
-		switch( e->GetCode() )
+		switch (e->GetCode())
 		{
-		/*case VK_ESCAPE:
-			if( wnd.CursorEnabled() )
-			{
-				wnd.DisableCursor();
-				wnd.mouse.EnableRaw();
-			}
-			else
-			{
-				wnd.EnableCursor();
-				wnd.mouse.DisableRaw();
-			}
-			break;*/
+			/*case VK_ESCAPE:
+				if( wnd.CursorEnabled() )
+				{
+					wnd.DisableCursor();
+					wnd.mouse.EnableRaw();
+				}
+				else
+				{
+					wnd.EnableCursor();
+					wnd.mouse.DisableRaw();
+				}
+				break;*/
 		case VK_F1:
 			showDemoWindow = true;
 			break;
 		}
+
 	}
 
 	static float cameraSpeed = 1.0f;
-
-	
 
 	while (!wnd.mouse.IsEmpty())
 	{
 		const auto e = wnd.mouse.Read();
 
-		if (e->RightIsPressed())
-		{
-			wnd.DisableCursor();
-			wnd.mouse.EnableRaw();
-			switch (e->GetType())
-			{
-			case Mouse::Event::Type::WheelUp:
-			{
-				cameraSpeed += 0.3;
-				break;
-			}
-			case Mouse::Event::Type::WheelDown:
-			{
-				cameraSpeed -= 0.3;
-				break;
-			}
-			}
-
-			cameraSpeed = std::clamp(cameraSpeed, 0.3f, 9.9f);
-
-		}
-		else
-		{
-			wnd.EnableCursor();
-			wnd.mouse.DisableRaw();
-			switch (e->GetType())
-			{
-			case Mouse::Event::Type::WheelUp:
-			{
-				cam.Translate({0.0f,0.0f,10.0f * dt});
-				break;
-			}
-			case Mouse::Event::Type::WheelDown:
-			{
-				cam.Translate({0.0f,0.0f,10.0f * -dt});
-				break;
-			}
-			}
-		}
-
 		
+		
+		switch (e->GetType())
+		{
+			case Mouse::Event::Type::RPress:
+			{
+				wnd.DisableCursor();
+				wnd.mouse.EnableRaw();
+				break;
+			}
+			case Mouse::Event::Type::RRelease:
+			{
+				wnd.EnableCursor();
+				wnd.mouse.DisableRaw();
+				break;
+			}
+			
+			case Mouse::Event::Type::LRelease:
+			{
+				if (wnd.kbd.KeyIsPressed(VK_MENU))
+				{
+					wnd.EnableCursor();
+					wnd.mouse.DisableRaw();
+				}
+				break;
+			}
+			case Mouse::Event::Type::LPress:
+			{
+				if (wnd.kbd.KeyIsPressed(VK_MENU))
+				{
+					wnd.DisableCursor();
+					wnd.mouse.EnableRaw();
+				}
+				break;
+			}
+			case Mouse::Event::Type::WheelUp:
+			{
+				if (wnd.mouse.RightIsPressed())
+				{
+					cameraSpeed += 0.3;
+				}
+				else
+				{
+					cam.Translate({ 0.0f,0.0f,10.0f * dt });
+				}
+				break;
+			}
+			case Mouse::Event::Type::WheelDown:
+			{
+				if (wnd.mouse.RightIsPressed())
+				{
+					cameraSpeed -= 0.3;
+				}
+				else
+				{
+					cam.Translate({ 0.0f,0.0f,10.0f * -dt });
+				}
+				break;
+			}
+			case Mouse::Event::Type::WheelPress:
+			{
+				wnd.DisableCursor();
+				wnd.mouse.EnableRaw();
+				break;
+			}
+			case Mouse::Event::Type::WheelRelease:
+			{
+				wnd.EnableCursor();
+				wnd.mouse.DisableRaw();
+				break;
+			}
+		}
+		cameraSpeed = std::clamp(cameraSpeed, 0.3f, 9.9f);
 	}
 
 	if( !wnd.CursorEnabled() )
@@ -141,28 +172,20 @@ void App::DoFrame()
 		cam.LookZero();
 	}
 	
+	while (const auto delta = wnd.mouse.ReadRawDelta())
+	{
 
-	if (wnd.kbd.KeyIsPressed(VK_MENU))
-	{
-		wnd.DisableCursor();
-		wnd.mouse.EnableRaw();
-	}
-	else
-	{
-		wnd.EnableCursor();
-		wnd.mouse.DisableRaw();
-	}
-
-	while( const auto delta = wnd.mouse.ReadRawDelta() )
-	{
-		
-		if(!wnd.CursorEnabled() && wnd.mouse.RightIsPressed() && !wnd.kbd.KeyIsPressed(VK_MENU))
+		if (!wnd.CursorEnabled() && wnd.mouse.RightIsPressed())
 		{
-			cam.Rotate( (float)delta->x,(float)delta->y );
+			cam.Rotate((float)delta->x, (float)delta->y);
 		}
-		else if (!wnd.CursorEnabled() && wnd.kbd.KeyIsPressed(VK_MENU))
+		else if (!wnd.CursorEnabled() && wnd.kbd.KeyIsPressed(VK_MENU) && wnd.mouse.LeftIsPressed())
 		{
 			cam.RotateAround((float)delta->x, (float)delta->y);
+		}
+		else if (!wnd.CursorEnabled() && wnd.mouse.WheelIsPressed())
+		{
+			cam.Translate({ -(float)delta->x * dt,(float)delta->y * dt,0.0f });
 		}
 	}
 		
@@ -171,7 +194,7 @@ void App::DoFrame()
 	light.SpawnControlWindow();
 	ShowImguiDemoWindow();
 	nano.ShowWindow( "Model 1" );
-	nano2.ShowWindow( "Model 2" );
+	//nano2.ShowWindow( "Model 2" );
 
 	// present
 	wnd.Gfx().EndFrame();

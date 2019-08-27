@@ -343,7 +343,7 @@ LRESULT Window::HandleMsg( HWND hWnd,UINT msg,WPARAM wParam,LPARAM lParam ) noex
 		// not in client -> log move / maintain capture if button down
 		else
 		{
-			if( wParam & (MK_LBUTTON | MK_RBUTTON) )
+			if( wParam & (MK_LBUTTON | MK_RBUTTON | MK_MBUTTON) )
 			{
 				mouse.OnMouseMove( pt.x,pt.y );
 			}
@@ -384,6 +384,17 @@ LRESULT Window::HandleMsg( HWND hWnd,UINT msg,WPARAM wParam,LPARAM lParam ) noex
 		mouse.OnRightPressed( pt.x,pt.y );
 		break;
 	}
+	case WM_MBUTTONDOWN:
+	{
+		// stifle this mouse message if imgui wants to capture
+		if (imio.WantCaptureMouse)
+		{
+			break;
+		}
+		const POINTS pt = MAKEPOINTS(lParam);
+		mouse.OnWheelPressed(pt.x, pt.y);
+		break;
+	}
 	case WM_LBUTTONUP:
 	{
 		// stifle this mouse message if imgui wants to capture
@@ -412,6 +423,23 @@ LRESULT Window::HandleMsg( HWND hWnd,UINT msg,WPARAM wParam,LPARAM lParam ) noex
 		mouse.OnRightReleased( pt.x,pt.y );
 		// release mouse if outside of window
 		if( pt.x < 0 || pt.x >= width || pt.y < 0 || pt.y >= height )
+		{
+			ReleaseCapture();
+			mouse.OnMouseLeave();
+		}
+		break;
+	}
+	case WM_MBUTTONUP:
+	{
+		// stifle this mouse message if imgui wants to capture
+		if (imio.WantCaptureMouse)
+		{
+			break;
+		}
+		const POINTS pt = MAKEPOINTS(lParam);
+		mouse.OnWheelReleased(pt.x, pt.y);
+		// release mouse if outside of window
+		if (pt.x < 0 || pt.x >= width || pt.y < 0 || pt.y >= height)
 		{
 			ReleaseCapture();
 			mouse.OnMouseLeave();
