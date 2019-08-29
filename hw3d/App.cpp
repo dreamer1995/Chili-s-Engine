@@ -169,7 +169,7 @@ void App::DoFrame()
 
 	if (wnd.kbd.KeyIsPressed('F'))
 	{
-		cam.LookZero();
+		cam.LookZero({ light.GetPos().x, light.GetPos().y, light.GetPos().z });
 	}
 	
 	while (const auto delta = wnd.mouse.ReadRawDelta())
@@ -181,7 +181,7 @@ void App::DoFrame()
 		}
 		else if (!wnd.CursorEnabled() && wnd.kbd.KeyIsPressed(VK_MENU) && wnd.mouse.LeftIsPressed())
 		{
-			cam.RotateAround((float)delta->x, (float)delta->y);
+			cam.RotateAround((float)delta->x, (float)delta->y, { light.GetPos().x, light.GetPos().y, light.GetPos().z });
 		}
 		else if (!wnd.CursorEnabled() && wnd.mouse.WheelIsPressed())
 		{

@@ -9,9 +9,9 @@ public:
 	void SpawnControlWindow() noexcept;
 	void Reset() noexcept;
 	void Rotate( float dx,float dy ) noexcept;
-	void RotateAround(float dx, float dy) noexcept;
+	void RotateAround(float dx, float dy, DirectX::XMFLOAT3 centralPoint) noexcept;
 	void Translate( DirectX::XMFLOAT3 translation ) noexcept;
-	void LookZero() noexcept;
+	void LookZero(DirectX::XMFLOAT3 position) noexcept;
 	void KeepLookFront(DirectX::XMFLOAT3 position) noexcept;
 private:
 	DirectX::XMFLOAT3 pos;
@@ -19,4 +19,5 @@ private:
 	float yaw;
 	static constexpr float travelSpeed = 12.0f;
 	static constexpr float rotationSpeed = 0.004f;
+	float yaw_;
 };

@@ -40,7 +40,7 @@ void PointLight::Reset() noexcept
 {
 	cbData = {
 		//{ 1.5f,14.0f,-4.5f },
-		{ 0.0f,0.0f,0.0f },
+		{0.0f, 9.0f, 0.0f},
 		{ 0.05f,0.05f,0.05f },
 		{ 1.0f,1.0f,1.0f },
 		1.0f,
@@ -63,4 +63,9 @@ void PointLight::Bind( Graphics& gfx,DirectX::FXMMATRIX view ) const noexcept
 	DirectX::XMStoreFloat3( &dataCopy.pos,DirectX::XMVector3Transform( pos,view ) );
 	cbuf.Update( gfx,dataCopy );
 	cbuf.Bind( gfx );
+}
+
+DirectX::XMFLOAT3 PointLight::GetPos() noexcept
+{
+	return cbData.pos;
 }
