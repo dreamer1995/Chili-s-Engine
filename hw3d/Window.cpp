@@ -343,7 +343,7 @@ LRESULT Window::HandleMsg( HWND hWnd,UINT msg,WPARAM wParam,LPARAM lParam ) noex
 		// not in client -> log move / maintain capture if button down
 		else
 		{
-			if( wParam & (MK_LBUTTON | MK_RBUTTON | MK_MBUTTON) )
+			if (wParam & (MK_LBUTTON | MK_RBUTTON | MK_MBUTTON))
 			{
 				mouse.OnMouseMove( pt.x,pt.y );
 			}

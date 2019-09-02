@@ -32,7 +32,7 @@ DirectX::XMMATRIX Camera::GetMatrix() const noexcept
 	{
 		upVector = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
 	}
-	return XMMatrixLookAtLH(camPosition,camTarget, upVector);
+	return XMMatrixLookAtLH(camPosition, camTarget, upVector);
 }
 
 void Camera::SpawnControlWindow() noexcept
@@ -44,7 +44,7 @@ void Camera::SpawnControlWindow() noexcept
 		ImGui::SliderFloat( "Y",&pos.y,-80.0f,80.0f,"%.1f" );
 		ImGui::SliderFloat( "Z",&pos.z,-80.0f,80.0f,"%.1f" );
 		ImGui::Text( "Orientation" );
-		ImGui::SliderAngle( "Pitch",&pitch,-180.0f,180.0f );
+		ImGui::SliderAngle("Pitch",&pitch, -180.0f, 180.0f);
 		ImGui::SliderAngle( "Yaw",&yaw,-180.0f,180.0f );
 		if( ImGui::Button( "Reset" ) )
 		{
@@ -60,6 +60,26 @@ void Camera::Reset() noexcept
 	pitch = 0.0f;
 	yaw = 0.0f;
 	yaw_ = 0;
+}
+
+void Camera::Rotate( float dx,float dy ) noexcept
+{
+	yaw = wrap_angle( yaw + dx * rotationSpeed );
+	pitch = std::clamp( pitch + dy * rotationSpeed,0.995f * -PI / 2.0f,0.995f * PI / 2.0f );
+}
+
+void Camera::Translate( DirectX::XMFLOAT3 translation ) noexcept
+{
+	dx::XMStoreFloat3( &translation,dx::XMVector3Transform(
+		dx::XMLoadFloat3( &translation ),
+		dx::XMMatrixRotationRollPitchYaw( pitch,yaw,0.0f ) *
+		dx::XMMatrixScaling( travelSpeed,travelSpeed,travelSpeed )
+	) );
+	pos = {
+		pos.x + translation.x,
+		pos.y + translation.y,
+		pos.z + translation.z
+	};
 }
 
 void Camera::LookZero(DirectX::XMFLOAT3 position) noexcept
@@ -105,16 +125,6 @@ void Camera::KeepLookFront(DirectX::XMFLOAT3 position) noexcept
 	}
 }
 
-void Camera::Rotate( float dx,float dy ) noexcept
-{
-	if (pitch <= -PI / 2.0f || pitch > PI / 2.0f)
-	{
-		dx = -dx;
-	}
-	yaw = wrap_angle( yaw + dx * rotationSpeed );
-	pitch = wrap_angle(pitch + dy * rotationSpeed);
-}
-
 void Camera::RotateAround(float dx, float dy, DirectX::XMFLOAT3 centralPoint) noexcept
 {
 	using namespace dx;
@@ -142,18 +152,4 @@ void Camera::RotateAround(float dx, float dy, DirectX::XMFLOAT3 centralPoint) no
 			XMVector3Transform(XMLoadFloat3(&centralPoint), XMMatrixTranslation(finalRatationVector.x, finalRatationVector.y, finalRatationVector.z)));
 		KeepLookFront(destination);
 	}
-}
-
-void Camera::Translate( DirectX::XMFLOAT3 translation ) noexcept
-{
-	dx::XMStoreFloat3( &translation,dx::XMVector3Transform(
-		dx::XMLoadFloat3( &translation ),
-		dx::XMMatrixRotationRollPitchYaw( pitch,yaw,0.0f ) *
-		dx::XMMatrixScaling( travelSpeed,travelSpeed,travelSpeed )
-	) );
-	pos = {
-		pos.x + translation.x,
-		pos.y + translation.y,
-		pos.z + translation.z
-	};
 }

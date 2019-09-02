@@ -9,10 +9,10 @@ public:
 	void SpawnControlWindow() noexcept;
 	void Reset() noexcept;
 	void Rotate( float dx,float dy ) noexcept;
-	void RotateAround(float dx, float dy, DirectX::XMFLOAT3 centralPoint) noexcept;
 	void Translate( DirectX::XMFLOAT3 translation ) noexcept;
 	void LookZero(DirectX::XMFLOAT3 position) noexcept;
 	void KeepLookFront(DirectX::XMFLOAT3 position) noexcept;
+	void RotateAround(float dx, float dy, DirectX::XMFLOAT3 centralPoint) noexcept;
 private:
 	DirectX::XMFLOAT3 pos;
 	float pitch;

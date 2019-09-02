@@ -14,8 +14,10 @@ GDIPlusManager gdipm;
 App::App()
 	:
 	wnd( 1280,720,"The Donkey Fart Box" ),
-	light( wnd.Gfx() )
+	light( wnd.Gfx() ),
+	plane( wnd.Gfx(),3.0f )
 {
+	plane.SetPos( { 1.0f,17.0f,-1.0f } );
 	wnd.Gfx().SetProjection( dx::XMMatrixPerspectiveLH( 1.0f,9.0f / 16.0f,0.5f,40.0f ) );
 }
 
@@ -29,15 +31,16 @@ void App::DoFrame()
 	nano.Draw( wnd.Gfx() );
 	//nano2.Draw( wnd.Gfx() );
 	light.Draw( wnd.Gfx() );
+	plane.Draw( wnd.Gfx() );
 
-	while (const auto e = wnd.kbd.ReadKey())
+	while( const auto e = wnd.kbd.ReadKey() )
 	{
-		if (!e->IsPress())
+		if( !e->IsPress() )
 		{
 			continue;
 		}
 
-		switch (e->GetCode())
+		switch( e->GetCode() )
 		{
 			/*case VK_ESCAPE:
 				if( wnd.CursorEnabled() )
@@ -51,11 +54,10 @@ void App::DoFrame()
 					wnd.mouse.DisableRaw();
 				}
 				break;*/
-		case VK_F1:
-			showDemoWindow = true;
-			break;
+			case VK_F1:
+				showDemoWindow = true;
+				break;
 		}
-
 	}
 
 	static float cameraSpeed = 1.0f;
@@ -64,106 +66,104 @@ void App::DoFrame()
 	{
 		const auto e = wnd.mouse.Read();
 
-		
-		
 		switch (e->GetType())
 		{
-			case Mouse::Event::Type::RPress:
-			{
-				wnd.DisableCursor();
-				wnd.mouse.EnableRaw();
-				break;
-			}
-			case Mouse::Event::Type::RRelease:
-			{
-				wnd.EnableCursor();
-				wnd.mouse.DisableRaw();
-				break;
-			}
-			
-			case Mouse::Event::Type::LRelease:
-			{
-				if (wnd.kbd.KeyIsPressed(VK_MENU))
-				{
-					wnd.EnableCursor();
-					wnd.mouse.DisableRaw();
-				}
-				break;
-			}
-			case Mouse::Event::Type::LPress:
-			{
-				if (wnd.kbd.KeyIsPressed(VK_MENU))
-				{
-					wnd.DisableCursor();
-					wnd.mouse.EnableRaw();
-				}
-				break;
-			}
-			case Mouse::Event::Type::WheelUp:
-			{
-				if (wnd.mouse.RightIsPressed())
-				{
-					cameraSpeed += 0.3;
-				}
-				else
-				{
-					cam.Translate({ 0.0f,0.0f,10.0f * dt });
-				}
-				break;
-			}
-			case Mouse::Event::Type::WheelDown:
-			{
-				if (wnd.mouse.RightIsPressed())
-				{
-					cameraSpeed -= 0.3;
-				}
-				else
-				{
-					cam.Translate({ 0.0f,0.0f,10.0f * -dt });
-				}
-				break;
-			}
-			case Mouse::Event::Type::WheelPress:
-			{
-				wnd.DisableCursor();
-				wnd.mouse.EnableRaw();
-				break;
-			}
-			case Mouse::Event::Type::WheelRelease:
+		case Mouse::Event::Type::RPress:
+		{
+			wnd.DisableCursor();
+			wnd.mouse.EnableRaw();
+			break;
+		}
+		case Mouse::Event::Type::RRelease:
+		{
+			wnd.EnableCursor();
+			wnd.mouse.DisableRaw();
+			break;
+		}
+
+		case Mouse::Event::Type::LRelease:
+		{
+			if (wnd.kbd.KeyIsPressed(VK_MENU))
 			{
 				wnd.EnableCursor();
 				wnd.mouse.DisableRaw();
-				break;
 			}
+			break;
+		}
+		case Mouse::Event::Type::LPress:
+		{
+			if (wnd.kbd.KeyIsPressed(VK_MENU))
+			{
+				wnd.DisableCursor();
+				wnd.mouse.EnableRaw();
+			}
+			break;
+		}
+		case Mouse::Event::Type::WheelUp:
+		{
+			if (wnd.mouse.RightIsPressed())
+			{
+				cameraSpeed += 0.3;
+			}
+			else
+			{
+				cam.Translate({ 0.0f,0.0f,10.0f * dt });
+			}
+			break;
+		}
+		case Mouse::Event::Type::WheelDown:
+		{
+			if (wnd.mouse.RightIsPressed())
+			{
+				cameraSpeed -= 0.3;
+			}
+			else
+			{
+				cam.Translate({ 0.0f,0.0f,10.0f * -dt });
+			}
+			break;
+		}
+		case Mouse::Event::Type::WheelPress:
+		{
+			wnd.DisableCursor();
+			wnd.mouse.EnableRaw();
+			break;
+		}
+		case Mouse::Event::Type::WheelRelease:
+		{
+			wnd.EnableCursor();
+			wnd.mouse.DisableRaw();
+			break;
+		}
 		}
 		cameraSpeed = std::clamp(cameraSpeed, 0.3f, 9.9f);
 	}
 
-	if( !wnd.CursorEnabled() )
+	if (!wnd.CursorEnabled())
 	{
-		if( wnd.kbd.KeyIsPressed( 'W' ) )
+		if (wnd.kbd.KeyIsPressed('W'))
 		{
-			cam.Translate( { 0.0f,0.0f,dt * cameraSpeed } );
+			cam.Translate({ 0.0f,0.0f,dt * cameraSpeed });
 		}
-		if( wnd.kbd.KeyIsPressed( 'A' ) )
+		if (wnd.kbd.KeyIsPressed('A'))
 		{
-			cam.Translate( { -dt * cameraSpeed,0.0f,0.0f } );
+			cam.Translate({ -dt * cameraSpeed,0.0f,0.0f });
 		}
-		if( wnd.kbd.KeyIsPressed( 'S' ) )
+		if (wnd.kbd.KeyIsPressed('S'))
 		{
-			cam.Translate( { 0.0f,0.0f,-dt * cameraSpeed } );
+			cam.Translate({ 0.0f,0.0f,-dt * cameraSpeed });
 		}
-		if( wnd.kbd.KeyIsPressed( 'D' ) )
+		if (wnd.kbd.KeyIsPressed('D'))
 		{
-			cam.Translate( { dt * cameraSpeed,0.0f,0.0f } );
+			cam.Translate({ dt * cameraSpeed,0.0f,0.0f });
 		}
-		if(wnd.kbd.KeyIsPressed( 'E' ))
+		if (wnd.kbd.KeyIsPressed('E'))
 		{
-			cam.Translate( { 0.0f,dt * cameraSpeed,0.0f } );
+			cam.Translate({ 0.0f,dt * cameraSpeed,0.0f });
 		}
-		if(wnd.kbd.KeyIsPressed( 'Q' ))
+		if (wnd.kbd.KeyIsPressed('Q'))
 		{
-			cam.Translate( { 0.0f,-dt * cameraSpeed,0.0f } );
+			cam.Translate({ 0.0f,-dt * cameraSpeed,0.0f });
 		}
 	}
 
@@ -171,7 +171,7 @@ void App::DoFrame()
 	{
 		cam.LookZero({ light.GetPos().x, light.GetPos().y, light.GetPos().z });
 	}
-	
+
 	while (const auto delta = wnd.mouse.ReadRawDelta())
 	{
 
@@ -195,6 +195,7 @@ void App::DoFrame()
 	ShowImguiDemoWindow();
 	nano.ShowWindow( "Model 1" );
 	//nano2.ShowWindow( "Model 2" );
+	plane.SpawnControlWindow( wnd.Gfx() );
 
 	// present
 	wnd.Gfx().EndFrame();
