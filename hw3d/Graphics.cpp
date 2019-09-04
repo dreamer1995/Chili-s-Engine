@@ -110,6 +110,22 @@ Graphics::Graphics( HWND hWnd,int width,int height )
 	vp.TopLeftY = 0.0f;
 	pContext->RSSetViewports( 1u,&vp );
 	
+	//Create the Rasterize State
+	D3D11_RASTERIZER_DESC rasterDesc{};
+	rasterDesc.AntialiasedLineEnable = false;
+	rasterDesc.CullMode = D3D11_CULL_BACK;
+	rasterDesc.DepthBias = 0;
+	rasterDesc.DepthBiasClamp = 0.0f;
+	rasterDesc.FillMode = D3D11_FILL_SOLID;
+	rasterDesc.FrontCounterClockwise = false;
+	rasterDesc.MultisampleEnable = false;
+	rasterDesc.SlopeScaledDepthBias = 0.0f;
+
+	GFX_THROW_INFO(pDevice->CreateRasterizerState(&rasterDesc, &pRasterState));
+
+	//Set the Rasterizer
+	pContext->RSSetState(pRasterState.Get());
+
 	// init imgui d3d impl
 	ImGui_ImplDX11_Init( pDevice.Get(),pContext.Get() );
 }
