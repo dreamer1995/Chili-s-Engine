@@ -115,7 +115,6 @@ Surface Surface::FromFile( const std::string& name )
 		// convert filenam to wide string (for Gdiplus)
 		wchar_t wideName[512];
 		mbstowcs_s( nullptr,wideName,name.c_str(),_TRUNCATE );
-
 		Gdiplus::Bitmap bitmap( wideName );
 		if( bitmap.GetLastStatus() != Gdiplus::Status::Ok )
 		{

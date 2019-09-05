@@ -7,10 +7,11 @@ namespace Bind
 {
 	namespace wrl = Microsoft::WRL;
 
-	Texture::Texture( Graphics& gfx,const std::string& path,UINT slot )
+	Texture::Texture( Graphics& gfx,const std::string& path,UINT slot,bool cubemap)
 		:
 		path( path ),
-		slot( slot )
+		slot( slot ),
+		cubemap(cubemap)
 	{
 		INFOMAN( gfx );
 
@@ -29,7 +30,16 @@ namespace Bind
 		textureDesc.Usage = D3D11_USAGE_DEFAULT;
 		textureDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
 		textureDesc.CPUAccessFlags = 0;
-		textureDesc.MiscFlags = 0;
+		if (cubemap)
+		{
+			textureDesc.ArraySize = 6;
+			textureDesc.MiscFlags = D3D11_RESOURCE_MISC_TEXTURECUBE;
+		}
+		else
+		{
+			textureDesc.ArraySize = 1;
+			textureDesc.MiscFlags = 0;
+		}
 		D3D11_SUBRESOURCE_DATA sd = {};
 		sd.pSysMem = s.GetBufferPtr();
 		sd.SysMemPitch = s.GetWidth() * sizeof( Surface::Color );
@@ -38,12 +48,30 @@ namespace Bind
 			&textureDesc,&sd,&pTexture
 		) );
 
+		//D3DX11_IMAGE_LOAD_INFO loadSMInfo;
+		//loadSMInfo.MiscFlags = D3D11_RESOURCE_MISC_TEXTURECUBE;
+
+		////Load the texture
+		//ID3D11Texture2D* SMTexture = 0;
+		//D3DX11CreateTextureFromFile(GetDevice(gfx), path.c_str(),
+		//	&loadSMInfo, 0, (ID3D11Resource**)&SMTexture, 0);
+
 		// create the resource view on the texture
 		D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
 		srvDesc.Format = textureDesc.Format;
-		srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
-		srvDesc.Texture2D.MostDetailedMip = 0;
-		srvDesc.Texture2D.MipLevels = 1;
+		if (cubemap)
+		{
+			srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURECUBE;
+			srvDesc.TextureCube.MostDetailedMip = 0;
+			srvDesc.TextureCube.MipLevels = 1;
+		}
+		else
+		{
+			srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+			srvDesc.Texture2D.MostDetailedMip = 0;
+			srvDesc.Texture2D.MipLevels = 1;
+		}
+		
 		GFX_THROW_INFO( GetDevice( gfx )->CreateShaderResourceView(
 			pTexture.Get(),&srvDesc,&pTextureView
 		) );
@@ -53,17 +81,17 @@ namespace Bind
 	{
 		GetContext( gfx )->PSSetShaderResources( slot,1u,pTextureView.GetAddressOf() );
 	}
-	std::shared_ptr<Texture> Texture::Resolve( Graphics& gfx,const std::string& path,UINT slot )
+	std::shared_ptr<Texture> Texture::Resolve( Graphics& gfx,const std::string& path,UINT slot, bool cubemap )
 	{
-		return Codex::Resolve<Texture>( gfx,path,slot );
+		return Codex::Resolve<Texture>( gfx,path,slot, cubemap);
 	}
-	std::string Texture::GenerateUID( const std::string& path,UINT slot )
+	std::string Texture::GenerateUID( const std::string& path,UINT slot, bool cubemap)
 	{
 		using namespace std::string_literals;
 		return typeid(Texture).name() + "#"s + path + "#" + std::to_string( slot );
 	}
 	std::string Texture::GetUID() const noexcept
 	{
-		return GenerateUID( path,slot );
+		return GenerateUID( path,slot, cubemap);
 	}
 }

@@ -4,17 +4,17 @@ cbuffer CBuf
 	matrix modelViewProj;
 };
 
-RasterizerState rsWireframe { FillMode = WireFrame; };
-
-float4 main( float3 pos : Position ) : SV_Position
+struct VSOut
 {
-	return mul( float4(pos,1.0f),modelViewProj );
-}
-
-technique11
-{
-	pass
-	{
-		SetRasterizerState(rsWireframe);
-	}
+	float3 tc : Texcoord;
+	float4 pos : SV_Position;
 };
+
+VSOut main( float3 pos : Position )
+{
+	VSOut vso;
+	vso.tc = pos;
+	vso.pos = mul(float4(pos, 1.0f), modelViewProj);
+	vso.pos = vso.pos.xyww;
+	return vso;
+}

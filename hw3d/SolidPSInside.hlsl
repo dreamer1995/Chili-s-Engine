@@ -3,17 +3,22 @@ cbuffer CBuf : register(b1)
 	float4 color;
 };
 
-RasterizerState rsWireframe { FillMode = WireFrame; };
+TextureCube SkyMap;
+SamplerState splr;
 
-float4 main() : SV_Target
+float4 main(float3 tc : Texcoord) : SV_Target
 {
-	return color;
+	return SkyMap.Sample(splr, normalize(tc)) * color;
 }
 
-technique11
-{
-	pass
-	{
-		SetRasterizerState(rsWireframe);
-	}
-};
+//RasterizerState MyCull {
+//	FillMode = WireFrame;
+//};
+//
+//technique11 main11
+//{
+//	pass p0
+//	{
+//		SetRasterizerState(MyCull);
+//	}
+//};

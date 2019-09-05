@@ -14,6 +14,8 @@ TestCube::TestCube(Graphics& gfx, float size)
 	AddBind(VertexBuffer::Resolve(gfx, geometryTag, model.vertices));
 	AddBind(IndexBuffer::Resolve(gfx, geometryTag, model.indices));
 
+	AddBind(Texture::Resolve(gfx, "Images\\CubeMap.jpg", 0u, true));
+
 	auto pvs = VertexShader::Resolve(gfx, "SolidVSInside.cso");
 	auto pvsbc = pvs->GetBytecode();
 	AddBind(std::move(pvs));

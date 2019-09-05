@@ -190,6 +190,7 @@
   </ItemGroup>
   <ItemGroup>
     <Image Include="chili.ico" />
+    <Image Include="Images\CubeMap.jpg" />
   </ItemGroup>
   <ItemGroup>
     <None Include="DXGetErrorDescription.inl" />
