@@ -71,6 +71,10 @@ public:
 	void EnableImgui() noexcept;
 	void DisableImgui() noexcept;
 	bool IsImguiEnabled() const noexcept;
+	void SetStencilState() noexcept;
+	void SetStencilState(char type) noexcept;
+	void SetRasterState() noexcept;
+	void SetRasterState(char type) noexcept;
 private:
 	DirectX::XMMATRIX projection;
 	DirectX::XMMATRIX camera;
@@ -83,5 +87,8 @@ private:
 	Microsoft::WRL::ComPtr<ID3D11DeviceContext> pContext;
 	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> pTarget;
 	Microsoft::WRL::ComPtr<ID3D11DepthStencilView> pDSV;
-	Microsoft::WRL::ComPtr<ID3D11RasterizerState> pRasterState;
+	Microsoft::WRL::ComPtr<ID3D11DepthStencilState> pDSStateDefault;
+	Microsoft::WRL::ComPtr<ID3D11DepthStencilState> pDSStateCube;
+	Microsoft::WRL::ComPtr<ID3D11RasterizerState> pRasterStateDefault;
+	Microsoft::WRL::ComPtr<ID3D11RasterizerState> pRasterStateNone;
 };

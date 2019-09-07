@@ -7,7 +7,7 @@
 #include "TestPlane.h"
 #include "Mesh.h"
 #include <set>
-#include "TestCube.h"
+#include "SkyBox.h"
 
 class App
 {
@@ -30,5 +30,5 @@ private:
 	Model nano{ wnd.Gfx(),"Models\\nano_textured\\nanosuit.obj" };
 	//Model nano2{ wnd.Gfx(),"Models\\nano_textured\\nanosuit.obj" };
 	TestPlane plane;
-	TestCube cube;
+	SkyBox cube;
 };

@@ -68,11 +68,14 @@ Graphics::Graphics( HWND hWnd,int width,int height )
 	dsDesc.DepthEnable = TRUE;
 	dsDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
 	dsDesc.DepthFunc = D3D11_COMPARISON_LESS;
-	wrl::ComPtr<ID3D11DepthStencilState> pDSState;
-	GFX_THROW_INFO( pDevice->CreateDepthStencilState( &dsDesc,&pDSState ) );
+
+	GFX_THROW_INFO( pDevice->CreateDepthStencilState( &dsDesc,&pDSStateDefault) );
+
+	dsDesc.DepthFunc = D3D11_COMPARISON_LESS_EQUAL;
+	GFX_THROW_INFO(pDevice->CreateDepthStencilState(&dsDesc, &pDSStateCube));
 
 	// bind depth state
-	pContext->OMSetDepthStencilState( pDSState.Get(),1u );
+	pContext->OMSetDepthStencilState(pDSStateDefault.Get(),1u );
 
 	// create depth stensil texture
 	wrl::ComPtr<ID3D11Texture2D> pDepthStencil;
@@ -121,10 +124,13 @@ Graphics::Graphics( HWND hWnd,int width,int height )
 	rasterDesc.MultisampleEnable = false;
 	rasterDesc.SlopeScaledDepthBias = 0.0f;
 
-	GFX_THROW_INFO(pDevice->CreateRasterizerState(&rasterDesc, &pRasterState));
+	GFX_THROW_INFO(pDevice->CreateRasterizerState(&rasterDesc, &pRasterStateDefault));
+
+	rasterDesc.CullMode = D3D11_CULL_NONE;
+	GFX_THROW_INFO(pDevice->CreateRasterizerState(&rasterDesc, &pRasterStateNone));
 
 	//Set the Rasterizer
-	pContext->RSSetState(pRasterState.Get());
+	pContext->RSSetState(pRasterStateDefault.Get());
 
 	// init imgui d3d impl
 	ImGui_ImplDX11_Init( pDevice.Get(),pContext.Get() );
@@ -216,6 +222,31 @@ bool Graphics::IsImguiEnabled() const noexcept
 	return imguiEnabled;
 }
 
+void Graphics::SetStencilState() noexcept
+{
+	pContext->OMSetDepthStencilState(pDSStateDefault.Get(), 1u);
+}
+
+void Graphics::SetStencilState(char type) noexcept
+{
+	if (type == 'C')
+	{
+		pContext->OMSetDepthStencilState(pDSStateCube.Get(), 1u);
+	}
+}
+
+void Graphics::SetRasterState() noexcept
+{
+	pContext->RSSetState(pRasterStateDefault.Get());
+}
+
+void Graphics::SetRasterState(char type) noexcept
+{
+	if (type == 'N')
+	{
+		pContext->RSSetState(pRasterStateNone.Get());
+	}
+}
 
 // Graphics exception stuff
 Graphics::HrException::HrException( int line,const char * file,HRESULT hr,std::vector<std::string> infoMsgs ) noexcept

@@ -66,6 +66,7 @@ void Camera::Rotate( float dx,float dy ) noexcept
 {
 	yaw = wrap_angle( yaw + dx * rotationSpeed );
 	pitch = wrap_angle(pitch + dy * rotationSpeed);
+	yaw_ = yaw;
 }
 
 void Camera::Translate( DirectX::XMFLOAT3 translation ) noexcept

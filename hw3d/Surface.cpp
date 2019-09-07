@@ -95,6 +95,11 @@ Surface::Color* Surface::GetBufferPtr() noexcept
 	return pBuffer.get();
 }
 
+Surface::Color* Surface::GetBufferPtrByIndex(unsigned long index) noexcept
+{
+	return &pBuffer[index];
+}
+
 const Surface::Color* Surface::GetBufferPtr() const noexcept
 {
 	return pBuffer.get();
@@ -105,7 +110,7 @@ const Surface::Color* Surface::GetBufferPtrConst() const noexcept
 	return pBuffer.get();
 }
 
-Surface Surface::FromFile( const std::string& name )
+Surface Surface::FromFile( const std::string& name, bool cubemap)
 {
 	unsigned int width = 0;
 	unsigned int height = 0;
@@ -122,20 +127,91 @@ Surface Surface::FromFile( const std::string& name )
 			ss << "Loading image [" << name << "]: failed to load.";
 			throw Exception( __LINE__,__FILE__ ,ss.str() );
 		}
-
-		width = bitmap.GetWidth();
-		height = bitmap.GetHeight();
-		pBuffer = std::make_unique<Color[]>( width * height );
-
-		for( unsigned int y = 0; y < height; y++ )
+		
+		if (cubemap)
 		{
-			for( unsigned int x = 0; x < width; x++ )
+			width = bitmap.GetWidth() / 4;
+			height = width;
+			pBuffer = std::make_unique<Color[]>(width * height * 6);
+			unsigned int i = 0;
+			for (unsigned int y = height; y < height * 2; y++)
 			{
-				Gdiplus::Color c;
-				bitmap.GetPixel( x,y,&c );
-				pBuffer[y * width + x] = c.GetValue();
+				for (unsigned int x = width * 2; x < width * 3; x++)
+				{
+					Gdiplus::Color c;
+					bitmap.GetPixel(x, y, &c);
+					pBuffer[i] = c.GetValue();
+					i++;
+				}
+			}
+			for (unsigned int y = height; y < height * 2; y++)
+			{
+				for (unsigned int x = 0; x < width; x++)
+				{
+					Gdiplus::Color c;
+					bitmap.GetPixel(x, y, &c);
+					pBuffer[i] = c.GetValue();
+					i++;
+				}
+			}
+			for (unsigned int y = 0; y < height; y++)
+			{
+				for (unsigned int x = width; x < width * 2; x++)
+				{
+					Gdiplus::Color c;
+					bitmap.GetPixel(x, y, &c);
+					pBuffer[i] = c.GetValue();
+					i++;
+				}
+			}
+			for (unsigned int y = height * 2; y < height * 3; y++)
+			{
+				for (unsigned int x = width * 1; x < width * 2; x++)
+				{
+					Gdiplus::Color c;
+					bitmap.GetPixel(x, y, &c);
+					pBuffer[i] = c.GetValue();
+					i++;
+				}
+			}
+			for (unsigned int y = height; y < height * 2; y++)
+			{
+				for (unsigned int x = width; x < width * 2; x++)
+				{
+					Gdiplus::Color c;
+					bitmap.GetPixel(x, y, &c);
+					pBuffer[i] = c.GetValue();
+					i++;
+				}
+			}
+			for (unsigned int y = height; y < height * 2; y++)
+			{
+				for (unsigned int x = width * 3; x < width * 4; x++)
+				{
+					Gdiplus::Color c;
+					bitmap.GetPixel(x, y, &c);
+					pBuffer[i] = c.GetValue();
+					i++;
+				}
 			}
 		}
+		else
+		{
+			width = bitmap.GetWidth();
+			height = bitmap.GetHeight();
+			pBuffer = std::make_unique<Color[]>(width * height);
+
+			for (unsigned int y = 0; y < height; y++)
+			{
+				for (unsigned int x = 0; x < width; x++)
+				{
+					Gdiplus::Color c;
+					bitmap.GetPixel(x, y, &c);
+					pBuffer[y * width + x] = c.GetValue();
+				}
+			}
+		}
+		
 	}
 
 	return Surface( width,height,std::move( pBuffer ) );

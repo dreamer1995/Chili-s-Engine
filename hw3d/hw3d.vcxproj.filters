@@ -153,7 +153,7 @@
     <ClCompile Include="TestPlane.cpp">
       <Filter>Source Files\Drawable</Filter>
     </ClCompile>
-    <ClCompile Include="TestCube.cpp">
+    <ClCompile Include="SkyBox.cpp">
       <Filter>Source Files\Drawable</Filter>
     </ClCompile>
   </ItemGroup>
@@ -314,7 +314,7 @@
     <ClInclude Include="Cube.h">
       <Filter>Header Files\Geometry</Filter>
     </ClInclude>
-    <ClInclude Include="TestCube.h">
+    <ClInclude Include="SkyBox.h">
       <Filter>Header Files\Drawable</Filter>
     </ClInclude>
   </ItemGroup>
@@ -361,10 +361,10 @@
     <FxCompile Include="PhongPSNormalMap.hlsl">
       <Filter>Shader</Filter>
     </FxCompile>
-    <FxCompile Include="SolidPSInside.hlsl">
+    <FxCompile Include="SkyBoxPS.hlsl">
       <Filter>Shader</Filter>
     </FxCompile>
-    <FxCompile Include="SolidVSInside.hlsl">
+    <FxCompile Include="SkyBoxVS.hlsl">
       <Filter>Shader</Filter>
     </FxCompile>
   </ItemGroup>

@@ -15,48 +15,61 @@ namespace Bind
 	{
 		INFOMAN( gfx );
 
-		// load surface
-		const auto s = Surface::FromFile( path );
+		Surface s(0, 0);
 
-		// create texture resource
+		// load surface
 		D3D11_TEXTURE2D_DESC textureDesc = {};
+		if (cubemap)
+		{
+			s = Surface::FromFile(path, true);
+			textureDesc.ArraySize = 6;
+			textureDesc.MiscFlags = D3D11_RESOURCE_MISC_TEXTURECUBE;
+		}
+		else
+		{
+			s = Surface::FromFile(path);	
+			textureDesc.ArraySize = 1;
+			textureDesc.MiscFlags = 0;
+		}
+		// create texture resource
+		
 		textureDesc.Width = s.GetWidth();
 		textureDesc.Height = s.GetHeight();
 		textureDesc.MipLevels = 1;
-		textureDesc.ArraySize = 1;
 		textureDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
 		textureDesc.SampleDesc.Count = 1;
 		textureDesc.SampleDesc.Quality = 0;
 		textureDesc.Usage = D3D11_USAGE_DEFAULT;
 		textureDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
 		textureDesc.CPUAccessFlags = 0;
+		
+		wrl::ComPtr<ID3D11Texture2D> pTexture;
 		if (cubemap)
 		{
-			textureDesc.ArraySize = 6;
-			textureDesc.MiscFlags = D3D11_RESOURCE_MISC_TEXTURECUBE;
+			D3D11_SUBRESOURCE_DATA sd[6] = {};
+			for (char i = 0; i < 6; i++)
+			{
+				sd[i].pSysMem = s.GetBufferPtrByIndex(s.GetWidth() * s.GetHeight() * i);
+				sd[i].SysMemPitch = s.GetWidth() * sizeof(Surface::Color);
+				sd[i].SysMemSlicePitch = 0;
+			}
+			
+
+			GFX_THROW_INFO(GetDevice(gfx)->CreateTexture2D(
+				&textureDesc, &sd[0], &pTexture
+			));
 		}
 		else
 		{
-			textureDesc.ArraySize = 1;
-			textureDesc.MiscFlags = 0;
+			D3D11_SUBRESOURCE_DATA sd = {};
+			sd.pSysMem = s.GetBufferPtr();
+			sd.SysMemPitch = s.GetWidth() * sizeof(Surface::Color);
+
+			GFX_THROW_INFO(GetDevice(gfx)->CreateTexture2D(
+				&textureDesc, &sd, &pTexture
+			));
 		}
-		D3D11_SUBRESOURCE_DATA sd = {};
-		sd.pSysMem = s.GetBufferPtr();
-		sd.SysMemPitch = s.GetWidth() * sizeof( Surface::Color );
-		wrl::ComPtr<ID3D11Texture2D> pTexture;
-		GFX_THROW_INFO( GetDevice( gfx )->CreateTexture2D(
-			&textureDesc,&sd,&pTexture
-		) );
 
-		//D3DX11_IMAGE_LOAD_INFO loadSMInfo;
-		//loadSMInfo.MiscFlags = D3D11_RESOURCE_MISC_TEXTURECUBE;
-
-		////Load the texture
-		//ID3D11Texture2D* SMTexture = 0;
-		//D3DX11CreateTextureFromFile(GetDevice(gfx), path.c_str(),
-		//	&loadSMInfo, 0, (ID3D11Resource**)&SMTexture, 0);
-
-		// create the resource view on the texture
 		D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
 		srvDesc.Format = textureDesc.Format;
 		if (cubemap)

@@ -32,8 +32,15 @@ void App::DoFrame()
 	nano.Draw( wnd.Gfx() );
 	//nano2.Draw( wnd.Gfx() );
 	light.Draw( wnd.Gfx() );
+	wnd.Gfx().SetRasterState('N');
 	plane.Draw( wnd.Gfx() );
+	wnd.Gfx().SetStencilState('C');
+	cube.SetPos(cam.pos);
 	cube.Draw(wnd.Gfx());
+	wnd.Gfx().SetStencilState();
+	wnd.Gfx().SetRasterState();
+
+	
 
 	while( const auto e = wnd.kbd.ReadKey() )
 	{
@@ -187,7 +194,8 @@ void App::DoFrame()
 		}
 		else if (!wnd.CursorEnabled() && wnd.mouse.WheelIsPressed())
 		{
-			cam.Translate({ -(float)delta->x * dt,(float)delta->y * dt,0.0f });
+			static float mKeyMoveSpeed = 0.1f;
+			cam.Translate({ -(float)delta->x * dt * mKeyMoveSpeed,(float)delta->y * dt * mKeyMoveSpeed,0.0f });
 		}
 	}
 		

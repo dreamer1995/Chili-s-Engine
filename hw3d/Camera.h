@@ -11,13 +11,13 @@ public:
 	void Rotate( float dx,float dy ) noexcept;
 	void Translate( DirectX::XMFLOAT3 translation ) noexcept;
 	void LookZero(DirectX::XMFLOAT3 position) noexcept;
-	void KeepLookFront(DirectX::XMFLOAT3 position) noexcept;
 	void RotateAround(float dx, float dy, DirectX::XMFLOAT3 centralPoint) noexcept;
-private:
 	DirectX::XMFLOAT3 pos;
+private:
 	float pitch;
 	float yaw;
 	static constexpr float travelSpeed = 12.0f;
 	static constexpr float rotationSpeed = 0.004f;
+	void KeepLookFront(DirectX::XMFLOAT3 position) noexcept;
 	float yaw_;
 };

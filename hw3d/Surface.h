@@ -129,9 +129,10 @@ public:
 	Color* GetBufferPtr() noexcept;
 	const Color* GetBufferPtr() const noexcept;
 	const Color* GetBufferPtrConst() const noexcept;
-	static Surface FromFile( const std::string& name );
+	static Surface FromFile( const std::string& name, bool cubemap = false);
 	void Save( const std::string& filename ) const;
 	void Copy( const Surface& src ) noxnd;
+	Color* GetBufferPtrByIndex(unsigned long index) noexcept;
 private:
 	Surface( unsigned int width,unsigned int height,std::unique_ptr<Color[]> pBufferParam ) noexcept;
 private:

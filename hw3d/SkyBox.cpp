@@ -1,9 +1,9 @@
-#include "TestCube.h"
+#include "SkyBox.h"
 #include "Cube.h"
 #include "BindableCommon.h"
 #include "imgui/imgui.h"
 
-TestCube::TestCube(Graphics& gfx, float size)
+SkyBox::SkyBox(Graphics& gfx, float size)
 {
 	using namespace Bind;
 	namespace dx = DirectX;
@@ -16,11 +16,11 @@ TestCube::TestCube(Graphics& gfx, float size)
 
 	AddBind(Texture::Resolve(gfx, "Images\\CubeMap.jpg", 0u, true));
 
-	auto pvs = VertexShader::Resolve(gfx, "SolidVSInside.cso");
+	auto pvs = VertexShader::Resolve(gfx, "SkyBoxVS.cso");
 	auto pvsbc = pvs->GetBytecode();
 	AddBind(std::move(pvs));
 
-	AddBind(PixelShader::Resolve(gfx, "SolidPSInside.cso"));
+	AddBind(PixelShader::Resolve(gfx, "SkyBoxPS.cso"));
 
 	AddBind(PixelConstantBuffer<PSMaterialConstant>::Resolve(gfx, pmc, 1u));
 
@@ -31,25 +31,25 @@ TestCube::TestCube(Graphics& gfx, float size)
 	AddBind(std::make_shared<TransformCbuf>(gfx, *this));
 }
 
-void TestCube::SetPos(DirectX::XMFLOAT3 pos) noexcept
+void SkyBox::SetPos(DirectX::XMFLOAT3 pos) noexcept
 {
 	this->pos = pos;
 }
 
-void TestCube::SetRotation(float roll, float pitch, float yaw) noexcept
+void SkyBox::SetRotation(float roll, float pitch, float yaw) noexcept
 {
 	this->roll = roll;
 	this->pitch = pitch;
 	this->yaw = yaw;
 }
 
-DirectX::XMMATRIX TestCube::GetTransformXM() const noexcept
+DirectX::XMMATRIX SkyBox::GetTransformXM() const noexcept
 {
 	return DirectX::XMMatrixRotationRollPitchYaw(roll, pitch, yaw) *
 		DirectX::XMMatrixTranslation(pos.x, pos.y, pos.z);
 }
 
-void TestCube::SpawnControlWindow(Graphics& gfx) noexcept
+void SkyBox::SpawnControlWindow(Graphics& gfx) noexcept
 {
 	if (ImGui::Begin("Cube"))
 	{
