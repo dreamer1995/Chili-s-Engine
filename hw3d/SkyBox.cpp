@@ -49,18 +49,33 @@ DirectX::XMMATRIX SkyBox::GetTransformXM() const noexcept
 		DirectX::XMMatrixTranslation(pos.x, pos.y, pos.z);
 }
 
+void SkyBox::Reset() noexcept
+{
+	pitch = 0.0f;
+	yaw = 0.0f;
+	roll = 0.0f;
+}
+
 void SkyBox::SpawnControlWindow(Graphics& gfx) noexcept
 {
-	if (ImGui::Begin("Cube"))
+	if (ImGui::Begin("SkyBox"))
 	{
-		ImGui::Text("Position");
-		ImGui::SliderFloat("X", &pos.x, -80.0f, 80.0f, "%.1f");
-		ImGui::SliderFloat("Y", &pos.y, -80.0f, 80.0f, "%.1f");
-		ImGui::SliderFloat("Z", &pos.z, -80.0f, 80.0f, "%.1f");
 		ImGui::Text("Orientation");
 		ImGui::SliderAngle("Roll", &roll, -180.0f, 180.0f);
 		ImGui::SliderAngle("Pitch", &pitch, -180.0f, 180.0f);
 		ImGui::SliderAngle("Yaw", &yaw, -180.0f, 180.0f);
+		ImGui::Text("Tint");
+		bool changed0 = ImGui::ColorEdit3("Tint Color", &pmc.color.x);
+		ImGui::Text("Visibility");
+		ImGui::Checkbox("Enable Normal Map", &show);
+		if (changed0)
+		{
+			QueryBindable<Bind::PixelConstantBuffer<PSMaterialConstant>>()->Update(gfx, pmc);
+		}
+		if (ImGui::Button("Reset"))
+		{
+			Reset();
+		}
 	}
 	ImGui::End();
 }

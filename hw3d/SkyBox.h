@@ -9,6 +9,7 @@ public:
 	void SetRotation(float roll, float pitch, float yaw) noexcept;
 	DirectX::XMMATRIX GetTransformXM() const noexcept override;
 	void SpawnControlWindow(Graphics& gfx) noexcept;
+	bool show = true;
 private:
 	struct PSMaterialConstant
 	{
@@ -19,4 +20,5 @@ private:
 	float roll = 0.0f;
 	float pitch = 0.0f;
 	float yaw = 0.0f;
+	void Reset() noexcept;
 };
