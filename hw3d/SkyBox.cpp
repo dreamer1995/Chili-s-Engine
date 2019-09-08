@@ -67,7 +67,7 @@ void SkyBox::SpawnControlWindow(Graphics& gfx) noexcept
 		ImGui::Text("Tint");
 		bool changed0 = ImGui::ColorEdit3("Tint Color", &pmc.color.x);
 		ImGui::Text("Visibility");
-		ImGui::Checkbox("Enable Normal Map", &show);
+		ImGui::Checkbox("Show CubeMap", &show);
 		if (changed0)
 		{
 			QueryBindable<Bind::PixelConstantBuffer<PSMaterialConstant>>()->Update(gfx, pmc);
