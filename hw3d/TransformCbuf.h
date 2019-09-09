@@ -10,8 +10,15 @@ namespace Bind
 	protected:
 		struct Transforms
 		{
-			DirectX::XMMATRIX modelView;
-			DirectX::XMMATRIX modelViewProj;
+			DirectX::XMMATRIX matrix_MVP;
+			DirectX::XMMATRIX matrix_MV;
+			DirectX::XMMATRIX matrix_V;
+			DirectX::XMMATRIX matrix_P;
+			DirectX::XMMATRIX matrix_VP;
+			DirectX::XMMATRIX matrix_T_MV;
+			DirectX::XMMATRIX matrix_IT_MV;
+			DirectX::XMMATRIX matrix_M2W;
+			DirectX::XMMATRIX matrix_W2M;
 		};
 	public:
 		TransformCbuf( Graphics& gfx,const Drawable& parent,UINT slot = 0u );

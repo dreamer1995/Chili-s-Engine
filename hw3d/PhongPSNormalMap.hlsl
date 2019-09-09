@@ -19,8 +19,15 @@ cbuffer ObjectCBuf
 
 cbuffer TransformCBuf
 {
-    matrix modelView;
-    matrix modelViewProj;
+	matrix matrix_MVP;
+	matrix matrix_MV;
+	matrix matrix_V;
+	matrix matrix_P;
+	matrix matrixmatrix_VP;
+	matrix matrixmatrix_T_MV;
+	matrix matrix_IT_MV;
+	matrix matrix_M2W;
+	matrix matrix_W2M;
 };
 
 Texture2D tex;
@@ -38,7 +45,7 @@ float4 main(float3 worldPos : Position, float3 n : Normal, float2 tc : Texcoord)
         n.x = normalSample.x * 2.0f - 1.0f;
         n.y = -normalSample.y * 2.0f + 1.0f;
         n.z = -normalSample.z;
-        n = mul(n, (float3x3)modelView);
+        n = mul(n, (float3x3)matrix_MV);
     }
 	// fragment to light vector data
     const float3 vToL = lightPos - worldPos;
