@@ -71,6 +71,10 @@ namespace Dvtx
 			return sizeof( Map<Texture2D>::SysType );
 		case Normal:
 			return sizeof( Map<Normal>::SysType );
+		case Tangent:
+			return sizeof(Map<Tangent>::SysType);
+		case Binormal:
+			return sizeof(Map<Binormal>::SysType);
 		case Float3Color:
 			return sizeof( Map<Float3Color>::SysType );
 		case Float4Color:
@@ -97,6 +101,10 @@ namespace Dvtx
 			return Map<Texture2D>::code;
 		case Normal:
 			return Map<Normal>::code;
+		case Tangent:
+			return Map<Tangent>::code;
+		case Binormal:
+			return Map<Binormal>::code;
 		case Float3Color:
 			return Map<Float3Color>::code;
 		case Float4Color:
@@ -119,6 +127,10 @@ namespace Dvtx
 			return GenerateDesc<Texture2D>( GetOffset() );
 		case Normal:
 			return GenerateDesc<Normal>( GetOffset() );
+		case Tangent:
+			return GenerateDesc<Tangent>(GetOffset());
+		case Binormal:
+			return GenerateDesc<Binormal>(GetOffset());
 		case Float3Color:
 			return GenerateDesc<Float3Color>( GetOffset() );
 		case Float4Color:

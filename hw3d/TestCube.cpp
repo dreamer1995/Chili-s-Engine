@@ -19,11 +19,11 @@ TestCube::TestCube( Graphics& gfx,float size )
 	AddBind( Texture::Resolve( gfx,"Images\\brickwall.jpg" ) );
 	AddBind( Texture::Resolve( gfx,"Images\\brickwall_normal.jpg",1u ) );
 
-	auto pvs = VertexShader::Resolve( gfx,"PhongVS.cso" );
+	auto pvs = VertexShader::Resolve( gfx,"PBRTestVS.cso" );
 	auto pvsbc = pvs->GetBytecode();
 	AddBind( std::move( pvs ) );
 
-	AddBind( PixelShader::Resolve( gfx,"PhongPSNormalMap.cso" ) );
+	AddBind( PixelShader::Resolve( gfx,"PBRTestPS.cso" ) );
 
 	AddBind( PixelConstantBuffer<PSMaterialConstant>::Resolve( gfx,pmc,1u ) );
 

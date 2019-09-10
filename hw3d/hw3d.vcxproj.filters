@@ -379,5 +379,11 @@
     <FxCompile Include="SkyBoxVS.hlsl">
       <Filter>Shader</Filter>
     </FxCompile>
+    <FxCompile Include="PBRTestPS.hlsl">
+      <Filter>Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="PBRTestVS.hlsl">
+      <Filter>Shader</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>

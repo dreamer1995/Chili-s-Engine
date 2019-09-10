@@ -256,6 +256,73 @@ std::unique_ptr<Mesh> Model::ParseMesh( Graphics& gfx,const aiMesh& mesh,const a
 		indices.push_back( face.mIndices[0] );
 		indices.push_back( face.mIndices[1] );
 		indices.push_back( face.mIndices[2] );
+
+		//// Calculate the two vectors for this face.
+		//dx::XMFLOAT3 vector1;	
+		//vector1.x = &mesh.mVertices[face.mIndices[1]].x - &mesh.mVertices[face.mIndices[0]].x;
+		//vector1.y = &mesh.mVertices[face.mIndices[1]].y - &mesh.mVertices[face.mIndices[0]].y;
+		//vector1.z = &mesh.mVertices[face.mIndices[1]].z - &mesh.mVertices[face.mIndices[0]].z;
+		//dx::XMFLOAT3 vector2;
+		//vector2.x = &mesh.mVertices[face.mIndices[2]].x - &mesh.mVertices[face.mIndices[0]].x;
+		//vector2.y = &mesh.mVertices[face.mIndices[2]].y - &mesh.mVertices[face.mIndices[0]].y;
+		//vector2.z = &mesh.mVertices[face.mIndices[2]].z - &mesh.mVertices[face.mIndices[0]].z;
+
+		//// Calculate the tu and tv texture space vectors.
+		//dx::XMFLOAT2 tuVector;
+		//dx::XMFLOAT2 tvVector;
+		//tuVector.x = &mesh.mTextureCoords[0][face.mIndices[1]].x - &mesh.mTextureCoords[0][face.mIndices[0]].x;
+		//tvVector.x = &mesh.mTextureCoords[0][face.mIndices[1]].y - &mesh.mTextureCoords[0][face.mIndices[0]].y;
+
+		//tuVector.y = &mesh.mTextureCoords[0][face.mIndices[2]].x - &mesh.mTextureCoords[0][face.mIndices[0]].x;
+		//tvVector.y = &mesh.mTextureCoords[0][face.mIndices[2]].y - &mesh.mTextureCoords[0][face.mIndices[0]].y;
+
+		//// Calculate the denominator of the tangent/binormal equation.
+		//float den;
+		//den = 1.0f / (tuVector.x * tvVector.y - tuVector.y * tvVector.x);
+
+		//// Calculate the cross products and multiply by the coefficient to get the tangent and binormal.
+		//dx::XMFLOAT3 tangent;
+		//tangent.x = (tvVector.y * vector1.x - tvVector.x * vector2.x) * den;
+		//tangent.y = (tvVector.y * vector1.y - tvVector.x * vector2.y) * den;
+		//tangent.z = (tvVector.y * vector1.z - tvVector.x * vector2.z) * den;
+
+		//dx::XMFLOAT3 binormal;
+		//binormal.x = (tuVector.x * vector2.x - tuVector.y * vector1.x) * den;
+		//binormal.y = (tuVector.x * vector2.y - tuVector.y * vector1.y) * den;
+		//binormal.z = (tuVector.x * vector2.z - tuVector.y * vector1.z) * den;
+
+		//// Calculate the length of the tangent.
+		//float length;
+		//length = (float)sqrt((tangent.x * tangent.x) + (tangent.y * tangent.y) + (tangent.z * tangent.z));
+
+		//// Normalize the tangent and then store it.
+		//tangent.x = tangent.x / length;
+		//tangent.y = tangent.y / length;
+		//tangent.z = tangent.z / length;
+
+		//// Calculate the length of the binormal.
+		//length = (float)sqrt((binormal.x * binormal.x) + (binormal.y * binormal.y) + (binormal.z * binormal.z));
+
+		//// Normalize the binormal and then store it.
+		//binormal.x = binormal.x / length;
+		//binormal.y = binormal.y / length;
+		//binormal.z = binormal.z / length;
+
+		//using Type = Dvtx::VertexLayout::ElementType;
+
+		//vbuf[face.mIndices[0]].Attr<Type::Position3D>() = *reinterpret_cast<dx::XMFLOAT3*>(&mesh.mVertices[face.mIndices[0]]);
+		//vbuf[face.mIndices[0]].Attr<Type::Normal>() = *reinterpret_cast<dx::XMFLOAT3*>(&mesh.mNormals[face.mIndices[0]]);
+		//vbuf[face.mIndices[0]].Attr<Type::Texture2D>() = *reinterpret_cast<dx::XMFLOAT2*>(&mesh.mTextureCoords[0][face.mIndices[0]]);
+
+		//vbuf[face.mIndices[1]].Attr<Type::Position3D>() = *reinterpret_cast<dx::XMFLOAT3*>(&mesh.mVertices[face.mIndices[1]]);
+		//vbuf[face.mIndices[1]].Attr<Type::Normal>() = *reinterpret_cast<dx::XMFLOAT3*>(&mesh.mNormals[face.mIndices[1]]);
+		//vbuf[face.mIndices[1]].Attr<Type::Texture2D>() = *reinterpret_cast<dx::XMFLOAT2*>(&mesh.mTextureCoords[0][face.mIndices[1]]);
+
+		//vbuf[face.mIndices[2]].Attr<Type::Position3D>() = *reinterpret_cast<dx::XMFLOAT3*>(&mesh.mVertices[face.mIndices[2]]);
+		//vbuf[face.mIndices[2]].Attr<Type::Normal>() = *reinterpret_cast<dx::XMFLOAT3*>(&mesh.mNormals[face.mIndices[2]]);
+		//vbuf[face.mIndices[2]].Attr<Type::Texture2D>() = *reinterpret_cast<dx::XMFLOAT2*>(&mesh.mTextureCoords[0][face.mIndices[2]]);
+
+
 	}
 
 	std::vector<std::shared_ptr<Bindable>> bindablePtrs;
