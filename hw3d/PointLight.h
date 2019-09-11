@@ -11,7 +11,8 @@ public:
 	void SpawnControlWindow() noexcept;
 	void Reset() noexcept;
 	void Draw( Graphics& gfx ) const noxnd;
-	void Bind( Graphics& gfx,DirectX::FXMMATRIX view ) const noexcept;
+	//void Bind( Graphics& gfx,DirectX::FXMMATRIX view ) const noexcept;
+	void Bind(Graphics& gfx) const noexcept;
 	DirectX::XMFLOAT3 GetPos() noexcept;
 private:
 	struct PointLightCBuf

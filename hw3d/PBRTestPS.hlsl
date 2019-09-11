@@ -68,7 +68,6 @@ float4 main(PSIn i) : SV_Target
 	// calculate specular intensity based on angle between viewing vector and reflection vector, narrow with power function
 	const float3 specular = att * (diffuseColor * diffuseIntensity) * specularIntensity * pow(max(0.0f, dot(normalize(-r), normalize(i.worldPos))), specularPower);
 	// final color
-	//return float4(saturate((diffuse + ambient) * tex.Sample(splr, i.uv).rgb + specular), 1.0f);
-	return float4((i.normal +1)/2,1.0f);
+	return float4(saturate((diffuse + ambient) * tex.Sample(splr, i.uv).rgb + specular), 1.0f);
 
 }

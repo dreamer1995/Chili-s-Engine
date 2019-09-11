@@ -29,7 +29,7 @@ void App::DoFrame()
 	const auto dt = timer.Mark() * speed_factor;
 	wnd.Gfx().BeginFrame( 0.07f,0.0f,0.12f );
 	wnd.Gfx().SetCamera( cam.GetMatrix() );
-	light.Bind( wnd.Gfx(),cam.GetMatrix() );
+	light.Bind( wnd.Gfx());
 		
 	nano.Draw( wnd.Gfx() );
 	//nano2.Draw( wnd.Gfx() );

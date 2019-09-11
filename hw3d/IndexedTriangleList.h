@@ -55,14 +55,14 @@ public:
 			XMStoreFloat3(&t02, (t2 - t0));
 
 			// Calculate the denominator of the tangent/binormal equation.
-			const auto den = 1.0f / (t01.x * t02.y - t02.x * t01.y);
+			const auto den = 1.0f / (t01.x * t02.y - t02.x		 * t01.y);
 
 			// Calculate the cross products and multiply by the coefficient to get the tangent and binormal.
 			XMFLOAT3 tangent, binormal;
 
-			tangent.x = (t02.y * p01.x - t02.y * p02.x) * den;
+			tangent.x = (t02.y * p01.x - t01.y * p02.x) * den;
 			tangent.y = (t02.y * p01.y - t01.y * p02.y) * den;
-			tangent.z = (t02.y * p01.z - t02.y * p02.z) * den;
+			tangent.z = (t02.y * p01.z - t01.y * p02.z) * den;
 
 			binormal.x = (t01.x * p02.x - t02.x * p01.x) * den;
 			binormal.y = (t01.x * p02.y - t02.x * p01.y) * den;
@@ -73,7 +73,7 @@ public:
 			XMStoreFloat3(&v1.Attr<Type::Tangent>(), t);
 			XMStoreFloat3(&v2.Attr<Type::Tangent>(), t);
 
-			const auto b = XMVector3Normalize(XMLoadFloat3(&tangent));
+			const auto b = XMVector3Normalize(XMLoadFloat3(&binormal));
 			XMStoreFloat3(&v0.Attr<Type::Binormal>(), b);
 			XMStoreFloat3(&v1.Attr<Type::Binormal>(), b);
 			XMStoreFloat3(&v2.Attr<Type::Binormal>(), b);
