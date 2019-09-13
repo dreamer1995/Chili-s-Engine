@@ -22,7 +22,7 @@ SkyBox::SkyBox(Graphics& gfx, float size)
 
 	AddBind(PixelShader::Resolve(gfx, "SkyBoxPS.cso"));
 
-	AddBind(PixelConstantBuffer<PSMaterialConstant>::Resolve(gfx, pmc, 1u));
+	AddBind(PixelConstantBuffer<PSMaterialConstant>::Resolve(gfx, pmc, 2u));
 
 	AddBind(InputLayout::Resolve(gfx, model.vertices.GetLayout(), pvsbc));
 

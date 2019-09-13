@@ -15,6 +15,7 @@ App::App()
 	:
 	wnd(1280, 720, "The Donkey Fart Box"),
 	light(wnd.Gfx()),
+	cam(wnd.Gfx()),
 	plane(wnd.Gfx(), 3.0f),
 	cube(wnd.Gfx(), 4.0f),
 	skyBox(wnd.Gfx(), 10.0f)
@@ -29,7 +30,8 @@ void App::DoFrame()
 	const auto dt = timer.Mark() * speed_factor;
 	wnd.Gfx().BeginFrame( 0.07f,0.0f,0.12f );
 	wnd.Gfx().SetCamera( cam.GetMatrix() );
-	light.Bind( wnd.Gfx());
+	light.Bind(wnd.Gfx());
+	cam.Bind(wnd.Gfx());
 		
 	nano.Draw( wnd.Gfx() );
 	//nano2.Draw( wnd.Gfx() );

@@ -1,10 +1,11 @@
 #pragma once
 #include "Graphics.h"
+#include "ConstantBuffers.h"
 
 class Camera
 {
 public:
-	Camera() noexcept;
+	Camera(Graphics& gfx) noexcept;
 	DirectX::XMMATRIX GetMatrix() const noexcept;
 	void SpawnControlWindow() noexcept;
 	void Reset() noexcept;
@@ -13,6 +14,12 @@ public:
 	void LookZero(DirectX::XMFLOAT3 position) noexcept;
 	void RotateAround(float dx, float dy, DirectX::XMFLOAT3 centralPoint) noexcept;
 	DirectX::XMFLOAT3 pos;
+	void Bind(Graphics& gfx) const noexcept;
+private:
+	struct CameraCBuf
+	{
+		alignas(16) DirectX::XMFLOAT3 pos;
+	};
 private:
 	float pitch;
 	float yaw;
@@ -20,4 +27,5 @@ private:
 	static constexpr float rotationSpeed = 0.004f;
 	void KeepLookFront(DirectX::XMFLOAT3 position) noexcept;
 	float yaw_;
+	mutable Bind::PixelConstantBuffer<CameraCBuf> cbuf;
 };

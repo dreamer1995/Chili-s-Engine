@@ -3,6 +3,7 @@
 #include "Surface.h"
 #include <unordered_map>
 #include <sstream>
+#include "TransformCbufDoubleboi.h"
 
 namespace dx = DirectX;
 
@@ -41,7 +42,7 @@ Mesh::Mesh( Graphics& gfx,std::vector<std::shared_ptr<Bind::Bindable>> bindPtrs 
 		AddBind( std::move( pb ) );
 	}
 
-	AddBind( std::make_shared<Bind::TransformCbuf>( gfx,*this ) );
+	AddBind( std::make_shared<Bind::TransformCbufDoubleboi>( gfx,*this,0u,3u ) );
 }
 void Mesh::Draw( Graphics& gfx,DirectX::FXMMATRIX accumulatedTransform ) const noxnd
 {
@@ -383,7 +384,7 @@ std::unique_ptr<Mesh> Model::ParseMesh( Graphics& gfx,const aiMesh& mesh,const a
 		pmc.specularPower = shininess;
 		// this is CLEARLY an issue... all meshes will share same mat const, but may have different
 		// Ns (specular power) specified for each in the material properties... bad conflict
-		bindablePtrs.push_back( PixelConstantBuffer<PSMaterialConstant>::Resolve( gfx,pmc,1u ) );
+		bindablePtrs.push_back( PixelConstantBuffer<PSMaterialConstant>::Resolve( gfx,pmc,2u ) );
 	}
 
 	return std::make_unique<Mesh>( gfx,std::move( bindablePtrs ) );

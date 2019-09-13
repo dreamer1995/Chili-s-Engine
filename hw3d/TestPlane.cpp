@@ -24,13 +24,13 @@ TestPlane::TestPlane( Graphics& gfx,float size )
 
 	AddBind( PixelShader::Resolve( gfx,"PhongPSNormalMap.cso" ) );
 
-	AddBind( PixelConstantBuffer<PSMaterialConstant>::Resolve( gfx,pmc,1u ) );
+	AddBind( PixelConstantBuffer<PSMaterialConstant>::Resolve( gfx,pmc,2u ) );
 
 	AddBind( InputLayout::Resolve( gfx,model.vertices.GetLayout(),pvsbc ) );
 
 	AddBind( Topology::Resolve( gfx,D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST ) );
 
-	AddBind( std::make_shared<TransformCbufDoubleboi>( gfx,*this,0u,2u ) );
+	AddBind( std::make_shared<TransformCbufDoubleboi>( gfx,*this,0u,3u ) );
 }
 
 void TestPlane::SetPos( DirectX::XMFLOAT3 pos ) noexcept

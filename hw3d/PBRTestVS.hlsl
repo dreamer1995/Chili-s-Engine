@@ -33,7 +33,7 @@ VSOut main(VSIn v)
 {
 	VSOut o;
 	o.pos = mul(float4(v.pos, 1.0f), matrix_MVP);
-	o.worldPos = (float3) mul(float4(v.pos, 1.0f), matrix_MV);
+	o.worldPos = (float3) mul(float4(v.pos, 1.0f), matrix_M2W);
 	o.normal = normalize(mul(v.n, (float3x3)matrix_M2W));
 	o.tangent = normalize(mul(v.t, (float3x3)matrix_M2W));
 	o.bitangent = normalize(mul(v.b, (float3x3)matrix_M2W));

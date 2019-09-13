@@ -9,6 +9,24 @@ cbuffer LightCBuf
     float attQuad;
 };
 
+cbuffer CameraCBuf
+{
+	float3 cameraPos;
+};
+
+cbuffer TransformCBuf : register(b3)
+{
+	matrix matrix_MVP;
+	matrix matrix_MV;
+	matrix matrix_V;
+	matrix matrix_P;
+	matrix matrixmatrix_VP;
+	matrix matrixmatrix_T_MV;
+	matrix matrix_IT_MV;
+	matrix matrix_M2W;
+	matrix matrix_W2M;
+};
+
 Texture2D tex;
 Texture2D spec;
 
@@ -18,7 +36,8 @@ SamplerState splr;
 float4 main(float3 worldPos : Position, float3 n : Normal, float2 tc : Texcoord) : SV_Target
 {
 	// fragment to light vector data
-    const float3 vToL = lightPos - worldPos;
+	float3 vLightPos = mul(float4(lightPos,1.0f), matrix_V).xyz;
+    const float3 vToL = vLightPos - worldPos;
     const float distToL = length(vToL);
     const float3 dirToL = vToL / distToL;
 	// attenuation

@@ -4,7 +4,9 @@
 
 namespace dx = DirectX;
 
-Camera::Camera() noexcept
+Camera::Camera(Graphics& gfx) noexcept
+	:
+	cbuf(gfx, 1u)
 {
 	Reset();
 }
@@ -153,4 +155,11 @@ void Camera::RotateAround(float dx, float dy, DirectX::XMFLOAT3 centralPoint) no
 			XMVector3Transform(XMLoadFloat3(&centralPoint), XMMatrixTranslation(finalRatationVector.x, finalRatationVector.y, finalRatationVector.z)));
 		KeepLookFront(destination);
 	}
+}
+
+void Camera::Bind(Graphics& gfx) const noexcept
+{
+	CameraCBuf cbData = { pos };
+	cbuf.Update(gfx, cbData);
+	cbuf.Bind(gfx);
 }
