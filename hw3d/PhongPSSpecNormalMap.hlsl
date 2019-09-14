@@ -16,6 +16,12 @@ cbuffer DirectionalLightCBuf : register(b1)
 	float DdiffuseIntensity;
 };
 
+cbuffer ObjectCBuf : register(b3)
+{
+    bool normalMapEnabled;
+    float padding[3];
+};
+
 cbuffer TransformCBuf : register(b4)
 {
 	matrix matrix_MVP;
@@ -31,15 +37,31 @@ cbuffer TransformCBuf : register(b4)
 
 Texture2D tex;
 Texture2D spec;
+Texture2D nmap;
 
 SamplerState splr;
 
 
-float4 main(float3 viewPos : Position, float3 n : Normal, float2 tc : Texcoord) : SV_Target
+float4 main(float3 viewPos : Position, float3 n : Normal, float3 tan : Tangent, float3 bitan : Binormal, float2 tc : Texcoord) : SV_Target
 {
+    // sample normal from map if normal mapping enabled
+    if (normalMapEnabled)
+    {
+        // build the tranform (rotation) into tangent space
+        const float3x3 tanToView = float3x3(
+            normalize(tan),
+            normalize(bitan),
+            normalize(n)
+        );
+        // unpack normal data
+        const float3 normalSample = nmap.Sample(splr, tc).xyz;
+        n = normalSample * 2.0f - 1.0f;
+        // bring normal from tanspace into view space
+        n = mul(n, tanToView);
+    }
 	// fragment to light vector data
-	float3 vLightPos = mul(float4(lightPos,1.0f), matrix_V).xyz;
-    const float3 vToL = vLightPos - viewPos;
+	float3 vLightPos = mul(float4(lightPos, 1.0f), matrix_V).xyz;
+	const float3 vToL = vLightPos - viewPos;
     const float distToL = length(vToL);
     const float3 dirToL = vToL / distToL;
 	const float3 dirView = mul(direction, (float3x3)matrix_V);

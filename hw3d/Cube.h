@@ -49,14 +49,14 @@ public:
 		};
 	}
 
-	static IndexedTriangleList MakeIndependent(Dvtx::VertexLayout layout)
+	static IndexedTriangleList MakeIndependent( Dvtx::VertexLayout layout )
 	{
 		using namespace Dvtx;
 		using Type = Dvtx::VertexLayout::ElementType;
 
 		constexpr float side = 1.0f / 2.0f;
 
-		VertexBuffer vertices(std::move(layout), 24u);
+		VertexBuffer vertices( std::move(layout), 24u );
 		vertices[0].Attr<Type::Position3D>() = { -side,-side,-side };// 0 near side
 		vertices[1].Attr<Type::Position3D>() = { side,-side,-side };// 1
 		vertices[2].Attr<Type::Position3D>() = { -side,side,-side };// 2
@@ -83,7 +83,7 @@ public:
 		vertices[23].Attr<Type::Position3D>() = { side,side,side };// 23
 
 		return{
-			std::move(vertices),{
+			std::move( vertices ),{
 				0,2, 1,    2,3,1,
 				4,5, 7,    4,7,6,
 				8,10, 9,  10,11,9,
@@ -233,11 +233,11 @@ public:
 		using Type = Dvtx::VertexLayout::ElementType;
 
 		auto itl = MakeIndependent(std::move(VertexLayout{}
-			.Append(Type::Position3D)
-			.Append(Type::Normal)
+			.Append( Type::Position3D )
+			.Append( Type::Normal )
 			.Append(Type::Tangent)
 			.Append(Type::Binormal)
-			.Append(Type::Texture2D)
+			.Append( Type::Texture2D )
 		));
 
 		itl.vertices[0].Attr<Type::Texture2D>() = { 0.0f,0.0f };

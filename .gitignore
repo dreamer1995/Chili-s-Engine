@@ -263,3 +263,6 @@ __pycache__/
 *.pyc
 *.cso
 /hw3d/imgui.ini
+
+#Backup Folder 
+/backup/*

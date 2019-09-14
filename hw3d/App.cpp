@@ -13,7 +13,7 @@ GDIPlusManager gdipm;
 
 App::App()
 	:
-	wnd(1280, 720, "The Donkey Fart Box"),
+	wnd( 1280,720,"The Donkey Fart Box" ),
 	pointlight(wnd.Gfx()),
 	directionallight(wnd.Gfx()),
 	cam(wnd.Gfx()),
@@ -21,6 +21,7 @@ App::App()
 	cube(wnd.Gfx(), 4.0f),
 	skyBox(wnd.Gfx(), 10.0f)
 {
+	wall.SetRootTransform(dx::XMMatrixTranslation(2.7f, 14.0f, -4.0f));
 	plane.SetPos({ -5.0f,17.0f,-1.0f });
 	cube.SetPos(pointlight.GetPos());
 	wnd.Gfx().SetProjection( dx::XMMatrixPerspectiveLH( 1.0f,9.0f / 16.0f,0.5f,40.0f ) );
@@ -35,7 +36,8 @@ void App::DoFrame()
 	directionallight.Bind(wnd.Gfx());
 	cam.Bind(wnd.Gfx());
 		
-	nano.Draw( wnd.Gfx() );
+	wall.Draw( wnd.Gfx() );
+	//nano.Draw( wnd.Gfx() );
 	//nano2.Draw( wnd.Gfx() );
 	pointlight.Draw( wnd.Gfx() );
 	directionallight.Draw(wnd.Gfx());
@@ -187,21 +189,21 @@ void App::DoFrame()
 		cameraSpeed = std::clamp(cameraSpeed, 0.3f, 9.9f);
 	}
 
-	if (!wnd.CursorEnabled())
+	if ( !wnd.CursorEnabled() )
 	{
-		if (wnd.kbd.KeyIsPressed('W'))
+		if ( wnd.kbd.KeyIsPressed('W') )
 		{
 			cam.Translate({ 0.0f,0.0f,dt * cameraSpeed });
 		}
-		if (wnd.kbd.KeyIsPressed('A'))
+		if ( wnd.kbd.KeyIsPressed('A') )
 		{
 			cam.Translate({ -dt * cameraSpeed,0.0f,0.0f });
 		}
-		if (wnd.kbd.KeyIsPressed('S'))
+		if ( wnd.kbd.KeyIsPressed('S') )
 		{
 			cam.Translate({ 0.0f,0.0f,-dt * cameraSpeed });
 		}
-		if (wnd.kbd.KeyIsPressed('D'))
+		if ( wnd.kbd.KeyIsPressed('D') )
 		{
 			cam.Translate({ dt * cameraSpeed,0.0f,0.0f });
 		}
@@ -220,12 +222,12 @@ void App::DoFrame()
 		cam.LookZero({ pointlight.GetPos().x, pointlight.GetPos().y, pointlight.GetPos().z });
 	}
 
-	while (const auto delta = wnd.mouse.ReadRawDelta())
+	while( const auto delta = wnd.mouse.ReadRawDelta() )
 	{
 
 		if (!wnd.CursorEnabled() && wnd.mouse.RightIsPressed())
 		{
-			cam.Rotate((float)delta->x, (float)delta->y);
+			cam.Rotate( (float)delta->x,(float)delta->y );
 		}
 		else if (!wnd.CursorEnabled() && wnd.kbd.KeyIsPressed(VK_MENU) && wnd.mouse.LeftIsPressed())
 		{
@@ -256,7 +258,8 @@ void App::DoFrame()
 	pointlight.SpawnControlWindow();
 	directionallight.SpawnControlWindow(wnd.Gfx());
 	ShowImguiDemoWindow();
-	nano.ShowWindow( "Model 1" );
+	wall.ShowWindow("Wall");
+	//nano.ShowWindow( "Model 1" );
 	//nano2.ShowWindow( "Model 2" );
 	plane.SpawnControlWindow( wnd.Gfx() );
 	cube.SpawnControlWindow(wnd.Gfx());
