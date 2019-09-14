@@ -16,6 +16,7 @@ private:
 		DirectX::XMFLOAT3 color = { 1.0f,1.0f,1.0f };
 		float padding;
 	} pmc;
+private:
 	DirectX::XMFLOAT3 pos = { 1.0f,1.0f,1.0f };
 	float roll = 0.0f;
 	float pitch = 0.0f;

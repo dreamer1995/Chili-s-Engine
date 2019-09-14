@@ -6,7 +6,7 @@ namespace dx = DirectX;
 
 Camera::Camera(Graphics& gfx) noexcept
 	:
-	cbuf(gfx, 1u)
+	cbuf(gfx, 2u)
 {
 	Reset();
 }

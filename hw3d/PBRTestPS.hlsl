@@ -2,14 +2,21 @@ cbuffer LightCBuf
 {
 	float3 lightPos;
 	float3 ambient;
-	float3 diffuseColor;
-	float diffuseIntensity;
+	float3 PdiffuseColor;
+	float PdiffuseIntensity;
 	float attConst;
 	float attLin;
 	float attQuad;
 };
 
-cbuffer CameraCBuf : register(b1)
+cbuffer DirectionalLightCBuf : register(b1)
+{
+	float3 direction;
+	float3 DdiffuseColor;
+	float DdiffuseIntensity;
+};
+
+cbuffer CameraCBuf : register(b2)
 {
 	float3 cameraPos;
 };
@@ -59,7 +66,7 @@ float4 main(PSIn i) : SV_Target
 		bumpNormal = (bumpNormal.x * i.tangent) + (bumpNormal.y * i.binormal) + (bumpNormal.z * i.normal);
 		i.normal = bumpNormal;
 	}
-	const float3 lightDir = normalize(lightPos - i.worldPos);
+	const float3 PlightDir = normalize(lightPos - i.worldPos);
 
 	const float distToL = length(lightPos - i.worldPos);
 
@@ -72,29 +79,14 @@ float4 main(PSIn i) : SV_Target
 
 	const float att = 1.0f / (attConst + attLin * distToL + attQuad * (distToL * distToL));
 
-	const float3 diffuse = albedo * diffuseColor * diffuseIntensity * att * max(0, dot(i.normal, lightDir));
+	const float3 diffuse = PdiffuseColor * PdiffuseIntensity * att * max(0, dot(i.normal, PlightDir)) +
+							DdiffuseColor * DdiffuseIntensity * max(0, dot(i.normal, direction));
 
-	const float3 halfDir = normalize(lightDir + viewDir);
+	const float3 PhalfDir = normalize(PlightDir + viewDir);
+	const float3 DhalfDir = normalize(direction + viewDir);
 
-	const float3 specular = diffuseColor * diffuseIntensity * att * specularIntensity * pow(max(0, dot(i.normal, halfDir)), specularPower);
+	const float3 specular = PdiffuseColor * PdiffuseIntensity * att * specularIntensity * pow(max(0, dot(i.normal, PhalfDir)), specularPower) +
+							DdiffuseColor * DdiffuseIntensity* specularIntensity * pow(max(0, dot(i.normal, DhalfDir)), specularPower);
 
-	return float4(ambient + diffuse + specular, 1.0);
-
-	//// fragment to light vector data
-	//float3 vLightPos = mul(float4(lightPos,1.0f), matrix_V).xyz;
-	//const float3 vToL = vLightPos - i.worldPos;
-	//const float distToL = length(vToL);
-	//const float3 dirToL = vToL / distToL;
-	//// attenuation
-	//
-	//// diffuse intensity
-	//const float3 diffuse = diffuseColor * diffuseIntensity * att * max(0.0f, dot(dirToL, i.normal));
-	//// reflected light vector
-	//const float3 w = i.normal * dot(vToL, i.normal);
-	//const float3 r = w * 2.0f - vToL;
-	//// calculate specular intensity based on angle between viewing vector and reflection vector, narrow with power function
-	//const float3 specular = att * (diffuseColor * diffuseIntensity) * specularIntensity * pow(max(0.0f, dot(normalize(-r), normalize(i.worldPos))), specularPower);
-	//// final color
-	//return float4(saturate((diffuse + ambient) * tex.Sample(splr, i.uv).rgb + specular), 1.0f);
-
+	return float4(ambient + diffuse * albedo + specular, 1.0);
 }

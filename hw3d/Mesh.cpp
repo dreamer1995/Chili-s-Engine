@@ -42,7 +42,7 @@ Mesh::Mesh( Graphics& gfx,std::vector<std::shared_ptr<Bind::Bindable>> bindPtrs 
 		AddBind( std::move( pb ) );
 	}
 
-	AddBind( std::make_shared<Bind::TransformCbufDoubleboi>( gfx,*this,0u,3u ) );
+	AddBind( std::make_shared<Bind::TransformCbufDoubleboi>( gfx,*this,0u,4u ) );
 }
 void Mesh::Draw( Graphics& gfx,DirectX::FXMMATRIX accumulatedTransform ) const noxnd
 {
@@ -146,10 +146,10 @@ public:
 			if( pSelectedNode != nullptr )
 			{
 				auto& transform = transforms[pSelectedNode->GetId()];
-				ImGui::Text( "Orientation" );
-				ImGui::SliderAngle( "Roll",&transform.roll,-180.0f,180.0f );
+				ImGui::Text( "Orientation" );		
 				ImGui::SliderAngle( "Pitch",&transform.pitch,-180.0f,180.0f );
 				ImGui::SliderAngle( "Yaw",&transform.yaw,-180.0f,180.0f );
+				ImGui::SliderAngle("Roll", &transform.roll, -180.0f, 180.0f);
 				ImGui::Text( "Position" );
 				ImGui::SliderFloat( "X",&transform.x,-20.0f,20.0f );
 				ImGui::SliderFloat( "Y",&transform.y,-20.0f,20.0f );
@@ -163,7 +163,7 @@ public:
 		assert( pSelectedNode != nullptr );
 		const auto& transform = transforms.at( pSelectedNode->GetId() );
 		return 
-			dx::XMMatrixRotationRollPitchYaw( transform.roll,transform.pitch,transform.yaw ) *
+			dx::XMMatrixRotationRollPitchYaw(transform.pitch, transform.yaw, transform.roll) *
 			dx::XMMatrixTranslation( transform.x,transform.y,transform.z );
 	}
 	Node* GetSelectedNode() const noexcept
@@ -384,7 +384,7 @@ std::unique_ptr<Mesh> Model::ParseMesh( Graphics& gfx,const aiMesh& mesh,const a
 		pmc.specularPower = shininess;
 		// this is CLEARLY an issue... all meshes will share same mat const, but may have different
 		// Ns (specular power) specified for each in the material properties... bad conflict
-		bindablePtrs.push_back( PixelConstantBuffer<PSMaterialConstant>::Resolve( gfx,pmc,2u ) );
+		bindablePtrs.push_back( PixelConstantBuffer<PSMaterialConstant>::Resolve( gfx,pmc,3u ) );
 	}
 
 	return std::make_unique<Mesh>( gfx,std::move( bindablePtrs ) );

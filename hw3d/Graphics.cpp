@@ -127,7 +127,14 @@ Graphics::Graphics( HWND hWnd,int width,int height )
 	GFX_THROW_INFO(pDevice->CreateRasterizerState(&rasterDesc, &pRasterStateDefault));
 
 	rasterDesc.CullMode = D3D11_CULL_NONE;
-	GFX_THROW_INFO(pDevice->CreateRasterizerState(&rasterDesc, &pRasterStateNone));
+	GFX_THROW_INFO(pDevice->CreateRasterizerState(&rasterDesc, &pRasterStateNoneSolid));
+
+	rasterDesc.FillMode = D3D11_FILL_WIREFRAME;
+	GFX_THROW_INFO(pDevice->CreateRasterizerState(&rasterDesc, &pRasterStateBackWireframe));
+
+	rasterDesc.CullMode = D3D11_CULL_NONE;
+	rasterDesc.FillMode = D3D11_FILL_WIREFRAME;
+	GFX_THROW_INFO(pDevice->CreateRasterizerState(&rasterDesc, &pRasterStateNoneWireframe));
 
 	//Set the Rasterizer
 	pContext->RSSetState(pRasterStateDefault.Get());
@@ -244,7 +251,15 @@ void Graphics::SetRasterState(char type) noexcept
 {
 	if (type == 'N')
 	{
-		pContext->RSSetState(pRasterStateNone.Get());
+		pContext->RSSetState(pRasterStateNoneSolid.Get());
+	}
+	if (type == 'W')
+	{
+		pContext->RSSetState(pRasterStateBackWireframe.Get());
+	}
+	if (type == 'D')
+	{
+		pContext->RSSetState(pRasterStateNoneWireframe.Get());
 	}
 }
 

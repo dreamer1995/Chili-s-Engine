@@ -11,7 +11,7 @@ TestCube::TestCube( Graphics& gfx,float size )
 
 	auto model = Cube::MakeIndependentTextured();
 	model.Transform( dx::XMMatrixScaling( size,size,size ) );
-	model.SetNormalsIndependentFlat();
+	model.SetTBNIndependentFlat();
 	const auto geometryTag = "$cube." + std::to_string( size );
 	AddBind( VertexBuffer::Resolve( gfx,geometryTag,model.vertices ) );
 	AddBind( IndexBuffer::Resolve( gfx,geometryTag,model.indices ) );
@@ -25,13 +25,13 @@ TestCube::TestCube( Graphics& gfx,float size )
 
 	AddBind( PixelShader::Resolve( gfx,"PBRTestPS.cso" ) );
 
-	AddBind( PixelConstantBuffer<PSMaterialConstant>::Resolve( gfx,pmc,2u ) );
+	AddBind( PixelConstantBuffer<PSMaterialConstant>::Resolve( gfx,pmc,3u ) );
 
 	AddBind( InputLayout::Resolve( gfx,model.vertices.GetLayout(),pvsbc ) );
 
 	AddBind( Topology::Resolve( gfx,D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST ) );
 
-	AddBind( std::make_shared<TransformCbufDoubleboi>( gfx,*this,0u,3u ) );
+	AddBind( std::make_shared<TransformCbufDoubleboi>( gfx,*this,0u,4u ) );
 }
 
 void TestCube::SetPos( DirectX::XMFLOAT3 pos ) noexcept
@@ -48,7 +48,7 @@ void TestCube::SetRotation( float roll,float pitch,float yaw ) noexcept
 
 DirectX::XMMATRIX TestCube::GetTransformXM() const noexcept
 {
-	return DirectX::XMMatrixRotationRollPitchYaw( roll,pitch,yaw ) *
+	return DirectX::XMMatrixRotationRollPitchYaw(pitch, yaw, roll) *
 		DirectX::XMMatrixTranslation( pos.x,pos.y,pos.z );
 }
 
@@ -61,9 +61,9 @@ void TestCube::SpawnControlWindow( Graphics& gfx ) noexcept
 		ImGui::SliderFloat( "Y",&pos.y,-80.0f,80.0f,"%.1f" );
 		ImGui::SliderFloat( "Z",&pos.z,-80.0f,80.0f,"%.1f" );
 		ImGui::Text( "Orientation" );
-		ImGui::SliderAngle( "Roll",&roll,-180.0f,180.0f );
 		ImGui::SliderAngle( "Pitch",&pitch,-180.0f,180.0f );
 		ImGui::SliderAngle( "Yaw",&yaw,-180.0f,180.0f );
+		ImGui::SliderAngle("Roll", &roll, -180.0f, 180.0f);
 		ImGui::Text( "Shading" );
 		bool changed0 = ImGui::SliderFloat( "Spec. Int.",&pmc.specularIntensity,0.0f,1.0f );
 		bool changed1 = ImGui::SliderFloat( "Spec. Power",&pmc.specularPower,0.0f,100.0f );

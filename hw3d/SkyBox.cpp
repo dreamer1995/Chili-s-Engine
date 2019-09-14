@@ -10,7 +10,7 @@ SkyBox::SkyBox(Graphics& gfx, float size)
 
 	auto model = Cube::Make();
 	model.Transform(dx::XMMatrixScaling(size, size, size));
-	const auto geometryTag = "$cube." + std::to_string(size);
+	const auto geometryTag = "$skybox." + std::to_string(size);
 	AddBind(VertexBuffer::Resolve(gfx, geometryTag, model.vertices));
 	AddBind(IndexBuffer::Resolve(gfx, geometryTag, model.indices));
 
@@ -22,7 +22,7 @@ SkyBox::SkyBox(Graphics& gfx, float size)
 
 	AddBind(PixelShader::Resolve(gfx, "SkyBoxPS.cso"));
 
-	AddBind(PixelConstantBuffer<PSMaterialConstant>::Resolve(gfx, pmc, 2u));
+	AddBind(PixelConstantBuffer<PSMaterialConstant>::Resolve(gfx, pmc, 3u));
 
 	AddBind(InputLayout::Resolve(gfx, model.vertices.GetLayout(), pvsbc));
 
@@ -38,14 +38,14 @@ void SkyBox::SetPos(DirectX::XMFLOAT3 pos) noexcept
 
 void SkyBox::SetRotation(float roll, float pitch, float yaw) noexcept
 {
-	this->roll = roll;
 	this->pitch = pitch;
 	this->yaw = yaw;
+	this->roll = roll;
 }
 
 DirectX::XMMATRIX SkyBox::GetTransformXM() const noexcept
 {
-	return DirectX::XMMatrixRotationRollPitchYaw(roll, pitch, yaw) *
+	return DirectX::XMMatrixRotationRollPitchYaw(pitch, yaw, roll) *
 		DirectX::XMMatrixTranslation(pos.x, pos.y, pos.z);
 }
 
@@ -61,9 +61,9 @@ void SkyBox::SpawnControlWindow(Graphics& gfx) noexcept
 	if (ImGui::Begin("SkyBox"))
 	{
 		ImGui::Text("Orientation");
-		ImGui::SliderAngle("Roll", &roll, -180.0f, 180.0f);
 		ImGui::SliderAngle("Pitch", &pitch, -180.0f, 180.0f);
 		ImGui::SliderAngle("Yaw", &yaw, -180.0f, 180.0f);
+		ImGui::SliderAngle("Roll", &roll, -180.0f, 180.0f);
 		ImGui::Text("Tint");
 		bool changed0 = ImGui::ColorEdit3("Tint Color", &pmc.color.x);
 		ImGui::Text("Visibility");

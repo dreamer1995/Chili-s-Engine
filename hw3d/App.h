@@ -9,6 +9,7 @@
 #include "Mesh.h"
 #include <set>
 #include "SkyBox.h"
+#include "DirectionalLight.h"
 
 class App
 {
@@ -27,7 +28,8 @@ private:
 	ChiliTimer timer;
 	float speed_factor = 1.0f;
 	Camera cam;
-	PointLight light;
+	PointLight pointlight;
+	DirectionalLight directionallight;
 	Model nano{ wnd.Gfx(),"Models\\nano_textured\\nanosuit.obj" };
 	//Model nano2{ wnd.Gfx(),"Models\\nano_textured\\nanosuit.obj" };
 	TestPlane plane;

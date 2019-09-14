@@ -15,6 +15,7 @@ public:
 	void RotateAround(float dx, float dy, DirectX::XMFLOAT3 centralPoint) noexcept;
 	DirectX::XMFLOAT3 pos;
 	void Bind(Graphics& gfx) const noexcept;
+	float yaw;
 private:
 	struct CameraCBuf
 	{
@@ -22,7 +23,6 @@ private:
 	};
 private:
 	float pitch;
-	float yaw;
 	static constexpr float travelSpeed = 12.0f;
 	static constexpr float rotationSpeed = 0.004f;
 	void KeepLookFront(DirectX::XMFLOAT3 position) noexcept;

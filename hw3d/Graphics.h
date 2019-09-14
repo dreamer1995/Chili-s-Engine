@@ -90,5 +90,7 @@ private:
 	Microsoft::WRL::ComPtr<ID3D11DepthStencilState> pDSStateDefault;
 	Microsoft::WRL::ComPtr<ID3D11DepthStencilState> pDSStateCube;
 	Microsoft::WRL::ComPtr<ID3D11RasterizerState> pRasterStateDefault;
-	Microsoft::WRL::ComPtr<ID3D11RasterizerState> pRasterStateNone;
+	Microsoft::WRL::ComPtr<ID3D11RasterizerState> pRasterStateNoneSolid;
+	Microsoft::WRL::ComPtr<ID3D11RasterizerState> pRasterStateBackWireframe;
+	Microsoft::WRL::ComPtr<ID3D11RasterizerState> pRasterStateNoneWireframe;
 };

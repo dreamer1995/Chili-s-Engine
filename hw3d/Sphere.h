@@ -8,7 +8,7 @@
 class Sphere
 {
 public:
-	static IndexedTriangleList MakeTesselated( Dvtx::VertexLayout layout,int latDiv,int longDiv )
+	static IndexedTriangleList MakeTesselated(Dvtx::VertexLayout layout, int latDiv, int longDiv, bool withNormal)
 	{
 		namespace dx = DirectX;
 		assert( latDiv >= 3 );
@@ -34,7 +34,16 @@ public:
 					dx::XMMatrixRotationZ( longitudeAngle * iLong )
 				);
 				dx::XMStoreFloat3( &calculatedPos,v );
-				vb.EmplaceBack( calculatedPos );
+				if (withNormal)
+				{
+					dx::XMFLOAT3 calculatedNor;
+					dx::XMStoreFloat3(&calculatedNor, dx::XMVector3Normalize(v));
+					vb.EmplaceBack(calculatedPos, calculatedNor);
+				}
+				else
+				{
+					vb.EmplaceBack( calculatedPos );
+				}
 			}
 		}
 
@@ -43,13 +52,31 @@ public:
 		{
 			dx::XMFLOAT3 northPos;
 			dx::XMStoreFloat3( &northPos,base );
-			vb.EmplaceBack( northPos );
+			if (withNormal)
+			{
+				dx::XMFLOAT3 calculatedNor;
+				dx::XMStoreFloat3(&calculatedNor, dx::XMVector3Normalize(base));
+				vb.EmplaceBack(northPos, calculatedNor);
+			}
+			else
+			{
+				vb.EmplaceBack( northPos );
+			}
 		}
 		const auto iSouthPole = (unsigned short)vb.Size();
 		{
 			dx::XMFLOAT3 southPos;
 			dx::XMStoreFloat3( &southPos,dx::XMVectorNegate( base ) );
-			vb.EmplaceBack( southPos );
+			if (withNormal)
+			{
+				dx::XMFLOAT3 calculatedNor;
+				dx::XMStoreFloat3(&calculatedNor, dx::XMVector3Normalize(dx::XMVectorNegate(base)));
+				vb.EmplaceBack(southPos, calculatedNor);
+			}
+			else
+			{
+				vb.EmplaceBack( southPos );
+			}
 		}
 		
 		const auto calcIdx = [latDiv,longDiv]( unsigned short iLat,unsigned short iLong )
@@ -99,13 +126,13 @@ public:
 
 		return { std::move( vb ),std::move( indices ) };
 	}
-	static IndexedTriangleList Make( std::optional<Dvtx::VertexLayout> layout = std::nullopt )
+	static IndexedTriangleList Make(std::optional<Dvtx::VertexLayout> layout = std::nullopt, bool withNormal = false)
 	{
 		using Element = Dvtx::VertexLayout::ElementType;
 		if( !layout )
 		{
 			layout = Dvtx::VertexLayout{}.Append( Element::Position3D );
 		}
-		return MakeTesselated( std::move( *layout ),12,24 );
+		return MakeTesselated(std::move(*layout), 12, 24, withNormal);
 	}
 };
