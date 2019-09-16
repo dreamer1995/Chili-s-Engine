@@ -32,6 +32,8 @@ TestCube::TestCube( Graphics& gfx,float size )
 	AddBind( Topology::Resolve( gfx,D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST ) );
 
 	AddBind( std::make_shared<TransformCbufDoubleboi>( gfx,*this,0u,4u ) );
+
+	AddBind(Sampler::Resolve(gfx));
 }
 
 void TestCube::SetPos( DirectX::XMFLOAT3 pos ) noexcept
@@ -65,8 +67,8 @@ void TestCube::SpawnControlWindow( Graphics& gfx ) noexcept
 		ImGui::SliderAngle( "Yaw",&yaw,-180.0f,180.0f );
 		ImGui::SliderAngle("Roll", &roll, -180.0f, 180.0f);
 		ImGui::Text( "Shading" );
-		bool changed0 = ImGui::SliderFloat( "Spec. Int.",&pmc.specularIntensity,0.0f,1.0f );
-		bool changed1 = ImGui::SliderFloat( "Spec. Power",&pmc.specularPower,0.0f,100.0f );
+		bool changed0 = ImGui::SliderFloat("Metallic", &pmc.metallic, 0.0f, 1.0f);
+		bool changed1 = ImGui::SliderFloat("Roughness", &pmc.roughness, 0.0f, 1.0f);
 		bool checkState = pmc.normalMappingEnabled == TRUE;
 		bool changed2 = ImGui::Checkbox( "Enable Normal Map",&checkState );
 		pmc.normalMappingEnabled = checkState ? TRUE : FALSE;

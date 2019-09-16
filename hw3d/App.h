@@ -30,9 +30,9 @@ private:
 	Camera cam;
 	PointLight pointlight;
 	DirectionalLight directionallight;
-	Model wall{ wnd.Gfx(),"Models\\brick_wall\\brick_wall.obj" };
+	//Model wall{ wnd.Gfx(),"Models\\brick_wall\\brick_wall.obj" };
 	//Model nano{ wnd.Gfx(),"Models\\nano_textured\\nanosuit.obj" };
-	TestPlane plane;
+	//TestPlane plane;
 	TestCube cube;
 	SkyBox skyBox;
 };

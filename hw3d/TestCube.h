@@ -12,8 +12,12 @@ public:
 private:
 	struct PSMaterialConstant
 	{
-		float specularIntensity = 0.18f;
+		/*float specularIntensity = 0.18f;
 		float specularPower = 18.0f;
+		BOOL normalMappingEnabled = TRUE;
+		float padding[1];*/
+		float metallic = 0.0f;
+		float roughness = 0.5f;
 		BOOL normalMappingEnabled = TRUE;
 		float padding[1];
 	} pmc;

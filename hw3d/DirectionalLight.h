@@ -29,7 +29,7 @@ private:
 	mutable PhongSphere sphere;
 	mutable SolidArrow arrow;
 	mutable Bind::PixelConstantBuffer<DirectionalLightCBuf> cbuf;
-	DirectX::XMFLOAT3 pos = { 6.0f,18.0f,-2.0f };
+	DirectX::XMFLOAT3 pos = { 0.0f,5.0f,0.0f };
 	float pitch = 0.0f;
 	float yaw = 0.0f;
 	float roll = 0.0f;

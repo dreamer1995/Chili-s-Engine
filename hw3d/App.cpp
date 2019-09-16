@@ -17,12 +17,12 @@ App::App()
 	pointlight(wnd.Gfx()),
 	directionallight(wnd.Gfx()),
 	cam(wnd.Gfx()),
-	plane(wnd.Gfx(), 3.0f),
+	//plane(wnd.Gfx(), 3.0f),
 	cube(wnd.Gfx(), 4.0f),
 	skyBox(wnd.Gfx(), 10.0f)
 {
-	wall.SetRootTransform(dx::XMMatrixTranslation(2.7f, 14.0f, -4.0f));
-	plane.SetPos({ -5.0f,17.0f,-1.0f });
+	//wall.SetRootTransform(dx::XMMatrixTranslation(pointlight.GetPos().x - 3.0f, pointlight.GetPos().y, pointlight.GetPos().z - 2.0f));
+	//plane.SetPos({ -5.0f,17.0f,-1.0f });
 	cube.SetPos(pointlight.GetPos());
 	wnd.Gfx().SetProjection( dx::XMMatrixPerspectiveLH( 1.0f,9.0f / 16.0f,0.5f,40.0f ) );
 }
@@ -36,7 +36,7 @@ void App::DoFrame()
 	directionallight.Bind(wnd.Gfx());
 	cam.Bind(wnd.Gfx());
 		
-	wall.Draw( wnd.Gfx() );
+	//wall.Draw( wnd.Gfx() );
 	//nano.Draw( wnd.Gfx() );
 	//nano2.Draw( wnd.Gfx() );
 	pointlight.Draw( wnd.Gfx() );
@@ -52,7 +52,7 @@ void App::DoFrame()
 	{
 		wnd.Gfx().SetRasterState('N');
 	}
-	plane.Draw( wnd.Gfx() );
+	//plane.Draw( wnd.Gfx() );
 	wnd.Gfx().SetStencilState('C');
 	if (skyBox.show)
 	{
@@ -258,10 +258,10 @@ void App::DoFrame()
 	pointlight.SpawnControlWindow();
 	directionallight.SpawnControlWindow(wnd.Gfx());
 	ShowImguiDemoWindow();
-	wall.ShowWindow("Wall");
+	//wall.ShowWindow("Wall");
 	//nano.ShowWindow( "Model 1" );
 	//nano2.ShowWindow( "Model 2" );
-	plane.SpawnControlWindow( wnd.Gfx() );
+	//plane.SpawnControlWindow( wnd.Gfx() );
 	cube.SpawnControlWindow(wnd.Gfx());
 	skyBox.SpawnControlWindow(wnd.Gfx());
 

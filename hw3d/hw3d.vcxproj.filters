@@ -418,5 +418,11 @@
     <FxCompile Include="PhongPSNormalMapObject.hlsl">
       <Filter>Shader</Filter>
     </FxCompile>
+    <FxCompile Include="LambertBlinnPhongPS.hlsl">
+      <Filter>Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="LambertBlinnPhongVS.hlsl">
+      <Filter>Shader</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>
