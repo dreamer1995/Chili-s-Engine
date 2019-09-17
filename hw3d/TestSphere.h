@@ -1,14 +1,14 @@
 #pragma once
 #include "Drawable.h"
 
-class TestCube : public Drawable
+class TestSphere : public Drawable
 {
 public:
-	TestCube( Graphics& gfx,float size );
-	void SetPos( DirectX::XMFLOAT3 pos ) noexcept;
-	void SetRotation( float roll,float pitch,float yaw ) noexcept;
+	TestSphere(Graphics& gfx, float size);
+	void SetPos(DirectX::XMFLOAT3 pos) noexcept;
+	void SetRotation(float roll, float pitch, float yaw) noexcept;
 	DirectX::XMMATRIX GetTransformXM() const noexcept override;
-	void SpawnControlWindow( Graphics& gfx ) noexcept;
+	void SpawnControlWindow(Graphics& gfx) noexcept;
 private:
 	struct PSMaterialConstant
 	{
