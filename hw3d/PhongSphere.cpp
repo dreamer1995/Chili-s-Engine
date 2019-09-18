@@ -9,6 +9,7 @@ PhongSphere::PhongSphere(Graphics& gfx, float radius)
 {
 	using namespace Bind;
 	namespace dx = DirectX;
+
 	using Dvtx::VertexLayout;
 	VertexLayout vl;
 	vl.Append(VertexLayout::Position3D);

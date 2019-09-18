@@ -127,7 +127,7 @@ public:
 		return { std::move( vb ),std::move( indices ) };
 	}
 
-	static IndexedTriangleList MakeTesselatedNormalUV(Dvtx::VertexLayout layout, int latDiv, int longDiv)
+	static IndexedTriangleList MakeTesselatedNormalUV(Dvtx::VertexLayout layout, int latDiv, int longDiv, bool withTangent)
 	{
 		namespace dx = DirectX;
 		assert( latDiv >= 3 );
@@ -149,6 +149,7 @@ public:
 			);
 			const float vSum = intervalV * iLat;
 			DirectX::XMFLOAT3 _calculatedPos, _calculatedNor;
+			DirectX::XMFLOAT3 _calculatedTan, _calculatedBin;
 			for( int iLong = 0; iLong < longDiv; iLong++ )
 			{
 				auto v = dx::XMVector3Transform(
@@ -162,18 +163,75 @@ public:
 					dx::XMFLOAT3 calculatedNor;
 					dx::XMStoreFloat3(&calculatedNor, dx::XMVector3Normalize(v));
 					dx::XMFLOAT2 calculatedUV = { intervalU * iLong,vSum };
-					vb.EmplaceBack(calculatedPos, calculatedNor, calculatedUV);
+					if (withTangent)
+					{
+						dx::XMFLOAT3 calculatedTan;
+						dx::XMStoreFloat3(&calculatedTan, dx::XMVector3Normalize({ calculatedPos.z,0.0f,-calculatedPos.x }));
+						dx::XMFLOAT3 calculatedBin;
+						if (calculatedPos.y > 0)
+						{
+							dx::XMStoreFloat3(&calculatedBin, dx::XMVector3Normalize({ calculatedPos.x,
+							-(calculatedPos.x * calculatedPos.x + calculatedPos.z * calculatedPos.z) / calculatedPos.y,
+							calculatedPos.z }));
+						}
+						else if (calculatedPos.y < 0)
+						{
+							dx::XMStoreFloat3(&calculatedBin, dx::XMVector3Normalize({ -calculatedPos.x,
+							calculatedPos.x * calculatedPos.x + calculatedPos.z * calculatedPos.z / calculatedPos.y,
+							-calculatedPos.z }));
+						}
+						else
+						{
+							dx::XMStoreFloat3(&calculatedBin, { 0.0f,1.0f,0.0f });
+						}
+						vb.EmplaceBack(calculatedPos, calculatedNor, calculatedTan, calculatedBin, calculatedUV);
+					}
+					else
+					{
+						vb.EmplaceBack(calculatedPos, calculatedNor, calculatedUV);
+					}
 				}
 				else
 				{
 					dx::XMStoreFloat3(&_calculatedPos, v);
 					dx::XMStoreFloat3(&_calculatedNor, dx::XMVector3Normalize(v));
 					dx::XMFLOAT2 calculatedUV = { 0.0f,vSum };
-					vb.EmplaceBack(_calculatedPos, _calculatedNor, calculatedUV);
+					if (withTangent)
+					{
+						dx::XMStoreFloat3(&_calculatedTan, dx::XMVector3Normalize({ _calculatedPos.z,0.0f,-_calculatedPos.x }));
+						if (_calculatedPos.y > 0)
+						{
+							dx::XMStoreFloat3(&_calculatedBin, dx::XMVector3Normalize({ _calculatedPos.x,
+							-(_calculatedPos.x * _calculatedPos.x + _calculatedPos.z * _calculatedPos.z) / _calculatedPos.y,
+							_calculatedPos.z }));
+						}
+						else if (_calculatedPos.y < 0)
+						{
+							dx::XMStoreFloat3(&_calculatedBin, dx::XMVector3Normalize({ -_calculatedPos.x,
+							_calculatedPos.x * _calculatedPos.x + _calculatedPos.z * _calculatedPos.z / _calculatedPos.y,
+							-_calculatedPos.z }));
+						}
+						else
+						{
+							dx::XMStoreFloat3(&_calculatedBin, { 0.0f,1.0f,0.0f });
+						}
+						vb.EmplaceBack(_calculatedPos, _calculatedNor, _calculatedTan, _calculatedBin, calculatedUV);
+					}
+					else
+					{
+						vb.EmplaceBack(_calculatedPos, _calculatedNor, calculatedUV);
+					}
 				}
 			}
 			dx::XMFLOAT2 calculatedUV = { 1.0f,vSum };
-			vb.EmplaceBack(_calculatedPos, _calculatedNor, calculatedUV);
+			if (withTangent)
+			{
+				vb.EmplaceBack(_calculatedPos, _calculatedNor, _calculatedTan, _calculatedBin, calculatedUV);
+			}
+			else
+			{
+				vb.EmplaceBack(_calculatedPos, _calculatedNor, calculatedUV);
+			}
 		}
 
 		// add the cap vertices
@@ -183,9 +241,32 @@ public:
 			dx::XMStoreFloat3( &northPos,base );
 			dx::XMFLOAT3 calculatedNor;
 			dx::XMStoreFloat3(&calculatedNor, dx::XMVector3Normalize(base));
-			dx::XMFLOAT2 calculatedUV = { 0.5f,0.0f };
-			vb.EmplaceBack(northPos, calculatedNor, calculatedUV);
-
+			for (int iLong = 0; iLong < longDiv; iLong++)
+			{
+				dx::XMFLOAT2 calculatedUV = { intervalU * iLong,0.0f };
+				if (withTangent)
+				{
+					const auto latBase = dx::XMVector3Transform(
+						base,
+						dx::XMMatrixRotationX(lattitudeAngle)
+					);
+					auto v = dx::XMVector3Transform(
+						latBase,
+						dx::XMMatrixRotationY(longitudeAngle * iLong)
+					);
+					dx::XMFLOAT3 _calculatedPos;
+					dx::XMStoreFloat3(&_calculatedPos, v);
+					dx::XMFLOAT3 calculatedTan;
+					dx::XMStoreFloat3(&calculatedTan, dx::XMVector3Normalize({ _calculatedPos.z,0.0,-_calculatedPos.x }));
+					dx::XMFLOAT3 calculatedBin;
+					dx::XMStoreFloat3(&calculatedBin, dx::XMVector3Normalize({ _calculatedPos.x,0.0,_calculatedPos.z }));
+					vb.EmplaceBack(northPos, calculatedNor, calculatedTan, calculatedBin, calculatedUV);
+				}
+				else
+				{
+					vb.EmplaceBack(northPos, calculatedNor, calculatedUV);
+				}
+			}
 		}
 		const auto iSouthPole = (unsigned short)vb.Size();
 		{
@@ -193,8 +274,32 @@ public:
 			dx::XMStoreFloat3( &southPos,dx::XMVectorNegate( base ) );
 			dx::XMFLOAT3 calculatedNor;
 			dx::XMStoreFloat3(&calculatedNor, dx::XMVector3Normalize(dx::XMVectorNegate(base)));
-			dx::XMFLOAT2 calculatedUV = { 0.5f,1.0f };
-			vb.EmplaceBack(southPos, calculatedNor, calculatedUV);
+			for (int iLong = 0; iLong < longDiv; iLong++)
+			{
+				dx::XMFLOAT2 calculatedUV = { intervalU * iLong,1.0f };
+				if (withTangent)
+				{
+					const auto latBase = dx::XMVector3Transform(
+						base,
+						dx::XMMatrixRotationX(lattitudeAngle)
+					);
+					auto v = dx::XMVector3Transform(
+						latBase,
+						dx::XMMatrixRotationY(longitudeAngle * iLong)
+					);
+					dx::XMFLOAT3 _calculatedPos;
+					dx::XMStoreFloat3(&_calculatedPos, v);
+					dx::XMFLOAT3 calculatedTan;
+					dx::XMStoreFloat3(&calculatedTan, dx::XMVector3Normalize({ _calculatedPos.z,0.0,-_calculatedPos.x }));
+					dx::XMFLOAT3 calculatedBin;
+					dx::XMStoreFloat3(&calculatedBin, dx::XMVector3Normalize({ -_calculatedPos.x,0.0,-_calculatedPos.z }));
+					vb.EmplaceBack(southPos, calculatedNor, calculatedTan, calculatedBin, calculatedUV);
+				}
+				else
+				{
+					vb.EmplaceBack(southPos, calculatedNor, calculatedUV);
+				}
+			}
 		}
 		
 		const auto calcIdx = [latDiv,longDiv]( unsigned short iLat,unsigned short iLong )
@@ -217,13 +322,13 @@ public:
 		for( unsigned short iLong = 0; iLong < longDiv; iLong++ )
 		{
 			// north
-			indices.push_back( iNorthPole );
+			indices.push_back(iNorthPole + iLong);
 			indices.push_back( calcIdx( 0,iLong ) );
 			indices.push_back( calcIdx( 0,iLong + 1 ) );
 			// south
 			indices.push_back( calcIdx( latDiv - 2,iLong + 1 ) );
 			indices.push_back( calcIdx( latDiv - 2,iLong ) );
-			indices.push_back( iSouthPole );
+			indices.push_back(iSouthPole + iLong);
 		}
 
 		return { std::move( vb ),std::move( indices ) };
@@ -239,14 +344,17 @@ public:
 		return MakeTesselated(std::move(*layout), 12, 24, withNormal);
 	}
 
-	static IndexedTriangleList MakeNormalUVed(std::optional<Dvtx::VertexLayout> layout = std::nullopt)
+	static IndexedTriangleList MakeNormalUVed(std::optional<Dvtx::VertexLayout> layout = std::nullopt, bool withTangent = false)
 	{
 		using Dvtx::VertexLayout;
-		VertexLayout vl;
-		vl.Append(VertexLayout::Position3D);
-		vl.Append(VertexLayout::Normal);
-		vl.Append(VertexLayout::Texture2D);
+		if (!layout)
+		{
+			layout = Dvtx::VertexLayout{}
+			.Append(VertexLayout::Position3D)
+			.Append(VertexLayout::Normal)
+			.Append(VertexLayout::Texture2D);
+		}
 
-		return MakeTesselatedNormalUV(std::move(vl), 12, 24);
+		return MakeTesselatedNormalUV(std::move(*layout), 24, 48, withTangent);
 	}
 };

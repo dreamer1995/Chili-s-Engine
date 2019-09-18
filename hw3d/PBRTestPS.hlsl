@@ -50,8 +50,8 @@ SamplerState splr;
 struct PSIn {
 	float3 worldPos : Position;
 	float3 normal : Normal;
-	//float3 tangent : Tangent;
-	//float3 binormal : Binormal;
+	float3 tangent : Tangent;
+	float3 binormal : Binormal;
 	float2 uv : Texcoord;
 };
 
@@ -68,14 +68,14 @@ float3 FresnelSchlickRoughness(float NdotH, float3 F0);
 float4 main(PSIn i) : SV_Target
 {
 	// sample normal from map if normal mapping enabled	
-	//if (normalMapEnabled)
-	//{
-	//	float3 bumpNormal;
-	//	bumpNormal = nmap.Sample(splr, i.uv).rgb;
-	//	bumpNormal = bumpNormal * 2.0f - 1.0f;
-	//	bumpNormal = (bumpNormal.x * i.tangent) + (bumpNormal.y * i.binormal) + (bumpNormal.z * i.normal);
-	//	i.normal = bumpNormal;
-	//}
+	if (normalMapEnabled)
+	{
+		float3 bumpNormal;
+		bumpNormal = nmap.Sample(splr, i.uv).rgb;
+		bumpNormal = bumpNormal * 2.0f - 1.0f;
+		bumpNormal = (bumpNormal.x * i.tangent) + (bumpNormal.y * i.binormal) + (bumpNormal.z * i.normal);
+		i.normal = bumpNormal;
+	}
 	//const float3 PlightDir = normalize(lightPos - i.worldPos);
 
 	//const float distToL = length(lightPos - i.worldPos);
@@ -88,7 +88,7 @@ float4 main(PSIn i) : SV_Target
 	const float3 halfDir = normalize(direction + viewDir);
 	float NdotH = max(dot(i.normal, halfDir), 0.0f);
 	//float3 albedo = tex.Sample(splr, i.uv).rgb * color;
-	const float3 albedo = pow(float3(1.0f, 0.0f, 0.0f), 2.2f);
+	const float3 albedo = pow(tex.Sample(splr, i.uv).rgb, 2.2f);
 	
 	F0 = lerp(F0, albedo, metallic);
 	//fixed3 ambient = UNITY_LIGHTMODEL_AMBIENT.xyz * albedo;

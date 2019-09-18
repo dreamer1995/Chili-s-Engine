@@ -3,13 +3,21 @@
 #include "BindableCommon.h"
 #include "TransformCbufDoubleboi.h"
 #include "imgui/imgui.h"
+#include "Vertex.h"
 
 TestSphere::TestSphere(Graphics& gfx, float size)
 {
 	using namespace Bind;
 	namespace dx = DirectX;
 
-	auto model = Sphere::MakeNormalUVed();
+	using Dvtx::VertexLayout;
+	VertexLayout vl;
+	vl.Append(VertexLayout::Position3D);
+	vl.Append(VertexLayout::Normal);
+	vl.Append(VertexLayout::Tangent);
+	vl.Append(VertexLayout::Binormal);
+	vl.Append(VertexLayout::Texture2D);
+	auto model = Sphere::MakeNormalUVed(vl, true);
 	model.Transform(dx::XMMatrixScaling(size, size, size));
 	//model.SetTBNIndependentFlat();
 	const auto geometryTag = "$sphere." + std::to_string(size);
