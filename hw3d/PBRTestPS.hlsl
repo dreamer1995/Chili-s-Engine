@@ -44,6 +44,7 @@ cbuffer TransformCBuf : register(b4)
 
 Texture2D tex;
 Texture2D nmap : register(t1);
+TextureCube SkyMap : register(t2);
 
 SamplerState splr;
 
@@ -55,7 +56,7 @@ struct PSIn {
 	float2 uv : Texcoord;
 };
 
-float ao = 0.0f;
+float ao;
 float3 albedo;
 
 float PI = 3.14159265359;
@@ -63,7 +64,9 @@ float PI = 3.14159265359;
 float DistributionGGX(float NdotH, float roughness);
 float GeometrySchlickGGX(float dotedVector, float roughness);
 float GeometrySmith(float NdotV, float NdotL, float roughness);
-float3 FresnelSchlickRoughness(float NdotH, float3 F0);
+float3 FresnelSchlick(float NdotH, float3 F0);
+float3 FresnelSchlickRoughness(float NdotV, float3 F0, float roughness);
+
 
 float4 main(PSIn i) : SV_Target
 {
@@ -88,6 +91,7 @@ float4 main(PSIn i) : SV_Target
 	const float3 halfDir = normalize(direction + viewDir);
 	float NdotH = max(dot(i.normal, halfDir), 0.0f);
 	//float3 albedo = tex.Sample(splr, i.uv).rgb * color;
+	//float3(1.0f, 0.0f, 0.0f)
 	const float3 albedo = pow(tex.Sample(splr, i.uv).rgb, 2.2f);
 	
 	F0 = lerp(F0, albedo, metallic);
@@ -99,7 +103,7 @@ float4 main(PSIn i) : SV_Target
 
 	float NDF = DistributionGGX(NdotH, roughness);
 	float G = GeometrySmith(NdotV, NdotL, roughness);
-	float3 F = FresnelSchlickRoughness(max(dot(halfDir, viewDir), 0.0f), F0);
+	float3 F = FresnelSchlick(max(dot(halfDir, viewDir), 0.0f), F0);
 
 	float3 kS = F;
 	float3 kD = 1.0f - kS;
@@ -111,7 +115,12 @@ float4 main(PSIn i) : SV_Target
 
 	float3 Light = (kD * albedo / PI + specular) * radiance * NdotL;
 
-	float3 ambient = 0.03f * albedo * ao;
+	float3 iKS = FresnelSchlickRoughness(NdotV, F0, roughness);
+	float3 iKD = 1.0 - iKS;
+	float3 irradiance = pow(SkyMap.Sample(splr, i.normal).rgb, 2.2f);
+	float3 diffuse = irradiance * albedo;
+	float ao = 1.0f;
+	float3 ambient = (iKD * diffuse) * ao;
 
 	float3 color = Light + ambient;
 
@@ -120,7 +129,7 @@ float4 main(PSIn i) : SV_Target
 
 	return float4(color, 1.0f);
 	//const float3 diffuse = PdiffuseColor * PdiffuseIntensity * att * max(0, dot(i.normal, PlightDir)) +
-	//						DdiffuseColor * DdiffuseIntensity * max(0, dot(i.normal, direction));
+	//						DdiffuseColor * DdiffuseIntens6ity * max(0, dot(i.normal, direction));
 
 	//const float3 PhalfDir = normalize(PlightDir + viewDir);
 
@@ -158,7 +167,12 @@ float GeometrySmith(float NdotV, float NdotL, float roughness)
 	return ggx1 * ggx2;
 }
 
-float3 FresnelSchlickRoughness(float HdotV, float3 F0)
+float3 FresnelSchlick(float HdotV, float3 F0)
 {
 	return F0 + (1.0f - F0)*pow(1.0 - HdotV, 5.0f);
+}
+
+float3 FresnelSchlickRoughness(float NdotV, float3 F0, float roughness)
+{
+	return F0 + (max((1.0f - roughness), F0) - F0)*pow(1.0 - NdotV, 5.0f);
 }

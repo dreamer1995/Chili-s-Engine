@@ -26,6 +26,7 @@ TestSphere::TestSphere(Graphics& gfx, float size)
 
 	AddBind(Texture::Resolve(gfx, "Images\\brickwall.jpg"));
 	AddBind(Texture::Resolve(gfx, "Images\\brickwall_normal.jpg", 1u));
+	AddBind(Texture::Resolve(gfx, "Images\\CubeMap.jpg", 2u, true));
 
 	auto pvs = VertexShader::Resolve(gfx, "PBRTestVS.cso");
 	auto pvsbc = pvs->GetBytecode();
