@@ -24,7 +24,7 @@ void DirectionalLight::SpawnControlWindow(Graphics& gfx) noexcept
 		ImGui::SliderAngle("Yaw", &yaw, -180.0f, 180.0f);
 		ImGui::SliderAngle("Roll", &roll, -180.0f, 180.0f);
 		ImGui::Text("Intensity/Color");
-		ImGui::SliderFloat("Intensity", &cbData.diffuseIntensity, 0.01f, 2.0f, "%.2f", 2);
+		ImGui::SliderFloat("Intensity", &cbData.diffuseIntensity, 0.01f, 100.0f, "%.1f", 2);
 		ImGui::ColorEdit3("Diffuse Color", &cbData.diffuseColor.x);
 		ImGui::Text("Arrow");
 		ImGui::SliderFloat("Arrow Length", &length, 0.0f, 5.0, "%.1f");
@@ -53,7 +53,7 @@ void DirectionalLight::Reset() noexcept
 	cbData = {
 		{ 0.0f,-1.0f,0.0f },
 		{ 1.0f,1.0f,1.0f },
-		1.0f,
+		10.0f,
 	};
 	pitch = -PI / 4;
 	yaw = -PI / 4;

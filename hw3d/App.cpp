@@ -18,13 +18,53 @@ App::App()
 	directionallight(wnd.Gfx()),
 	cam(wnd.Gfx()),
 	//plane(wnd.Gfx(), 3.0f),
-	cube(wnd.Gfx(), 4.0f),
-	skyBox(wnd.Gfx(), 10.0f)
+	preSkyBox(wnd.Gfx(), 10.0f),
+	preSkyBoxBlur(wnd.Gfx(), 10.0f),
+	skyBox(wnd.Gfx(), 10.0f),
+	cube(wnd.Gfx(), 4.0f)
 {
 	//wall.SetRootTransform(dx::XMMatrixTranslation(pointlight.GetPos().x - 3.0f, pointlight.GetPos().y, pointlight.GetPos().z - 2.0f));
 	//plane.SetPos({ -5.0f,17.0f,-1.0f });
+
+	wnd.Gfx().SetViewPort('P');
+	wnd.Gfx().SetStencilState('C');
+	wnd.Gfx().SetRasterState('N');
+	wnd.Gfx().SetProjection(dx::XMMatrixPerspectiveLH(1.0f, 1.0f, 0.5f, 40.0f));
+
+	dx::XMMATRIX viewmatrix[6] = 
+	{
+		dx::XMMatrixLookAtLH({ 0.0f,0.0f,0.0f }, { 1.0f,0.0f,0.0f }, { 0.0f,1.0f,0.0f }),
+		dx::XMMatrixLookAtLH({ 0.0f,0.0f,0.0f }, { -1.0f,0.0f,0.0f }, { 0.0f,1.0f,0.0f }),
+		dx::XMMatrixLookAtLH({ 0.0f,0.0f,0.0f }, { 0.0f,1.0f,0.0f }, { 0.0f,0.0f,-1.0f }),
+		dx::XMMatrixLookAtLH({ 0.0f,0.0f,0.0f }, { 0.0f,-1.0f,0.0f }, { 0.0f,0.0f,1.0f }),
+		dx::XMMatrixLookAtLH({ 0.0f,0.0f,0.0f }, { 0.0f,0.0f,1.0f }, { 0.0f,1.0f,0.0f }),
+		dx::XMMatrixLookAtLH({ 0.0f,0.0f,0.0f }, { 0.0f,0.0f,-1.0f }, { 0.0f,1.0f,0.0f })
+	};
+
+	for (short i = 0; i < 6; i++)
+	{
+		wnd.Gfx().CleanPreRenderTarget(i);
+		wnd.Gfx().SetPreRenderTarget(i);
+		wnd.Gfx().SetCamera(viewmatrix[i]);
+		preSkyBox.Draw(wnd.Gfx());
+	}
+	wnd.Gfx().SaveHDCubemapSRV();
+
+	for (short i = 0; i < 6; i++)
+	{
+		wnd.Gfx().CleanPreRenderTarget(i);
+		wnd.Gfx().SetPreRenderTarget(i);
+		wnd.Gfx().SetCamera(viewmatrix[i]);
+		preSkyBoxBlur.Draw(wnd.Gfx());
+	}
+
+	wnd.Gfx().SetRenderTarget();
+	wnd.Gfx().SetRasterState();
+	wnd.Gfx().SetStencilState();
+
+	wnd.Gfx().SetViewPort();
+	wnd.Gfx().SetProjection(dx::XMMatrixPerspectiveLH(1.0f, 9.0f / 16.0f, 0.5f, 40.0f));
 	cube.SetPos(pointlight.GetPos());
-	wnd.Gfx().SetProjection( dx::XMMatrixPerspectiveLH( 1.0f,9.0f / 16.0f,0.5f,40.0f ) );
 }
 
 void App::DoFrame()
@@ -41,7 +81,6 @@ void App::DoFrame()
 	//nano2.Draw( wnd.Gfx() );
 	pointlight.Draw( wnd.Gfx() );
 	directionallight.Draw(wnd.Gfx());
-	cube.Draw(wnd.Gfx());
 
 	static bool isWireframe = false;
 	if (isWireframe)
@@ -69,7 +108,7 @@ void App::DoFrame()
 	}
 	wnd.Gfx().SetStencilState();
 
-	
+	cube.Draw(wnd.Gfx());
 
 	while( const auto e = wnd.kbd.ReadKey() )
 	{

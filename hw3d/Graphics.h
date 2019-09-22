@@ -10,6 +10,8 @@
 #include <memory>
 #include <random>
 #include "ConditionalNoexcept.h"
+#include "C:\Program Files (x86)\Microsoft DirectX SDK (June 2010)\Include\D3DX11.h"
+#pragma comment(lib, "C:\\Program Files (x86)\\Microsoft DirectX SDK (June 2010)\\Lib\\x64\\d3dx11.lib")
 
 namespace Bind
 {
@@ -75,6 +77,14 @@ public:
 	void SetStencilState(char type) noexcept;
 	void SetRasterState() noexcept;
 	void SetRasterState(char type) noexcept;
+	void CleanPreRenderTarget(int i) noexcept;
+	void SetRenderTarget() noexcept;
+	void SetPreRenderTarget(int i) noexcept;
+	void SetViewPort() noexcept;
+	void SetViewPort(char type) noexcept;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> GetShaderResourceViewH() const noexcept;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> GetShaderResourceViewL() const noexcept;
+	void SaveHDCubemapSRV() noexcept;
 private:
 	DirectX::XMMATRIX projection;
 	DirectX::XMMATRIX camera;
@@ -89,8 +99,15 @@ private:
 	Microsoft::WRL::ComPtr<ID3D11DepthStencilView> pDSV;
 	Microsoft::WRL::ComPtr<ID3D11DepthStencilState> pDSStateDefault;
 	Microsoft::WRL::ComPtr<ID3D11DepthStencilState> pDSStateCube;
+	Microsoft::WRL::ComPtr<ID3D11DepthStencilView> pPreDSV;
 	Microsoft::WRL::ComPtr<ID3D11RasterizerState> pRasterStateDefault;
 	Microsoft::WRL::ComPtr<ID3D11RasterizerState> pRasterStateNoneSolid;
 	Microsoft::WRL::ComPtr<ID3D11RasterizerState> pRasterStateBackWireframe;
 	Microsoft::WRL::ComPtr<ID3D11RasterizerState> pRasterStateNoneWireframe;
+	Microsoft::WRL::ComPtr<ID3D11Texture2D> pPreCubeMap;
+	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> pPreMapTarget[6];
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> pPreMapShaderResourceView;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> pPreMapShaderResourceViewH;
+	D3D11_VIEWPORT pDefaultVP;
+	D3D11_VIEWPORT pPreMapVP;
 };

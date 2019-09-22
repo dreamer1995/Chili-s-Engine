@@ -24,9 +24,9 @@ TestSphere::TestSphere(Graphics& gfx, float size)
 	AddBind(VertexBuffer::Resolve(gfx, geometryTag, model.vertices));
 	AddBind(IndexBuffer::Resolve(gfx, geometryTag, model.indices));
 
-	AddBind(Texture::Resolve(gfx, "Images\\brickwall.jpg"));
+	AddBind(Texture::Resolve(gfx, "Images\\brickwall.jpg", 0u, true, gfx.GetShaderResourceViewH()));
 	AddBind(Texture::Resolve(gfx, "Images\\brickwall_normal.jpg", 1u));
-	AddBind(Texture::Resolve(gfx, "Images\\CubeMap.jpg", 2u, true));
+	AddBind(Texture::Resolve(gfx, "Images\\CubeMap.jpg", 2u, true, gfx.GetShaderResourceViewL()));
 
 	auto pvs = VertexShader::Resolve(gfx, "PBRTestVS.cso");
 	auto pvsbc = pvs->GetBytecode();
@@ -41,8 +41,6 @@ TestSphere::TestSphere(Graphics& gfx, float size)
 	AddBind(Topology::Resolve(gfx, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST));
 
 	AddBind(std::make_shared<TransformCbufDoubleboi>(gfx, *this, 0u, 4u));
-
-	AddBind(Sampler::Resolve(gfx));
 }
 
 void TestSphere::SetPos(DirectX::XMFLOAT3 pos) noexcept

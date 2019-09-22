@@ -11,6 +11,8 @@
 #include <set>
 #include "SkyBox.h"
 #include "DirectionalLight.h"
+#include "PreSkyBox.h"
+#include "PreSkyBoxBlur.h"
 
 class App
 {
@@ -37,4 +39,6 @@ private:
 	//TestCube
 	TestSphere cube;
 	SkyBox skyBox;
+	PreSkyBox preSkyBox;
+	PreSkyBoxBlur preSkyBoxBlur;
 };

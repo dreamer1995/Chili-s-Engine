@@ -14,7 +14,7 @@ SkyBox::SkyBox(Graphics& gfx, float size)
 	AddBind(VertexBuffer::Resolve(gfx, geometryTag, model.vertices));
 	AddBind(IndexBuffer::Resolve(gfx, geometryTag, model.indices));
 
-	AddBind(Texture::Resolve(gfx, "Images\\CubeMap.jpg", 0u, true));
+	AddBind(Texture::Resolve(gfx, "Images\\CubeMap.jpg", 0u, true, gfx.GetShaderResourceViewH()));
 
 	auto pvs = VertexShader::Resolve(gfx, "SkyBoxVS.cso");
 	auto pvsbc = pvs->GetBytecode();

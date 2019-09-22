@@ -32,8 +32,6 @@ TestCube::TestCube( Graphics& gfx,float size )
 	AddBind( Topology::Resolve( gfx,D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST ) );
 
 	AddBind( std::make_shared<TransformCbufDoubleboi>( gfx,*this,0u,4u ) );
-
-	AddBind(Sampler::Resolve(gfx));
 }
 
 void TestCube::SetPos( DirectX::XMFLOAT3 pos ) noexcept
