@@ -128,6 +128,7 @@
     <ClCompile Include="TestPlane.cpp" />
     <ClCompile Include="TestSphere.cpp" />
     <ClCompile Include="Texture.cpp" />
+    <ClCompile Include="TexturePre.cpp" />
     <ClCompile Include="Topology.cpp" />
     <ClCompile Include="TransformCbuf.cpp" />
     <ClCompile Include="TransformCbufDoubleboi.cpp" />
@@ -192,6 +193,7 @@
     <ClInclude Include="TestPlane.h" />
     <ClInclude Include="TestSphere.h" />
     <ClInclude Include="Texture.h" />
+    <ClInclude Include="TexturePre.h" />
     <ClInclude Include="Topology.h" />
     <ClInclude Include="TransformCbuf.h" />
     <ClInclude Include="TransformCbufDoubleboi.h" />

@@ -26,9 +26,9 @@ App::App()
 	//wall.SetRootTransform(dx::XMMatrixTranslation(pointlight.GetPos().x - 3.0f, pointlight.GetPos().y, pointlight.GetPos().z - 2.0f));
 	//plane.SetPos({ -5.0f,17.0f,-1.0f });
 
-	wnd.Gfx().SetViewPort('P');
-	wnd.Gfx().SetStencilState('C');
-	wnd.Gfx().SetRasterState('N');
+	//wnd.Gfx().SetViewPort('P');
+	//wnd.Gfx().SetStencilState('C');
+	//wnd.Gfx().SetRasterState('N');
 	wnd.Gfx().SetProjection(dx::XMMatrixPerspectiveLH(1.0f, 1.0f, 0.5f, 40.0f));
 
 	dx::XMMATRIX viewmatrix[6] = 

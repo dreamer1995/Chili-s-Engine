@@ -62,14 +62,13 @@ Graphics::Graphics( HWND hWnd,int width,int height )
 	wrl::ComPtr<ID3D11Resource> pBackBuffer;
 	GFX_THROW_INFO( pSwap->GetBuffer( 0,__uuidof(ID3D11Resource),&pBackBuffer ) );
 	GFX_THROW_INFO( pDevice->CreateRenderTargetView( pBackBuffer.Get(),nullptr,&pTarget ) );
-	
-	D3D11_TEXTURE2D_DESC texDesc = {};
 
 	///////////////////////// Map's Texture
 
 	// Setup the texture description.
 	// We will have our map be a square
 	// We will need to have this texture bound as a render target AND a shader resource
+	D3D11_TEXTURE2D_DESC texDesc = {};
 	texDesc.Width = height;
 	texDesc.Height = height;
 	texDesc.MipLevels = 0;
@@ -81,14 +80,15 @@ Graphics::Graphics( HWND hWnd,int width,int height )
 	texDesc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
 	texDesc.CPUAccessFlags = 0;
 	texDesc.MiscFlags = D3D11_RESOURCE_MISC_GENERATE_MIPS |
-		D3D11_RESOURCE_MISC_TEXTURECUBE;
+		D3D11_RESOURCE_MISC_TEXTURECUBE;
+
 
 	// Create the texture
 	GFX_THROW_INFO(pDevice->CreateTexture2D(&texDesc, NULL, &pPreCubeMap));
+	GFX_THROW_INFO(pDevice->CreateTexture2D(&texDesc, NULL, &pPreCubeMapH));
 
 	/////////////////////// Map's Render Target
     // Setup the description of the render target view.
-	D3D11_RENDER_TARGET_VIEW_DESC rtvDesc = {};
 	rtvDesc.Format = texDesc.Format;
 	rtvDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2DARRAY;
 	rtvDesc.Texture2D.MipSlice = 0;
@@ -100,20 +100,20 @@ Graphics::Graphics( HWND hWnd,int width,int height )
 	{
 		// Create a render target view to the ith element.
 		rtvDesc.Texture2DArray.FirstArraySlice = i;
-		GFX_THROW_INFO(pDevice->CreateRenderTargetView(pPreCubeMap.Get(), &rtvDesc, &pPreMapTarget[i]));
-	}
+		GFX_THROW_INFO(pDevice->CreateRenderTargetView(pPreCubeMapH.Get(), &rtvDesc, &pPreMapTarget[i]));
+	}
+
 
 
 	/////////////////////// Map's Shader Resource View
     // Setup the description of the shader resource view.
-	D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
 	srvDesc.Format = texDesc.Format;
 	srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURECUBE;
 	srvDesc.TextureCube.MostDetailedMip = 0;
-	srvDesc.TextureCube.MipLevels = 1;
+	srvDesc.TextureCube.MipLevels = 1;
+
     // Create the shader resource view.
-	GFX_THROW_INFO(pDevice->CreateShaderResourceView(pPreCubeMap.Get(), &srvDesc, &pPreMapShaderResourceViewH));
-	pPreMapShaderResourceView = pPreMapShaderResourceViewH;
+	GFX_THROW_INFO(pDevice->CreateShaderResourceView(pPreCubeMapH.Get(), &srvDesc, &pPreMapShaderResourceViewH));
 
 	// create depth stensil state
 	D3D11_DEPTH_STENCIL_DESC dsDesc = {};
@@ -127,7 +127,7 @@ Graphics::Graphics( HWND hWnd,int width,int height )
 	GFX_THROW_INFO(pDevice->CreateDepthStencilState(&dsDesc, &pDSStateCube));
 
 	// bind depth state
-	pContext->OMSetDepthStencilState(pDSStateDefault.Get(),1u );
+	pContext->OMSetDepthStencilState(pDSStateCube.Get(),1u );
 
 	// create depth stensil texture
 	wrl::ComPtr<ID3D11Texture2D> pDepthStencil;
@@ -182,7 +182,7 @@ Graphics::Graphics( HWND hWnd,int width,int height )
 	pPreMapVP.TopLeftX = 0.0f;
 	pPreMapVP.TopLeftY = 0.0f;
 
-	pContext->RSSetViewports(1u, &pDefaultVP);
+	pContext->RSSetViewports(1u, &pPreMapVP);
 	
 	//Create the Rasterize State
 	D3D11_RASTERIZER_DESC rasterDesc{};
@@ -208,7 +208,7 @@ Graphics::Graphics( HWND hWnd,int width,int height )
 	GFX_THROW_INFO(pDevice->CreateRasterizerState(&rasterDesc, &pRasterStateNoneWireframe));
 
 	//Set the Rasterizer
-	pContext->RSSetState(pRasterStateDefault.Get());
+	pContext->RSSetState(pRasterStateNoneSolid.Get());
 
 	// init imgui d3d impl
 	ImGui_ImplDX11_Init( pDevice.Get(),pContext.Get() );
@@ -374,9 +374,17 @@ Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> Graphics::GetShaderResourceView
 	return pPreMapShaderResourceView;
 }
 
-void Graphics::SaveHDCubemapSRV() noexcept
+void Graphics::SaveHDCubemapSRV()
 {
-	pPreMapShaderResourceView = pPreMapShaderResourceViewH;
+	HRESULT hr;
+	for (short int i = 0; i < 6; ++i)
+	{
+		// Create a render target view to the ith element.
+		rtvDesc.Texture2DArray.FirstArraySlice = i;
+		GFX_THROW_INFO(pDevice->CreateRenderTargetView(pPreCubeMap.Get(), &rtvDesc, &pPreMapTarget[i]));
+	}
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> Reset;
+	GFX_THROW_INFO(pDevice->CreateShaderResourceView(pPreCubeMap.Get(), &srvDesc, &pPreMapShaderResourceView));
 }
 
 // Graphics exception stuff

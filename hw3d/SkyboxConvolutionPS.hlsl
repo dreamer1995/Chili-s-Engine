@@ -1,5 +1,5 @@
 // External texture-related data
-TextureCube Sky;
+TextureCube Sky : register(t3);
 SamplerState splr;
 
 static const float PI = 3.14159265359;

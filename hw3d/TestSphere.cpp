@@ -24,9 +24,9 @@ TestSphere::TestSphere(Graphics& gfx, float size)
 	AddBind(VertexBuffer::Resolve(gfx, geometryTag, model.vertices));
 	AddBind(IndexBuffer::Resolve(gfx, geometryTag, model.indices));
 
-	AddBind(Texture::Resolve(gfx, "Images\\brickwall.jpg", 0u, true, gfx.GetShaderResourceViewH()));
+	AddBind(TexturePre::Resolve(gfx, 0u, gfx.GetShaderResourceViewH()));
 	AddBind(Texture::Resolve(gfx, "Images\\brickwall_normal.jpg", 1u));
-	AddBind(Texture::Resolve(gfx, "Images\\CubeMap.jpg", 2u, true, gfx.GetShaderResourceViewL()));
+	AddBind(TexturePre::Resolve(gfx, 2u, gfx.GetShaderResourceViewL()));
 
 	auto pvs = VertexShader::Resolve(gfx, "PBRTestVS.cso");
 	auto pvsbc = pvs->GetBytecode();

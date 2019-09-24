@@ -14,7 +14,7 @@ SkyBox::SkyBox(Graphics& gfx, float size)
 	AddBind(VertexBuffer::Resolve(gfx, geometryTag, model.vertices));
 	AddBind(IndexBuffer::Resolve(gfx, geometryTag, model.indices));
 
-	AddBind(Texture::Resolve(gfx, "Images\\CubeMap.jpg", 0u, true, gfx.GetShaderResourceViewH()));
+	AddBind(TexturePre::Resolve(gfx, 0u, gfx.GetShaderResourceViewH()));
 
 	auto pvs = VertexShader::Resolve(gfx, "SkyBoxVS.cso");
 	auto pvsbc = pvs->GetBytecode();
@@ -29,6 +29,8 @@ SkyBox::SkyBox(Graphics& gfx, float size)
 	AddBind(Topology::Resolve(gfx, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST));
 
 	AddBind(std::make_shared<TransformCbuf>(gfx, *this));
+
+	AddBind(Sampler::Resolve(gfx));
 }
 
 void SkyBox::SetPos(DirectX::XMFLOAT3 pos) noexcept

@@ -84,7 +84,7 @@ public:
 	void SetViewPort(char type) noexcept;
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> GetShaderResourceViewH() const noexcept;
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> GetShaderResourceViewL() const noexcept;
-	void SaveHDCubemapSRV() noexcept;
+	void SaveHDCubemapSRV();
 private:
 	DirectX::XMMATRIX projection;
 	DirectX::XMMATRIX camera;
@@ -105,9 +105,12 @@ private:
 	Microsoft::WRL::ComPtr<ID3D11RasterizerState> pRasterStateBackWireframe;
 	Microsoft::WRL::ComPtr<ID3D11RasterizerState> pRasterStateNoneWireframe;
 	Microsoft::WRL::ComPtr<ID3D11Texture2D> pPreCubeMap;
+	Microsoft::WRL::ComPtr<ID3D11Texture2D> pPreCubeMapH;
 	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> pPreMapTarget[6];
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> pPreMapShaderResourceView;
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> pPreMapShaderResourceViewH;
 	D3D11_VIEWPORT pDefaultVP;
 	D3D11_VIEWPORT pPreMapVP;
+	D3D11_RENDER_TARGET_VIEW_DESC rtvDesc = {};
+	D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
 };
