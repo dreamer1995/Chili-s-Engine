@@ -13,8 +13,9 @@ PreSkyBoxBlur::PreSkyBoxBlur(Graphics& gfx, float size)
 	const auto geometryTag = "$preskybox." + std::to_string(size);
 	AddBind(VertexBuffer::Resolve(gfx, geometryTag, model.vertices));
 	AddBind(IndexBuffer::Resolve(gfx, geometryTag, model.indices));
-	AddBind(Texture::Resolve(gfx, "Images\\CubeMap.jpg", 3u, true));
-	//AddBind(TexturePre::Resolve(gfx, 0u, gfx.GetShaderResourceViewH()));
+
+	//AddBind(Texture::Resolve(gfx, "Images\\jellybeans1.jpg", 0u, true));
+	AddBind(TexturePre::Resolve(gfx, 0u, gfx.GetShaderResourceViewH()));
 
 	auto pvs = VertexShader::Resolve(gfx, "SkyBoxVS.cso");
 	auto pvsbc = pvs->GetBytecode();

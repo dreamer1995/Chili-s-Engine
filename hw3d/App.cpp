@@ -263,7 +263,6 @@ void App::DoFrame()
 
 	while( const auto delta = wnd.mouse.ReadRawDelta() )
 	{
-
 		if (!wnd.CursorEnabled() && wnd.mouse.RightIsPressed())
 		{
 			cam.Rotate( (float)delta->x,(float)delta->y );
@@ -279,16 +278,7 @@ void App::DoFrame()
 		}
 		else if (!wnd.CursorEnabled() && (wnd.kbd.KeyIsPressed('L') || wnd.kbd.KeyIsPressed(VK_SHIFT)) && wnd.mouse.LeftIsPressed())
 		{
-			if (cam.yaw <= 0)
-			{
-				directionallight.Rotate((float)delta->x, (float)delta->y);
-			}
-			else
-			{
-				directionallight.Rotate((float)delta->x, -(float)delta->y);
-			}
-
-			
+			directionallight.Rotate((float)delta->x, (float)delta->y);
 		}
 	}
 		

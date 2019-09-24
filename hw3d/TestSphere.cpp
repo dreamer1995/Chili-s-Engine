@@ -24,7 +24,8 @@ TestSphere::TestSphere(Graphics& gfx, float size)
 	AddBind(VertexBuffer::Resolve(gfx, geometryTag, model.vertices));
 	AddBind(IndexBuffer::Resolve(gfx, geometryTag, model.indices));
 
-	AddBind(TexturePre::Resolve(gfx, 0u, gfx.GetShaderResourceViewH()));
+	//AddBind(Texture::Resolve(gfx, "Images\\jellybeans1.jpg", 0u, true));
+	AddBind(Texture::Resolve(gfx, "Images\\brickwall.jpg"));
 	AddBind(Texture::Resolve(gfx, "Images\\brickwall_normal.jpg", 1u));
 	AddBind(TexturePre::Resolve(gfx, 2u, gfx.GetShaderResourceViewL()));
 

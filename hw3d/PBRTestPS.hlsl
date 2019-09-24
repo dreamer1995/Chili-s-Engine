@@ -42,7 +42,7 @@ cbuffer TransformCBuf : register(b4)
 	matrix matrix_W2M;
 };
 
-TextureCube tex;
+Texture2D tex;
 Texture2D nmap : register(t1);
 TextureCube SkyMap : register(t2);
 
@@ -89,17 +89,9 @@ float4 main(PSIn i) : SV_Target
 	float NdotH = max(dot(i.normal, halfDir), 0.0f);
 	//float3 albedo = tex.Sample(splr, i.uv).rgb * color;
 	//float3(1.0f, 0.0f, 0.0f)
-	float3 albedo;
-	if (normalMapEnabled)
-	{ 
-		albedo = pow(SkyMap.Sample(splr, i.worldPos).rgb, 2.2f);
-	}
-	else
-	{
-		albedo = pow(tex.Sample(splr, i.worldPos).rgb, 2.2f);
-	}
 	
-	
+	float3 albedo = pow(tex.Sample(splr, i.uv).rgb, 2.2f);
+
 	F0 = lerp(F0, albedo, metallic);
 	//fixed3 ambient = UNITY_LIGHTMODEL_AMBIENT.xyz * albedo;
 
@@ -133,7 +125,7 @@ float4 main(PSIn i) : SV_Target
 	color = color / (color + 1.0f);
 	color = pow(color, 1.0f / 2.2f);
 
-	return float4(albedo, 1.0f);
+	return float4(color, 1.0f);
 	//const float3 diffuse = PdiffuseColor * PdiffuseIntensity * att * max(0, dot(i.normal, PlightDir)) +
 	//						DdiffuseColor * DdiffuseIntens6ity * max(0, dot(i.normal, direction));
 

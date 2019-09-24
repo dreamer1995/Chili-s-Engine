@@ -103,10 +103,9 @@ Graphics::Graphics( HWND hWnd,int width,int height )
 		GFX_THROW_INFO(pDevice->CreateRenderTargetView(pPreCubeMapH.Get(), &rtvDesc, &pPreMapTarget[i]));
 	}
 
-
-
 	/////////////////////// Map's Shader Resource View
     // Setup the description of the shader resource view.
+	D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
 	srvDesc.Format = texDesc.Format;
 	srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURECUBE;
 	srvDesc.TextureCube.MostDetailedMip = 0;
@@ -114,6 +113,7 @@ Graphics::Graphics( HWND hWnd,int width,int height )
 
     // Create the shader resource view.
 	GFX_THROW_INFO(pDevice->CreateShaderResourceView(pPreCubeMapH.Get(), &srvDesc, &pPreMapShaderResourceViewH));
+	GFX_THROW_INFO(pDevice->CreateShaderResourceView(pPreCubeMap.Get(), &srvDesc, &pPreMapShaderResourceView));
 
 	// create depth stensil state
 	D3D11_DEPTH_STENCIL_DESC dsDesc = {};
@@ -383,8 +383,6 @@ void Graphics::SaveHDCubemapSRV()
 		rtvDesc.Texture2DArray.FirstArraySlice = i;
 		GFX_THROW_INFO(pDevice->CreateRenderTargetView(pPreCubeMap.Get(), &rtvDesc, &pPreMapTarget[i]));
 	}
-	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> Reset;
-	GFX_THROW_INFO(pDevice->CreateShaderResourceView(pPreCubeMap.Get(), &srvDesc, &pPreMapShaderResourceView));
 }
 
 // Graphics exception stuff
