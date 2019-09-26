@@ -12,7 +12,7 @@
 #include "SkyBox.h"
 #include "DirectionalLight.h"
 #include "PreSkyBox.h"
-#include "PreSkyBoxBlur.h"
+#include "PrePlane.h"
 
 class App
 {
@@ -39,6 +39,7 @@ private:
 	//TestCube
 	TestSphere cube;
 	SkyBox skyBox;
-	PreSkyBox preSkyBox;
-	PreSkyBoxBlur preSkyBoxBlur;
+	std::unique_ptr<PreSkyBox> preSkyBox;
+	std::unique_ptr<PreSkyBox> preSkyBoxBlur;
+	PrePlane prePlane;
 };

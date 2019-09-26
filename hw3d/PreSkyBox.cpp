@@ -3,7 +3,7 @@
 #include "BindableCommon.h"
 #include "imgui/imgui.h"
 
-PreSkyBox::PreSkyBox(Graphics& gfx, float size)
+PreSkyBox::PreSkyBox(Graphics& gfx, float size, char type)
 {
 	using namespace Bind;
 	namespace dx = DirectX;
@@ -14,14 +14,29 @@ PreSkyBox::PreSkyBox(Graphics& gfx, float size)
 	AddBind(VertexBuffer::Resolve(gfx, geometryTag, model.vertices));
 	AddBind(IndexBuffer::Resolve(gfx, geometryTag, model.indices));
 
-	AddBind(Texture::Resolve(gfx, "Images\\Villa Nova Street.jpg"));
-
 	auto pvs = VertexShader::Resolve(gfx, "SkyBoxVS.cso");
 	auto pvsbc = pvs->GetBytecode();
 	AddBind(std::move(pvs));
 
-	AddBind(PixelShader::Resolve(gfx, "SphereToCubePS.cso"));
+	if (type == 'B')
+	{
+		AddBind(TexturePre::Resolve(gfx, 0u, gfx.GetShaderResourceViewH()));
 
+		AddBind(PixelShader::Resolve(gfx, "SkyboxConvolutionPS.cso"));
+	}
+	else if (type == 'M')
+	{
+		AddBind(TexturePre::Resolve(gfx, 0u, gfx.GetShaderResourceViewH()));
+
+		AddBind(PixelShader::Resolve(gfx, "SkyboxConvolutionPS.cso"));
+	}
+	else
+	{
+		AddBind(Texture::Resolve(gfx, "Images\\Villa Nova Street.jpg"));
+
+		AddBind(PixelShader::Resolve(gfx, "SphereToCubePS.cso"));
+	}
+	
 	AddBind(InputLayout::Resolve(gfx, model.vertices.GetLayout(), pvsbc));
 
 	AddBind(Topology::Resolve(gfx, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST));

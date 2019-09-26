@@ -4,7 +4,7 @@
 class PreSkyBox : public Drawable
 {
 public:
-	PreSkyBox(Graphics& gfx, float size);
+	PreSkyBox(Graphics& gfx, float size, char type = 'D');
 	void SetRotation(float roll, float pitch, float yaw) noexcept;
 	DirectX::XMMATRIX GetTransformXM() const noexcept override;
 

@@ -77,9 +77,9 @@ public:
 	void SetStencilState(char type) noexcept;
 	void SetRasterState() noexcept;
 	void SetRasterState(char type) noexcept;
-	void CleanPreRenderTarget(int i) noexcept;
+	void CleanPreRenderTarget(int i, char definition) noexcept;
 	void SetRenderTarget() noexcept;
-	void SetPreRenderTarget(int i) noexcept;
+	void SetPreRenderTarget(int i, char definition) noexcept;
 	void SetViewPort() noexcept;
 	void SetViewPort(char type) noexcept;
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> GetShaderResourceViewH() const noexcept;
@@ -99,6 +99,7 @@ private:
 	Microsoft::WRL::ComPtr<ID3D11DepthStencilView> pDSV;
 	Microsoft::WRL::ComPtr<ID3D11DepthStencilState> pDSStateDefault;
 	Microsoft::WRL::ComPtr<ID3D11DepthStencilState> pDSStateCube;
+	Microsoft::WRL::ComPtr<ID3D11DepthStencilView> pPreDSVH;
 	Microsoft::WRL::ComPtr<ID3D11DepthStencilView> pPreDSV;
 	Microsoft::WRL::ComPtr<ID3D11RasterizerState> pRasterStateDefault;
 	Microsoft::WRL::ComPtr<ID3D11RasterizerState> pRasterStateNoneSolid;

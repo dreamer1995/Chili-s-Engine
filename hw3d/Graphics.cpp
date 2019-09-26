@@ -84,8 +84,10 @@ Graphics::Graphics( HWND hWnd,int width,int height )
 
 
 	// Create the texture
-	GFX_THROW_INFO(pDevice->CreateTexture2D(&texDesc, NULL, &pPreCubeMap));
 	GFX_THROW_INFO(pDevice->CreateTexture2D(&texDesc, NULL, &pPreCubeMapH));
+	texDesc.Width = height;
+	texDesc.Height = height;
+	GFX_THROW_INFO(pDevice->CreateTexture2D(&texDesc, NULL, &pPreCubeMap));
 
 	/////////////////////// Map's Render Target
     // Setup the description of the render target view.
@@ -109,7 +111,7 @@ Graphics::Graphics( HWND hWnd,int width,int height )
 	srvDesc.Format = texDesc.Format;
 	srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURECUBE;
 	srvDesc.TextureCube.MostDetailedMip = 0;
-	srvDesc.TextureCube.MipLevels = 1;
+	srvDesc.TextureCube.MipLevels = -1;
 
     // Create the shader resource view.
 	GFX_THROW_INFO(pDevice->CreateShaderResourceView(pPreCubeMapH.Get(), &srvDesc, &pPreMapShaderResourceViewH));
@@ -147,6 +149,11 @@ Graphics::Graphics( HWND hWnd,int width,int height )
 	descDepth.Height = height;
 	descDepth.CPUAccessFlags = 0;
 	descDepth.MiscFlags = 0;
+	wrl::ComPtr<ID3D11Texture2D> pPreDepthStencilH;
+	GFX_THROW_INFO(pDevice->CreateTexture2D(&descDepth, nullptr, &pPreDepthStencilH));
+
+	descDepth.Width = height;
+	descDepth.Height = height;
 	wrl::ComPtr<ID3D11Texture2D> pPreDepthStencil;
 	GFX_THROW_INFO(pDevice->CreateTexture2D(&descDepth, nullptr, &pPreDepthStencil));
 
@@ -160,6 +167,10 @@ Graphics::Graphics( HWND hWnd,int width,int height )
 	) );
 
 	descDSV.Flags = 0;
+	GFX_THROW_INFO(pDevice->CreateDepthStencilView(
+		pPreDepthStencilH.Get(), &descDSV, &pPreDSVH
+	));
+
 	GFX_THROW_INFO(pDevice->CreateDepthStencilView(
 		pPreDepthStencil.Get(), &descDSV, &pPreDSV
 	));
@@ -334,11 +345,18 @@ void Graphics::SetRasterState(char type) noexcept
 	}
 }
 
-void Graphics::CleanPreRenderTarget(int i) noexcept
+void Graphics::CleanPreRenderTarget(int i, char definition) noexcept
 {
 	const float color[] = { 0.0f,0.0f,0.0f,1.0f };
 	pContext->ClearRenderTargetView(pPreMapTarget[i].Get(), color);
-	pContext->ClearDepthStencilView(pPreDSV.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0u);
+	if (definition == 'H')
+	{
+		pContext->ClearDepthStencilView(pPreDSVH.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0u);
+	}
+	else if (definition == 'L')
+	{
+		pContext->ClearDepthStencilView(pPreDSV.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0u);
+	}
 }
 
 void Graphics::SetRenderTarget() noexcept
@@ -346,9 +364,16 @@ void Graphics::SetRenderTarget() noexcept
 	pContext->OMSetRenderTargets(1u, pTarget.GetAddressOf(), pDSV.Get());
 }
 
-void Graphics::SetPreRenderTarget(int i) noexcept
+void Graphics::SetPreRenderTarget(int i, char definition) noexcept
 {
-	pContext->OMSetRenderTargets(1u, pPreMapTarget[i].GetAddressOf(), pPreDSV.Get());
+	if (definition == 'H')
+	{
+		pContext->OMSetRenderTargets(1u, pPreMapTarget[i].GetAddressOf(), pPreDSVH.Get());
+	}
+	else if (definition == 'L')
+	{
+		pContext->OMSetRenderTargets(1u, pPreMapTarget[i].GetAddressOf(), pPreDSV.Get());
+	}
 }
 
 void Graphics::SetViewPort() noexcept
@@ -376,6 +401,7 @@ Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> Graphics::GetShaderResourceView
 
 void Graphics::SaveHDCubemapSRV()
 {
+
 	HRESULT hr;
 	for (short int i = 0; i < 6; ++i)
 	{
@@ -383,6 +409,9 @@ void Graphics::SaveHDCubemapSRV()
 		rtvDesc.Texture2DArray.FirstArraySlice = i;
 		GFX_THROW_INFO(pDevice->CreateRenderTargetView(pPreCubeMap.Get(), &rtvDesc, &pPreMapTarget[i]));
 	}
+
+	//pPreMapVP.Width = 64.0f;
+	//pPreMapVP.Height = 64.0f;
 }
 
 // Graphics exception stuff
