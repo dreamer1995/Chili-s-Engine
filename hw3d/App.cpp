@@ -25,11 +25,12 @@ App::App()
 	//wall.SetRootTransform(dx::XMMatrixTranslation(pointlight.GetPos().x - 3.0f, pointlight.GetPos().y, pointlight.GetPos().z - 2.0f));
 	//plane.SetPos({ -5.0f,17.0f,-1.0f });
 
-	//wnd.Gfx().SetViewPort('P');
-	//wnd.Gfx().SetStencilState('C');
-	//wnd.Gfx().SetRasterState('N');
+	wnd.Gfx().SetViewPort('P');
+	wnd.Gfx().SetStencilState('C');
+	wnd.Gfx().SetRasterState('N');
 	preSkyBox = std::make_unique<PreSkyBox>(wnd.Gfx(), 10.0f);
 	preSkyBoxBlur = std::make_unique<PreSkyBox>(wnd.Gfx(), 10.0f, 'B');
+	preSkyBoxMip= std::make_unique<PreSkyBox>(wnd.Gfx(), 10.0f, 'M');
 
 	wnd.Gfx().SetProjection(dx::XMMatrixPerspectiveLH(1.0f, 1.0f, 0.5f, 40.0f));
 
@@ -43,22 +44,35 @@ App::App()
 		dx::XMMatrixLookAtLH({ 0.0f,0.0f,0.0f }, { 0.0f,0.0f,-1.0f }, { 0.0f,1.0f,0.0f })
 	};
 
-	for (short i = 0; i < 6; i++)
+	for (short int i = 0; i < 6; i++)
 	{
-		wnd.Gfx().CleanPreRenderTarget(i, 'H');
-		wnd.Gfx().SetPreRenderTarget(i, 'H');
+		wnd.Gfx().SetPreRenderTarget(i);
 		wnd.Gfx().SetCamera(viewmatrix[i]);
 		preSkyBox->Draw(wnd.Gfx());
 	}
-	wnd.Gfx().SaveHDCubemapSRV();
 
-	for (short i = 0; i < 6; i++)
+	wnd.Gfx().SaveHDCubemapSRV();
+	for (short int i = 0; i < 6; i++)
 	{
-		wnd.Gfx().CleanPreRenderTarget(i, 'L');
-		wnd.Gfx().SetPreRenderTarget(i, 'L');
+		wnd.Gfx().SetPreRenderTarget(i);
 		wnd.Gfx().SetCamera(viewmatrix[i]);
 		preSkyBoxBlur->Draw(wnd.Gfx());
 	}
+
+
+	for (short int i = 0; i < 5; i++)
+	{
+		wnd.Gfx().SetCubemapSRVMip(i);
+		preSkyBoxMip->pmc.roughness = (float)i / (float)(4);
+		for (short j = 0; j < 6; j++)
+		{
+			wnd.Gfx().SetPreRenderTarget(j);
+			wnd.Gfx().SetCamera(viewmatrix[j]);
+			preSkyBoxMip->Draw(wnd.Gfx());
+		}
+	}
+
+	wnd.Gfx().SetLUTRT();
 
 	wnd.Gfx().SetRenderTarget();
 	wnd.Gfx().SetRasterState();

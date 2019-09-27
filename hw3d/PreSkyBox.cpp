@@ -20,15 +20,17 @@ PreSkyBox::PreSkyBox(Graphics& gfx, float size, char type)
 
 	if (type == 'B')
 	{
-		AddBind(TexturePre::Resolve(gfx, 0u, gfx.GetShaderResourceViewH()));
+		AddBind(TexturePre::Resolve(gfx, 0u, gfx.GetShaderResourceView('H')));
 
 		AddBind(PixelShader::Resolve(gfx, "SkyboxConvolutionPS.cso"));
 	}
 	else if (type == 'M')
 	{
-		AddBind(TexturePre::Resolve(gfx, 0u, gfx.GetShaderResourceViewH()));
+		AddBind(TexturePre::Resolve(gfx, 0u, gfx.GetShaderResourceView('H')));
 
-		AddBind(PixelShader::Resolve(gfx, "SkyboxConvolutionPS.cso"));
+		AddBind(PixelShader::Resolve(gfx, "PrefilterMapPixelShader.cso"));
+
+		AddBind(PixelConstantBuffer<PSMaterialConstant>::Resolve(gfx, pmc, 3u));
 	}
 	else
 	{

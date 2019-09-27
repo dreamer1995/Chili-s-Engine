@@ -45,6 +45,7 @@ cbuffer TransformCBuf : register(b4)
 Texture2D tex;
 Texture2D nmap : register(t1);
 TextureCube SkyMap : register(t2);
+TextureCube SkyMapMip : register(t3);
 
 SamplerState splr;
 
@@ -74,7 +75,7 @@ float4 main(PSIn i) : SV_Target
 		bumpNormal = nmap.Sample(splr, i.uv).rgb;
 		bumpNormal = bumpNormal * 2.0f - 1.0f;
 		bumpNormal = (bumpNormal.x * i.tangent) + (bumpNormal.y * i.binormal) + (bumpNormal.z * i.normal);
-		i.normal = bumpNormal;
+		i.normal = normalize(bumpNormal);
 	}
 	//const float3 PlightDir = normalize(lightPos - i.worldPos);
 
@@ -124,8 +125,10 @@ float4 main(PSIn i) : SV_Target
 
 	color = color / (color + 1.0f);
 	color = pow(color, 1.0f / 2.2f);
+	float3 R = reflect(-viewDir, i.normal);
+	const float MAX_REF_LOD = 4.0f;
 
-	return float4(color, 1.0f);
+	return float4(SkyMapMip.SampleLevel(splr, i.worldPos, roughness * MAX_REF_LOD).rgb, 1.0f);
 	//const float3 diffuse = PdiffuseColor * PdiffuseIntensity * att * max(0, dot(i.normal, PlightDir)) +
 	//						DdiffuseColor * DdiffuseIntens6ity * max(0, dot(i.normal, direction));
 

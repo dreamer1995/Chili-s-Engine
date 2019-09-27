@@ -1,20 +1,17 @@
 #include <IBLHeader.hlsli>
 
-TextureCube EnvMap			: register(t0);
-SamplerState basicSampler	: register(s0);
+TextureCube EnvMap;
+SamplerState basicSampler;
 
-cbuffer ExternalData : register(b0) {
+cbuffer ExternalData : register(b3)
+{
 	float roughness;
+	float padding[3];
 }
-struct VertexToPixel
-{
-	float4 position		: SV_POSITION;
-	float3 uvw			: TEXCOORD;
-};
 
-float4 main(VertexToPixel input) : SV_TARGET
+float4 main(float3 tc : Texcoord) : SV_TARGET
 {
-	float3 normalVec = normalize(input.uvw);
+	float3 normalVec = normalize(tc);
 	float3 R = normalVec;
 	float3 viewDir = R;
 
@@ -36,7 +33,7 @@ float4 main(VertexToPixel input) : SV_TARGET
 			float HdotV = max(dot(halfwayVec, viewDir), 0.0f);
 			float pdf = D * NdotH / (4.0f * HdotV) + 0.0001f;
 
-			float resolution = 512.0f; // resolution of source cubemap (per face)
+			float resolution = 720.0f; // resolution of source cubemap (per face)
 			float saTexel = 4.0f * PI / (6.0f * resolution * resolution);
 			float saSample = 1.0f / (float(NumSamples) * pdf + 0.0001f);
 

@@ -49,4 +49,3 @@ DirectX::XMMATRIX PrePlane::GetTransformXM() const noexcept
 	return DirectX::XMMatrixRotationRollPitchYaw(pitch, yaw, roll) *
 		DirectX::XMMatrixTranslation(pos.x, pos.y, pos.z);
 }
-}

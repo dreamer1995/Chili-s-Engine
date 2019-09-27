@@ -16,8 +16,10 @@ TestCube::TestCube( Graphics& gfx,float size )
 	AddBind( VertexBuffer::Resolve( gfx,geometryTag,model.vertices ) );
 	AddBind( IndexBuffer::Resolve( gfx,geometryTag,model.indices ) );
 
-	AddBind( Texture::Resolve( gfx,"Images\\brickwall.jpg" ) );
-	AddBind( Texture::Resolve( gfx,"Images\\brickwall_normal.jpg",1u ) );
+	AddBind(Texture::Resolve(gfx, "Images\\brickwall.jpg"));
+	AddBind(Texture::Resolve(gfx, "Images\\brickwall_normal.jpg", 1u));
+	AddBind(TexturePre::Resolve(gfx, 2u, gfx.GetShaderResourceView()));
+	AddBind(TexturePre::Resolve(gfx, 3u, gfx.GetShaderResourceView('M')));
 
 	auto pvs = VertexShader::Resolve( gfx,"PBRTestVS.cso" );
 	auto pvsbc = pvs->GetBytecode();

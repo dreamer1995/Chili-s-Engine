@@ -77,14 +77,14 @@ public:
 	void SetStencilState(char type) noexcept;
 	void SetRasterState() noexcept;
 	void SetRasterState(char type) noexcept;
-	void CleanPreRenderTarget(int i, char definition) noexcept;
 	void SetRenderTarget() noexcept;
-	void SetPreRenderTarget(int i, char definition) noexcept;
+	void SetPreRenderTarget(short int i) noexcept;
 	void SetViewPort() noexcept;
 	void SetViewPort(char type) noexcept;
-	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> GetShaderResourceViewH() const noexcept;
-	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> GetShaderResourceViewL() const noexcept;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> GetShaderResourceView(char type = 'D') const noexcept;
 	void SaveHDCubemapSRV();
+	void SetCubemapSRVMip(short int i);
+	void SetLUTRT() noexcept;
 private:
 	DirectX::XMMATRIX projection;
 	DirectX::XMMATRIX camera;
@@ -99,7 +99,6 @@ private:
 	Microsoft::WRL::ComPtr<ID3D11DepthStencilView> pDSV;
 	Microsoft::WRL::ComPtr<ID3D11DepthStencilState> pDSStateDefault;
 	Microsoft::WRL::ComPtr<ID3D11DepthStencilState> pDSStateCube;
-	Microsoft::WRL::ComPtr<ID3D11DepthStencilView> pPreDSVH;
 	Microsoft::WRL::ComPtr<ID3D11DepthStencilView> pPreDSV;
 	Microsoft::WRL::ComPtr<ID3D11RasterizerState> pRasterStateDefault;
 	Microsoft::WRL::ComPtr<ID3D11RasterizerState> pRasterStateNoneSolid;
@@ -107,10 +106,16 @@ private:
 	Microsoft::WRL::ComPtr<ID3D11RasterizerState> pRasterStateNoneWireframe;
 	Microsoft::WRL::ComPtr<ID3D11Texture2D> pPreCubeMap;
 	Microsoft::WRL::ComPtr<ID3D11Texture2D> pPreCubeMapH;
+	Microsoft::WRL::ComPtr<ID3D11Texture2D> pPreCubeMapM;
+	Microsoft::WRL::ComPtr<ID3D11Texture2D> pPreCubeMapLUT;
 	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> pPreMapTarget[6];
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> pPreMapShaderResourceView;
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> pPreMapShaderResourceViewH;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> pPreMapShaderResourceViewM;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> pPreMapShaderResourceViewLUT;
 	D3D11_VIEWPORT pDefaultVP;
 	D3D11_VIEWPORT pPreMapVP;
 	D3D11_RENDER_TARGET_VIEW_DESC rtvDesc = {};
+	float preCubemapHeight;
+	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> pPreLUTTarget;
 };

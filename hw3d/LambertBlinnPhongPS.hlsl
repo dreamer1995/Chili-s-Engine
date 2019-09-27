@@ -64,7 +64,7 @@ float4 main(PSIn i) : SV_Target
 		bumpNormal = nmap.Sample(splr, i.uv).xyz;
 		bumpNormal = bumpNormal * 2.0f - 1.0f;
 		bumpNormal = (bumpNormal.x * i.tangent) + (bumpNormal.y * i.binormal) + (bumpNormal.z * i.normal);
-		i.normal = bumpNormal;
+		i.normal = normalize(bumpNormal);
 	}
 	const float3 PlightDir = normalize(lightPos - i.worldPos);
 

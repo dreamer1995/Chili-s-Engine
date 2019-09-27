@@ -37,9 +37,10 @@ private:
 	//Model nano{ wnd.Gfx(),"Models\\nano_textured\\nanosuit.obj" };
 	//TestPlane plane;
 	//TestCube
-	TestSphere cube;
+	TestCube cube;
 	SkyBox skyBox;
 	std::unique_ptr<PreSkyBox> preSkyBox;
 	std::unique_ptr<PreSkyBox> preSkyBoxBlur;
+	std::unique_ptr<PreSkyBox> preSkyBoxMip;
 	PrePlane prePlane;
 };

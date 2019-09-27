@@ -15,7 +15,7 @@ SkyBox::SkyBox(Graphics& gfx, float size)
 	AddBind(IndexBuffer::Resolve(gfx, geometryTag, model.indices));
 
 	//AddBind(Texture::Resolve(gfx, "Images\\jellybeans1.jpg", 0u, true));
-	AddBind(TexturePre::Resolve(gfx, 0u, gfx.GetShaderResourceViewH()));
+	AddBind(TexturePre::Resolve(gfx, 0u, gfx.GetShaderResourceView('H')));
 
 	auto pvs = VertexShader::Resolve(gfx, "SkyBoxVS.cso");
 	auto pvsbc = pvs->GetBytecode();
