@@ -90,8 +90,8 @@ Graphics::Graphics( HWND hWnd,int width,int height )
 	texDesc.Width = 64u;
 	texDesc.Height = 64u;
 	GFX_THROW_INFO(pDevice->CreateTexture2D(&texDesc, NULL, &pPreCubeMap));
-	texDesc.Width = height;
-	texDesc.Height = height;
+	texDesc.Width = 128u;
+	texDesc.Height = 128u;
 	texDesc.MipLevels = 5;
 	GFX_THROW_INFO(pDevice->CreateTexture2D(&texDesc, NULL, &pPreCubeMapM));
 
@@ -128,6 +128,8 @@ Graphics::Graphics( HWND hWnd,int width,int height )
 	GFX_THROW_INFO(pDevice->CreateShaderResourceView(pPreCubeMapM.Get(), &srvDesc, &pPreMapShaderResourceViewM));
 	
 	//Create another RTV for LUT
+	texDesc.Width = height;
+	texDesc.Height = height;
 	texDesc.MipLevels = 0;
 	texDesc.Format = DXGI_FORMAT_R32G32_FLOAT;
 	texDesc.MiscFlags = 0;
@@ -427,7 +429,7 @@ void Graphics::SetCubemapSRVMip(short int i)
 {
 	HRESULT hr;
 
-	float mipHeight = preCubemapHeight * (float)pow(0.5, i);
+	float mipHeight = 128.0f * (float)pow(0.5, i);
 	pPreMapVP.Width = mipHeight;
 	pPreMapVP.Height = mipHeight;
 	pContext->RSSetViewports(1u, &pPreMapVP);

@@ -6,25 +6,15 @@
 //	float2 uv           : TEXCOORD0;
 //};
 
-struct VertexToPixel
-{
-
-	float4 position		: SV_POSITION;
-	float3 normal       : NORMAL;       // Normal co-ordinates
-	float3 tangent		: TANGENT;
-	float3 worldPos		: POSITION;
-	float2 uv           : TEXCOORD;     // UV co-ordinates
-};
-
-float2 main(VertexToPixel input) : SV_TARGET
+float2 main(float2 uv : Texcoord) : SV_TARGET
 {
 	
-	float NdotV = input.uv.y;
-	float roughness = input.uv.x;
+	float NdotV = uv.x;
+	float roughness = uv.y;
 
 	float3 viewDir;
 	viewDir.x = sqrt(1.0f - (NdotV * NdotV)); // sin
-	viewDir.y = 0;
+	viewDir.y = 0.0f;
 	viewDir.z = NdotV; // cos
 
 	float A = 0.0f;

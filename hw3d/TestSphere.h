@@ -13,7 +13,7 @@ private:
 	struct PSMaterialConstant
 	{
 		float metallic = 0.0f;
-		float roughness = 0.0f;
+		float roughness = 0.01f;
 		BOOL normalMappingEnabled = FALSE;
 		float padding[1];
 	} pmc;

@@ -46,6 +46,7 @@ Texture2D tex;
 Texture2D nmap : register(t1);
 TextureCube SkyMap : register(t2);
 TextureCube SkyMapMip : register(t3);
+Texture2D BRDFLUT : register(t4);
 
 SamplerState splr;
 
@@ -83,16 +84,17 @@ float4 main(PSIn i) : SV_Target
 
 	const float3 viewDir = normalize(cameraPos - i.worldPos);
 	//PBR Start
-	float3 F0 = float3(0.04f, 0.04f, 0.04f);
 	const float NdotV = max(dot(i.normal, viewDir), 0.0f);
 	const float NdotL = max(dot(i.normal, direction), 0.0f);
 	const float3 halfDir = normalize(direction + viewDir);
 	float NdotH = max(dot(i.normal, halfDir), 0.0f);
+	float3 R = reflect(-viewDir, i.normal);
 	//float3 albedo = tex.Sample(splr, i.uv).rgb * color;
 	//float3(1.0f, 0.0f, 0.0f)
 	
-	float3 albedo = pow(tex.Sample(splr, i.uv).rgb, 2.2f);
+	float3 albedo = pow(float3(1.0f, 1.0f, 1.0f), 2.2f);
 
+	float3 F0 = float3(0.04f, 0.04f, 0.04f);
 	F0 = lerp(F0, albedo, metallic);
 	//fixed3 ambient = UNITY_LIGHTMODEL_AMBIENT.xyz * albedo;
 
@@ -116,19 +118,28 @@ float4 main(PSIn i) : SV_Target
 
 	float3 iKS = FresnelSchlickRoughness(NdotV, F0, roughness);
 	float3 iKD = 1.0 - iKS;
+	iKD *= 1.0 - metallic;
 	float3 irradiance = pow(SkyMap.Sample(splr, i.normal).rgb, 2.2f);
-	float3 diffuse = irradiance * albedo;
+	float3 iDiffuse = irradiance * albedo;
+
+	const float MAX_REF_LOD = 4.0f;
+	float3 prefilteredColor = pow(SkyMapMip.SampleLevel(splr, R, roughness * MAX_REF_LOD).rgb, 2.2f);
+	float2 brdf = BRDFLUT.Sample(splr, float2(NdotV, roughness)).rg;
+	float3 iSpecular = prefilteredColor * (iKS * brdf.x + brdf.y);
+
+
 	float ao = 1.0f;
-	float3 ambient = (iKD * diffuse) * ao;
+	float3 ambient = (iKD * iDiffuse + iSpecular) * ao;
 
 	float3 color = Light + ambient;
 
 	color = color / (color + 1.0f);
 	color = pow(color, 1.0f / 2.2f);
-	float3 R = reflect(-viewDir, i.normal);
-	const float MAX_REF_LOD = 4.0f;
 
-	return float4(SkyMapMip.SampleLevel(splr, i.worldPos, roughness * MAX_REF_LOD).rgb, 1.0f);
+
+
+	//SkyMapMip.SampleLevel(splr, i.worldPos, roughness * MAX_REF_LOD).rgb
+	return float4(color, 1.0f);
 	//const float3 diffuse = PdiffuseColor * PdiffuseIntensity * att * max(0, dot(i.normal, PlightDir)) +
 	//						DdiffuseColor * DdiffuseIntens6ity * max(0, dot(i.normal, direction));
 

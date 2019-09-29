@@ -56,11 +56,11 @@ float4 main(PSIn i) : SV_Target
 
 	float3 albedo = color;
 
-	const float3 diffuse = albedo * DdiffuseColor * DdiffuseIntensity * 0.1f * max(0, dot(i.normal, direction));
+	const float3 diffuse = albedo * DdiffuseColor * DdiffuseIntensity * max(0, dot(i.normal, direction));
 
 	const float3 halfDir = normalize(direction + viewDir);
 
-	const float3 specular = DdiffuseColor * DdiffuseIntensity * 0.1f * specularIntensity * pow(max(0, dot(i.normal, halfDir)), specularPower);
+	const float3 specular = DdiffuseColor * DdiffuseIntensity * specularIntensity * pow(max(0, dot(i.normal, halfDir)), specularPower);
 
 	return float4(diffuse + specular, 1.0);
 }

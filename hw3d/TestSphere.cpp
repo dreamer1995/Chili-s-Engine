@@ -29,6 +29,7 @@ TestSphere::TestSphere(Graphics& gfx, float size)
 	AddBind(Texture::Resolve(gfx, "Images\\brickwall_normal.jpg", 1u));
 	AddBind(TexturePre::Resolve(gfx, 2u, gfx.GetShaderResourceView()));
 	AddBind(TexturePre::Resolve(gfx, 3u, gfx.GetShaderResourceView('M')));
+	AddBind(TexturePre::Resolve(gfx, 4u, gfx.GetShaderResourceView('L')));
 
 	auto pvs = VertexShader::Resolve(gfx, "PBRTestVS.cso");
 	auto pvsbc = pvs->GetBytecode();
@@ -77,7 +78,7 @@ void TestSphere::SpawnControlWindow(Graphics& gfx) noexcept
 		ImGui::SliderAngle("Roll", &roll, -180.0f, 180.0f);
 		ImGui::Text("Shading");
 		bool changed0 = ImGui::SliderFloat("Metallic", &pmc.metallic, 0.0f, 1.0f);
-		bool changed1 = ImGui::SliderFloat("Roughness", &pmc.roughness, 0.0f, 1.0f);
+		bool changed1 = ImGui::SliderFloat("Roughness", &pmc.roughness, 0.01f, 0.99f);
 		bool checkState = pmc.normalMappingEnabled == TRUE;
 		bool changed2 = ImGui::Checkbox("Enable Normal Map", &checkState);
 		pmc.normalMappingEnabled = checkState ? TRUE : FALSE;

@@ -63,7 +63,7 @@ App::App()
 	for (short int i = 0; i < 5; i++)
 	{
 		wnd.Gfx().SetCubemapSRVMip(i);
-		preSkyBoxMip->pmc.roughness = (float)i / (float)(4);
+		preSkyBoxMip->pmc.roughness = (float)i / 4.0f;
 		for (short j = 0; j < 6; j++)
 		{
 			wnd.Gfx().SetPreRenderTarget(j);
@@ -73,6 +73,7 @@ App::App()
 	}
 
 	wnd.Gfx().SetLUTRT();
+	prePlane.Draw(wnd.Gfx());
 
 	wnd.Gfx().SetRenderTarget();
 	wnd.Gfx().SetRasterState();

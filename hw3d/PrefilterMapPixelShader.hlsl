@@ -23,7 +23,7 @@ float4 main(float3 tc : Texcoord) : SV_TARGET
 	{
 		float2 Xi = Hammersley(i, NumSamples);
 		float3 halfwayVec = ImportanceSampleGGX(Xi, roughness, normalVec);
-		float3 lightDir = 2 * dot(viewDir, halfwayVec) * halfwayVec - viewDir;
+		float3 lightDir = 2.0f * dot(viewDir, halfwayVec) * halfwayVec - viewDir;
 		float NdotL = saturate(dot(normalVec, lightDir));
 		if (NdotL > 0)
 		{
@@ -33,13 +33,13 @@ float4 main(float3 tc : Texcoord) : SV_TARGET
 			float HdotV = max(dot(halfwayVec, viewDir), 0.0f);
 			float pdf = D * NdotH / (4.0f * HdotV) + 0.0001f;
 
-			float resolution = 720.0f; // resolution of source cubemap (per face)
+			float resolution = 512.0f; // resolution of source cubemap (per face)
 			float saTexel = 4.0f * PI / (6.0f * resolution * resolution);
 			float saSample = 1.0f / (float(NumSamples) * pdf + 0.0001f);
 
 			float mipLevel = roughness == 0.0 ? 0.0 : 0.5 * log2(saSample / saTexel);
 
-			PrefilteredColor += EnvMap.SampleLevel(basicSampler , lightDir, 0).rgb * NdotL;
+			PrefilteredColor += EnvMap.SampleLevel(basicSampler , lightDir, mipLevel).rgb * NdotL;
 			totalWeight += NdotL;
 		}
 	}
