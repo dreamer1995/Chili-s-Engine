@@ -20,7 +20,8 @@ App::App()
 	//plane(wnd.Gfx(), 3.0f),
 	prePlane(wnd.Gfx(), 1.0f),
 	skyBox(wnd.Gfx(), 10.0f),
-	cube(wnd.Gfx(), 4.0f)
+	cube(wnd.Gfx(), 4.0f),
+	uvPannel(wnd.Gfx(), 1)
 {
 	//wall.SetRootTransform(dx::XMMatrixTranslation(pointlight.GetPos().x - 3.0f, pointlight.GetPos().y, pointlight.GetPos().z - 2.0f));
 	//plane.SetPos({ -5.0f,17.0f,-1.0f });
@@ -79,9 +80,9 @@ App::App()
 	wnd.Gfx().SetRasterState();
 	wnd.Gfx().SetStencilState();
 
-	wnd.Gfx().SetViewPort();
 	wnd.Gfx().SetProjection(dx::XMMatrixPerspectiveLH(1.0f, 9.0f / 16.0f, 0.5f, 40.0f));
 	cube.SetPos(pointlight.GetPos());
+	wnd.Gfx().SetViewPort('U');
 }
 
 void App::DoFrame()
@@ -126,6 +127,12 @@ void App::DoFrame()
 	wnd.Gfx().SetStencilState();
 
 	cube.Draw(wnd.Gfx());
+
+	wnd.Gfx().SetViewPort('P');
+	wnd.Gfx().SetRasterState('W');
+	uvPannel.Draw(wnd.Gfx());
+	wnd.Gfx().SetViewPort();
+	wnd.Gfx().SetRasterState();
 
 	while( const auto e = wnd.kbd.ReadKey() )
 	{

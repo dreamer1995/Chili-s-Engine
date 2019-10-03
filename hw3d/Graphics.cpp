@@ -388,6 +388,16 @@ void Graphics::SetViewPort(char type) noexcept
 	{
 		pContext->RSSetViewports(1u, &pPreMapVP);
 	}
+	if (type == 'U')
+	{
+		SetViewPort(9.0f / 16.0f, 9.0f / 16.0f);
+	}
+}
+
+void Graphics::SetViewPort(float x, float y) noexcept
+{
+	pPreMapVP.Width = preCubemapHeight / x;
+	pPreMapVP.Height = preCubemapHeight / y;
 }
 
 Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> Graphics::GetShaderResourceView(char type) const noexcept

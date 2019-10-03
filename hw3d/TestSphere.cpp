@@ -25,17 +25,18 @@ TestSphere::TestSphere(Graphics& gfx, float size)
 	AddBind(IndexBuffer::Resolve(gfx, geometryTag, model.indices));
 
 	//AddBind(Texture::Resolve(gfx, "Images\\jellybeans1.jpg", 0u, true));
-	AddBind(Texture::Resolve(gfx, "Images\\brickwall.jpg"));
-	AddBind(Texture::Resolve(gfx, "Images\\brickwall_normal.jpg", 1u));
-	AddBind(TexturePre::Resolve(gfx, 2u, gfx.GetShaderResourceView()));
-	AddBind(TexturePre::Resolve(gfx, 3u, gfx.GetShaderResourceView('M')));
-	AddBind(TexturePre::Resolve(gfx, 4u, gfx.GetShaderResourceView('L')));
+	AddBind(Texture::Resolve(gfx, "Images\\rustediron2_basecolor.png"));
+	AddBind(Texture::Resolve(gfx, "Images\\rustediron2_normal.png", 1u));
+	AddBind(Texture::Resolve(gfx, "Images\\rustediron2_RMA.png", 2u));
+	AddBind(TexturePre::Resolve(gfx, 3u, gfx.GetShaderResourceView()));
+	AddBind(TexturePre::Resolve(gfx, 4u, gfx.GetShaderResourceView('M')));
+	AddBind(TexturePre::Resolve(gfx, 5u, gfx.GetShaderResourceView('L')));
 
-	auto pvs = VertexShader::Resolve(gfx, "PBRTestVS.cso");
+	auto pvs = VertexShader::Resolve(gfx, "PBRTestTexVS.cso");
 	auto pvsbc = pvs->GetBytecode();
 	AddBind(std::move(pvs));
 
-	AddBind(PixelShader::Resolve(gfx, "PBRTestPS.cso"));
+	AddBind(PixelShader::Resolve(gfx, "PBRTestTexPS.cso"));
 
 	AddBind(PixelConstantBuffer<PSMaterialConstant>::Resolve(gfx, pmc, 3u));
 

@@ -12,9 +12,9 @@ public:
 private:
 	struct PSMaterialConstant
 	{
-		float metallic = 0.0f;
-		float roughness = 0.01f;
-		BOOL normalMappingEnabled = FALSE;
+		float metallic = 1.0f;
+		float roughness = 0.99f;
+		BOOL normalMappingEnabled = TRUE;
 		float padding[1];
 	} pmc;
 	DirectX::XMFLOAT3 pos = { 0.0f,0.0f,0.0f };

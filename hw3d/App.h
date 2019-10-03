@@ -13,7 +13,7 @@
 #include "DirectionalLight.h"
 #include "PreSkyBox.h"
 #include "PrePlane.h"
-
+#include "UVPannel.h"
 class App
 {
 public:
@@ -43,4 +43,5 @@ private:
 	std::unique_ptr<PreSkyBox> preSkyBoxBlur;
 	std::unique_ptr<PreSkyBox> preSkyBoxMip;
 	PrePlane prePlane;
+	UVPannel uvPannel;
 };

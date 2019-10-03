@@ -81,6 +81,7 @@ public:
 	void SetPreRenderTarget(short int i) noexcept;
 	void SetViewPort() noexcept;
 	void SetViewPort(char type) noexcept;
+	void SetViewPort(float x, float y) noexcept;
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> GetShaderResourceView(char type = 'D') const noexcept;
 	void SaveHDCubemapSRV();
 	void SetCubemapSRVMip(short int i);
