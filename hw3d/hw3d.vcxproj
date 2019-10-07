@@ -112,6 +112,7 @@
     <ClCompile Include="IndexBuffer.cpp" />
     <ClCompile Include="InputLayout.cpp" />
     <ClCompile Include="Keyboard.cpp" />
+    <ClCompile Include="MeshSingle.cpp" />
     <ClCompile Include="MeshWall.cpp" />
     <ClCompile Include="PhongSphere.cpp" />
     <ClCompile Include="PointLight.cpp" />
@@ -162,6 +163,7 @@
     <ClInclude Include="GDIPlusManager.h" />
     <ClInclude Include="Graphics.h" />
     <ClInclude Include="GraphicsThrowMacros.h" />
+    <ClInclude Include="MeshSingle.h" />
     <ClInclude Include="PhongSphere.h" />
     <ClInclude Include="PrePlane.h" />
     <ClInclude Include="PreSkyBox.h" />

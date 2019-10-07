@@ -14,6 +14,7 @@
 #include "PreSkyBox.h"
 #include "PrePlane.h"
 #include "UVPannel.h"
+#include "MeshSingle.h"
 class App
 {
 public:
@@ -37,11 +38,12 @@ private:
 	//Model nano{ wnd.Gfx(),"Models\\nano_textured\\nanosuit.obj" };
 	//TestPlane plane;
 	//TestCube
-	TestSphere cube;
+	//TestSphere cube;
 	SkyBox skyBox;
 	std::unique_ptr<PreSkyBox> preSkyBox;
 	std::unique_ptr<PreSkyBox> preSkyBoxBlur;
 	std::unique_ptr<PreSkyBox> preSkyBoxMip;
 	PrePlane prePlane;
-	UVPannel uvPannel;
+	std::unique_ptr<UVPannel> uvPannel;
+	MeshSingle gun{ wnd.Gfx(), "Models\\Cerberus_LP.FBX", 0.1f };
 };

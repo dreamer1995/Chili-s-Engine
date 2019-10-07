@@ -5,23 +5,14 @@
 #include "imgui/imgui.h"
 #include "Vertex.h"
 
-UVPannel::UVPannel(Graphics& gfx, short int num)
+UVPannel::UVPannel(Graphics& gfx, short int num, Dvtx::VertexBuffer vertices, std::vector<unsigned short> indices)
 {
 	using namespace Bind;
 	namespace dx = DirectX;
 
-	using Dvtx::VertexLayout;
-	VertexLayout vl;
-	vl.Append(VertexLayout::Position3D);
-	vl.Append(VertexLayout::Normal);
-	vl.Append(VertexLayout::Tangent);
-	vl.Append(VertexLayout::Binormal);
-	vl.Append(VertexLayout::Texture2D);
-	auto model = Sphere::MakeNormalUVed(vl, true);
-
 	const auto geometryTag = "$uvpannel." + std::to_string(num);
-	AddBind(VertexBuffer::Resolve(gfx, geometryTag, model.vertices));
-	AddBind(IndexBuffer::Resolve(gfx, geometryTag, model.indices));
+	AddBind(VertexBuffer::Resolve(gfx, geometryTag, vertices));
+	AddBind(IndexBuffer::Resolve(gfx, geometryTag, indices));
 
 	auto pvs = VertexShader::Resolve(gfx, "UVPannelVS.cso");
 	auto pvsbc = pvs->GetBytecode();
@@ -29,7 +20,7 @@ UVPannel::UVPannel(Graphics& gfx, short int num)
 
 	AddBind(PixelShader::Resolve(gfx, "UVPannelPS.cso"));
 
-	AddBind(InputLayout::Resolve(gfx, model.vertices.GetLayout(), pvsbc));
+	AddBind(InputLayout::Resolve(gfx, vertices.GetLayout(), pvsbc));
 
 	AddBind(Topology::Resolve(gfx, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST));
 }

@@ -76,9 +76,14 @@ float4 main(PSIn i) : SV_Target
 		float3 bumpNormal;
 		bumpNormal = nmap.Sample(splr, i.uv).rgb;
 		bumpNormal = bumpNormal * 2.0f - 1.0f;
-		bumpNormal = (bumpNormal.x * i.tangent) + (bumpNormal.y * i.binormal) + (bumpNormal.z * i.normal);
+		bumpNormal = (bumpNormal.x * normalize(i.tangent)) + (bumpNormal.y * normalize(i.binormal)) + (bumpNormal.z * normalize(i.normal));
 		i.normal = normalize(bumpNormal);
 	}
+	else
+	{
+		i.normal = normalize(i.normal);
+	}
+
 	//const float3 PlightDir = normalize(lightPos - i.worldPos);
 
 	//const float distToL = length(lightPos - i.worldPos);

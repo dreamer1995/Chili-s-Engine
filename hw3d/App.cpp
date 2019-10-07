@@ -19,13 +19,12 @@ App::App()
 	cam(wnd.Gfx()),
 	//plane(wnd.Gfx(), 3.0f),
 	prePlane(wnd.Gfx(), 1.0f),
-	skyBox(wnd.Gfx(), 10.0f),
-	cube(wnd.Gfx(), 4.0f),
-	uvPannel(wnd.Gfx(), 1)
+	skyBox(wnd.Gfx(), 10.0f)
+	//cube(wnd.Gfx(), 4.0f),
 {
 	//wall.SetRootTransform(dx::XMMatrixTranslation(pointlight.GetPos().x - 3.0f, pointlight.GetPos().y, pointlight.GetPos().z - 2.0f));
 	//plane.SetPos({ -5.0f,17.0f,-1.0f });
-
+	uvPannel = std::make_unique<UVPannel>(wnd.Gfx(), 1, gun.UVPos, gun.indices);
 	wnd.Gfx().SetViewPort('P');
 	wnd.Gfx().SetStencilState('C');
 	wnd.Gfx().SetRasterState('N');
@@ -81,7 +80,7 @@ App::App()
 	wnd.Gfx().SetStencilState();
 
 	wnd.Gfx().SetProjection(dx::XMMatrixPerspectiveLH(1.0f, 9.0f / 16.0f, 0.5f, 40.0f));
-	cube.SetPos(pointlight.GetPos());
+	//gun.SetPos(pointlight.GetPos());
 	wnd.Gfx().SetViewPort('U');
 }
 
@@ -97,7 +96,7 @@ void App::DoFrame()
 	//wall.Draw( wnd.Gfx() );
 	//nano.Draw( wnd.Gfx() );
 	//nano2.Draw( wnd.Gfx() );
-	pointlight.Draw( wnd.Gfx() );
+	//pointlight.Draw( wnd.Gfx() );
 	directionallight.Draw(wnd.Gfx());
 
 	static bool isWireframe = false;
@@ -126,13 +125,18 @@ void App::DoFrame()
 	}
 	wnd.Gfx().SetStencilState();
 
-	cube.Draw(wnd.Gfx());
+	gun.Draw(wnd.Gfx());
 
-	wnd.Gfx().SetViewPort('P');
-	wnd.Gfx().SetRasterState('W');
-	uvPannel.Draw(wnd.Gfx());
-	wnd.Gfx().SetViewPort();
-	wnd.Gfx().SetRasterState();
+	if (uvPannel->showUV)
+	{
+		wnd.Gfx().SetViewPort('P');
+		wnd.Gfx().SetRasterState('W');
+		uvPannel->Draw(wnd.Gfx());
+		wnd.Gfx().SetViewPort();
+		wnd.Gfx().SetRasterState();
+	}
+
+	static bool isRotate = true;
 
 	while( const auto e = wnd.kbd.ReadKey() )
 	{
@@ -164,6 +168,25 @@ void App::DoFrame()
 			case VK_F4:
 				isWireframe = false;
 				break;
+			case VK_F5:
+				if (uvPannel->showUV)
+				{
+					uvPannel->showUV = false;
+				}
+				else
+				{
+					uvPannel->showUV = true;
+				}
+				break;
+			case VK_SPACE:
+				if (isRotate)
+				{
+					isRotate = false;
+				}
+				else
+				{
+					isRotate = true;
+				}
 			break;
 		}
 	}
@@ -305,7 +328,12 @@ void App::DoFrame()
 			directionallight.Rotate((float)delta->x, (float)delta->y);
 		}
 	}
-		
+	
+	if (isRotate)
+	{
+		gun.SetRotation(gun.roll, gun.pitch, gun.yaw + dt);
+	}
+
 	// imgui windows
 	cam.SpawnControlWindow();
 	pointlight.SpawnControlWindow();
@@ -315,7 +343,7 @@ void App::DoFrame()
 	//nano.ShowWindow( "Model 1" );
 	//nano2.ShowWindow( "Model 2" );
 	//plane.SpawnControlWindow( wnd.Gfx() );
-	cube.SpawnControlWindow(wnd.Gfx());
+	gun.SpawnControlWindow(wnd.Gfx());
 	skyBox.SpawnControlWindow(wnd.Gfx());
 
 	// present
