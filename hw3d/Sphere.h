@@ -355,6 +355,6 @@ public:
 			.Append(VertexLayout::Texture2D);
 		}
 
-		return MakeTesselatedNormalUV(std::move(*layout), 12, 24, withTangent);
+		return MakeTesselatedNormalUV(std::move(*layout), 48, 96, withTangent);
 	}
 };

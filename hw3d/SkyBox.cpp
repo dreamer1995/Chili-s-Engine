@@ -30,8 +30,6 @@ SkyBox::SkyBox(Graphics& gfx, float size)
 	AddBind(Topology::Resolve(gfx, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST));
 
 	AddBind(std::make_shared<TransformCbuf>(gfx, *this));
-
-	AddBind(Sampler::Resolve(gfx));
 }
 
 void SkyBox::SetPos(DirectX::XMFLOAT3 pos) noexcept

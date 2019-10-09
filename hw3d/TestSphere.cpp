@@ -25,18 +25,18 @@ TestSphere::TestSphere(Graphics& gfx, float size)
 	AddBind(IndexBuffer::Resolve(gfx, geometryTag, model.indices));
 
 	//AddBind(Texture::Resolve(gfx, "Images\\jellybeans1.jpg", 0u, true));
-	AddBind(Texture::Resolve(gfx, "Images\\rustediron2_basecolor.png"));
-	AddBind(Texture::Resolve(gfx, "Images\\rustediron2_normal.png", 1u));
-	AddBind(Texture::Resolve(gfx, "Images\\rustediron2_RMA.png", 2u));
+	//AddBind(Texture::Resolve(gfx, "Images\\rustediron2_basecolor.png"));
+	//AddBind(Texture::Resolve(gfx, "Images\\rustediron2_normal.png", 1u));
+	//AddBind(Texture::Resolve(gfx, "Images\\rustediron2_RMA.png", 2u));
 	AddBind(TexturePre::Resolve(gfx, 3u, gfx.GetShaderResourceView()));
 	AddBind(TexturePre::Resolve(gfx, 4u, gfx.GetShaderResourceView('M')));
 	AddBind(TexturePre::Resolve(gfx, 5u, gfx.GetShaderResourceView('L')));
 
-	auto pvs = VertexShader::Resolve(gfx, "PBRTestTexVS.cso");
+	auto pvs = VertexShader::Resolve(gfx, "PBRTestVS.cso");
 	auto pvsbc = pvs->GetBytecode();
 	AddBind(std::move(pvs));
 
-	AddBind(PixelShader::Resolve(gfx, "PBRTestTexPS.cso"));
+	AddBind(PixelShader::Resolve(gfx, "PBRTestPS.cso"));
 
 	AddBind(PixelConstantBuffer<PSMaterialConstant>::Resolve(gfx, pmc, 3u));
 
@@ -79,7 +79,7 @@ void TestSphere::SpawnControlWindow(Graphics& gfx) noexcept
 		ImGui::SliderAngle("Roll", &roll, -180.0f, 180.0f);
 		ImGui::Text("Shading");
 		bool changed0 = ImGui::SliderFloat("Metallic", &pmc.metallic, 0.0f, 1.0f);
-		bool changed1 = ImGui::SliderFloat("Roughness", &pmc.roughness, 0.01f, 0.99f);
+		bool changed1 = ImGui::SliderFloat("Roughness", &pmc.roughness, 0.0f, 1.0f);
 		bool checkState = pmc.normalMappingEnabled == TRUE;
 		bool changed2 = ImGui::Checkbox("Enable Normal Map", &checkState);
 		pmc.normalMappingEnabled = checkState ? TRUE : FALSE;
@@ -89,4 +89,10 @@ void TestSphere::SpawnControlWindow(Graphics& gfx) noexcept
 		}
 	}
 	ImGui::End();
+}
+
+void TestSphere::ChangeSphereMaterialState(Graphics& gfx, float pitch, float yaw, float roll) noexcept
+{
+	pmc.EVRotation = DirectX::XMMatrixRotationRollPitchYaw(pitch, yaw, roll);
+	QueryBindable<Bind::PixelConstantBuffer<PSMaterialConstant>>()->Update(gfx, pmc);
 }

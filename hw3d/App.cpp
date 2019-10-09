@@ -20,7 +20,6 @@ App::App()
 	//plane(wnd.Gfx(), 3.0f),
 	prePlane(wnd.Gfx(), 1.0f),
 	skyBox(wnd.Gfx(), 10.0f)
-	//cube(wnd.Gfx(), 4.0f),
 {
 	//wall.SetRootTransform(dx::XMMatrixTranslation(pointlight.GetPos().x - 3.0f, pointlight.GetPos().y, pointlight.GetPos().z - 2.0f));
 	//plane.SetPos({ -5.0f,17.0f,-1.0f });
@@ -64,6 +63,7 @@ App::App()
 	{
 		wnd.Gfx().SetCubemapSRVMip(i);
 		preSkyBoxMip->pmc.roughness = (float)i / 4.0f;
+		preSkyBoxMip->ChangeSphereMaterialState(wnd.Gfx());
 		for (short j = 0; j < 6; j++)
 		{
 			wnd.Gfx().SetPreRenderTarget(j);
@@ -80,12 +80,13 @@ App::App()
 	wnd.Gfx().SetStencilState();
 
 	wnd.Gfx().SetProjection(dx::XMMatrixPerspectiveLH(1.0f, 9.0f / 16.0f, 0.5f, 40.0f));
-	//gun.SetPos(pointlight.GetPos());
+
 	wnd.Gfx().SetViewPort('U');
 }
 
 void App::DoFrame()
 {
+	wnd.Gfx().SetViewPort();
 	const auto dt = timer.Mark() * speed_factor;
 	wnd.Gfx().BeginFrame( 0.07f,0.0f,0.12f );
 	wnd.Gfx().SetCamera( cam.GetMatrix() );
@@ -125,6 +126,7 @@ void App::DoFrame()
 	}
 	wnd.Gfx().SetStencilState();
 
+	gun.ChangeSphereMaterialState(wnd.Gfx(), skyBox.pitch, skyBox.yaw, skyBox.roll);
 	gun.Draw(wnd.Gfx());
 
 	if (uvPannel->showUV)

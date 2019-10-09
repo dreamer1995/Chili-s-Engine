@@ -407,7 +407,7 @@
     <None Include="DXTrace.inl">
       <Filter>Dxerr</Filter>
     </None>
-    <None Include="IBLHeader.hlsli">
+    <None Include="PBRHeader.hlsli">
       <Filter>Shader</Filter>
     </None>
   </ItemGroup>

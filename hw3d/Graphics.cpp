@@ -76,7 +76,7 @@ Graphics::Graphics( HWND hWnd,int width,int height )
 	texDesc.ArraySize = 6;
 	texDesc.SampleDesc.Count = 1;
 	texDesc.SampleDesc.Quality = 0;
-	texDesc.Format = DXGI_FORMAT_R16G16B16A16_FLOAT;
+	texDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
 	texDesc.Usage = D3D11_USAGE_DEFAULT;
 	texDesc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
 	texDesc.CPUAccessFlags = 0;
@@ -90,8 +90,8 @@ Graphics::Graphics( HWND hWnd,int width,int height )
 	texDesc.Width = 64u;
 	texDesc.Height = 64u;
 	GFX_THROW_INFO(pDevice->CreateTexture2D(&texDesc, NULL, &pPreCubeMap));
-	texDesc.Width = 128u;
-	texDesc.Height = 128u;
+	texDesc.Width = 256u;
+	texDesc.Height = 256u;
 	texDesc.MipLevels = 5;
 	GFX_THROW_INFO(pDevice->CreateTexture2D(&texDesc, NULL, &pPreCubeMapM));
 
@@ -439,7 +439,7 @@ void Graphics::SetCubemapSRVMip(short int i)
 {
 	HRESULT hr;
 
-	float mipHeight = 128.0f * (float)pow(0.5, i);
+	float mipHeight = 256u * (float)pow(0.5, i);
 	pPreMapVP.Width = mipHeight;
 	pPreMapVP.Height = mipHeight;
 	pContext->RSSetViewports(1u, &pPreMapVP);

@@ -9,12 +9,14 @@ public:
 	void SetRotation(float roll, float pitch, float yaw) noexcept;
 	DirectX::XMMATRIX GetTransformXM() const noexcept override;
 	void SpawnControlWindow(Graphics& gfx) noexcept;
+	void ChangeSphereMaterialState(Graphics& gfx, float pitch, float yaw, float roll) noexcept;
 private:
 	struct PSMaterialConstant
 	{
 		float metallic = 1.0f;
-		float roughness = 0.99f;
-		BOOL normalMappingEnabled = TRUE;
+		float roughness = 0.0f;
+		BOOL normalMappingEnabled = FALSE;
+		DirectX::XMMATRIX EVRotation = DirectX::XMMatrixIdentity();
 		float padding[1];
 	} pmc;
 	DirectX::XMFLOAT3 pos = { 0.0f,0.0f,0.0f };

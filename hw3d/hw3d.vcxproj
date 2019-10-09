@@ -218,7 +218,7 @@
     <None Include="DXGetErrorDescription.inl" />
     <None Include="DXGetErrorString.inl" />
     <None Include="DXTrace.inl" />
-    <None Include="IBLHeader.hlsli" />
+    <None Include="PBRHeader.hlsli" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="IntegrateBRDFPixelShader.hlsl">

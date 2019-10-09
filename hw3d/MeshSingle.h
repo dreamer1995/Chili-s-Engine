@@ -17,6 +17,7 @@ public:
 	void SetRotation(float roll, float pitch, float yaw) noexcept;
 	DirectX::XMMATRIX GetTransformXM() const noexcept override;
 	void SpawnControlWindow(Graphics& gfx) noexcept;
+	void ChangeSphereMaterialState(Graphics& gfx, float pitch, float yaw, float roll) noexcept;
 
 public:
 	Dvtx::VertexBuffer UVPos;
@@ -31,6 +32,7 @@ private:
 		float metallic = 1.0f;
 		float roughness = 1.0f;
 		BOOL normalMappingEnabled = TRUE;
+		DirectX::XMMATRIX EVRotation = DirectX::XMMatrixIdentity();
 		float padding[1];
 	} pmc;
 	DirectX::XMFLOAT3 pos = { 0.0f,1.0f,0.0f };

@@ -34,7 +34,7 @@ PreSkyBox::PreSkyBox(Graphics& gfx, float size, char type)
 	}
 	else
 	{
-		AddBind(Texture::Resolve(gfx, "Images\\Villa Nova Street.jpg"));
+		AddBind(Texture::Resolve(gfx, "Images\\EpicQuadPanorama_CC+EV1.jpg"));
 
 		AddBind(PixelShader::Resolve(gfx, "SphereToCubePS.cso"));
 	}
@@ -46,6 +46,8 @@ PreSkyBox::PreSkyBox(Graphics& gfx, float size, char type)
 	AddBind(std::make_shared<TransformCbuf>(gfx, *this));
 
 	AddBind(Sampler::Resolve(gfx));
+
+	AddBind(Sampler::Resolve(gfx, 'C'));
 }
 
 void PreSkyBox::SetRotation(float roll, float pitch, float yaw) noexcept
@@ -65,4 +67,9 @@ void PreSkyBox::Reset() noexcept
 	pitch = 0.0f;
 	yaw = 0.0f;
 	roll = 0.0f;
+}
+
+void PreSkyBox::ChangeSphereMaterialState(Graphics& gfx) noexcept
+{
+	QueryBindable<Bind::PixelConstantBuffer<PSMaterialConstant>>()->Update(gfx, pmc);
 }

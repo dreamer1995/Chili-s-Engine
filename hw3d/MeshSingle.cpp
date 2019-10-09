@@ -116,8 +116,8 @@ void MeshSingle::SpawnControlWindow(Graphics& gfx) noexcept
 		ImGui::SliderAngle("Yaw", &yaw, -180.0f, 180.0f);
 		ImGui::SliderAngle("Roll", &roll, -180.0f, 180.0f);
 		ImGui::Text("Shading");
-		bool changed0 = ImGui::SliderFloat("Metallic", &pmc.metallic, 0.0f, 2.0f);
-		bool changed1 = ImGui::SliderFloat("Roughness", &pmc.roughness, 0.01f, 1.99f);
+		bool changed0 = ImGui::SliderFloat("Metallic", &pmc.metallic, 0.0f, 10.0f);
+		bool changed1 = ImGui::SliderFloat("Roughness", &pmc.roughness, 0.01f, 10.0f);
 		bool checkState = pmc.normalMappingEnabled == TRUE;
 		bool changed2 = ImGui::Checkbox("Enable Normal Map", &checkState);
 		pmc.normalMappingEnabled = checkState ? TRUE : FALSE;
@@ -127,4 +127,10 @@ void MeshSingle::SpawnControlWindow(Graphics& gfx) noexcept
 		}
 	}
 	ImGui::End();
+}
+
+void MeshSingle::ChangeSphereMaterialState(Graphics& gfx, float pitch, float yaw, float roll) noexcept
+{
+	pmc.EVRotation = DirectX::XMMatrixRotationRollPitchYaw(pitch, yaw, roll);
+	QueryBindable<Bind::PixelConstantBuffer<PSMaterialConstant>>()->Update(gfx, pmc);
 }

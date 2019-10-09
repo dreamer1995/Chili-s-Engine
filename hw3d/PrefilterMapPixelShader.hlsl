@@ -1,4 +1,4 @@
-#include <IBLHeader.hlsli>
+#include <PBRHeader.hlsli>
 
 TextureCube EnvMap;
 SamplerState basicSampler;
@@ -6,7 +6,6 @@ SamplerState basicSampler;
 cbuffer ExternalData : register(b3)
 {
 	float roughness;
-	float padding[3];
 }
 
 float4 main(float3 tc : Texcoord) : SV_TARGET
@@ -28,8 +27,8 @@ float4 main(float3 tc : Texcoord) : SV_TARGET
 		if (NdotL > 0)
 		{
 			// sample from the environment's mip level based on roughness/pdf
-			float D = NormalDistributionGGXTR(normalVec, halfwayVec, roughness);
 			float NdotH = max(dot(normalVec, halfwayVec), 0.0f);
+			float D = DistributionGGX(NdotH, roughness);
 			float HdotV = max(dot(halfwayVec, viewDir), 0.0f);
 			float pdf = D * NdotH / (4.0f * HdotV) + 0.0001f;
 

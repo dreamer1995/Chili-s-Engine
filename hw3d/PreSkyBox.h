@@ -7,6 +7,7 @@ public:
 	PreSkyBox(Graphics& gfx, float size, char type = 'D');
 	void SetRotation(float roll, float pitch, float yaw) noexcept;
 	DirectX::XMMATRIX GetTransformXM() const noexcept override;
+	void ChangeSphereMaterialState(Graphics& gfx) noexcept;
 public:
 	struct PSMaterialConstant
 	{
