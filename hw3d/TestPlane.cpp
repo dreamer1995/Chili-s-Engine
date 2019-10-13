@@ -9,20 +9,34 @@ TestPlane::TestPlane( Graphics& gfx,float size )
 	using namespace Bind;
 	namespace dx = DirectX;
 
-	auto model = Plane::Make();
+	auto model = Plane::Make(true);
 	model.Transform( dx::XMMatrixScaling( size,size,1.0f ) );
 	const auto geometryTag = "$plane." + std::to_string( size );
 	AddBind( VertexBuffer::Resolve( gfx,geometryTag,model.vertices ) );
 	AddBind( IndexBuffer::Resolve( gfx,geometryTag,model.indices ) );
 
-	AddBind( Texture::Resolve( gfx,"Images\\brickwall.jpg" ) );
-	AddBind( Texture::Resolve( gfx,"Images\\brickwall_normal.jpg",1u ) );
+	//AddBind( Texture::Resolve( gfx,"Images\\brickwall.jpg" ) );
+	//AddBind( Texture::Resolve( gfx,"Images\\brickwall_normal.jpg",1u ) );
 
-	auto pvs = VertexShader::Resolve( gfx,"PhongVS.cso" );
+	//auto pvs = VertexShader::Resolve( gfx,"PhongVS.cso" );
+	//auto pvsbc = pvs->GetBytecode();
+	//AddBind( std::move( pvs ) );
+
+	//AddBind( PixelShader::Resolve( gfx,"PhongPSNormalMapObject.cso" ) );
+
+	//AddBind(Texture::Resolve(gfx, "Images\\jellybeans1.jpg", 0u, true));
+	//AddBind(Texture::Resolve(gfx, "Images\\rustediron2_basecolor.png"));
+	AddBind(Texture::Resolve(gfx, "Images\\rustediron2_normal.png", 1u));
+	//AddBind(Texture::Resolve(gfx, "Images\\rustediron2_RMA.png", 2u));
+	AddBind(TexturePre::Resolve(gfx, 3u, gfx.GetShaderResourceView()));
+	AddBind(TexturePre::Resolve(gfx, 4u, gfx.GetShaderResourceView('M')));
+	AddBind(TexturePre::Resolve(gfx, 5u, gfx.GetShaderResourceView('L')));
+
+	auto pvs = VertexShader::Resolve(gfx, "PBRTestVS.cso");
 	auto pvsbc = pvs->GetBytecode();
-	AddBind( std::move( pvs ) );
+	AddBind(std::move(pvs));
 
-	AddBind( PixelShader::Resolve( gfx,"PhongPSNormalMapObject.cso" ) );
+	AddBind(PixelShader::Resolve(gfx, "PBRTestPS.cso"));
 
 	AddBind( PixelConstantBuffer<PSMaterialConstant>::Resolve( gfx,pmc,3u ) );
 
@@ -64,8 +78,10 @@ void TestPlane::SpawnControlWindow( Graphics& gfx ) noexcept
 		ImGui::SliderAngle( "Yaw",&yaw,-180.0f,180.0f );
 		ImGui::SliderAngle("Roll", &roll, -180.0f, 180.0f);
 		ImGui::Text( "Shading" );
-		bool changed0 = ImGui::SliderFloat( "Spec. Int.",&pmc.specularIntensity,0.0f,1.0f );
-		bool changed1 = ImGui::SliderFloat( "Spec. Power",&pmc.specularPower,0.0f,100.0f );
+		//bool changed0 = ImGui::SliderFloat( "Spec. Int.",&pmc.specularIntensity,0.0f,1.0f );
+		//bool changed1 = ImGui::SliderFloat( "Spec. Power",&pmc.specularPower,0.0f,100.0f );
+		bool changed0 = ImGui::SliderFloat("Metallic", &pmc.metallic, 0.0f, 1.0f);
+		bool changed1 = ImGui::SliderFloat("Roughness", &pmc.roughness, 0.0f, 1.0f);
 		bool checkState = pmc.normalMappingEnabled == TRUE;
 		bool changed2 = ImGui::Checkbox( "Enable Normal Map",&checkState );
 		pmc.normalMappingEnabled = checkState ? TRUE : FALSE;
@@ -75,4 +91,10 @@ void TestPlane::SpawnControlWindow( Graphics& gfx ) noexcept
 		}
 	}
 	ImGui::End();
+}
+
+void TestPlane::ChangeSphereMaterialState(Graphics& gfx, float pitch, float yaw, float roll) noexcept
+{
+	pmc.EVRotation = DirectX::XMMatrixRotationRollPitchYaw(pitch, yaw, roll);
+	QueryBindable<Bind::PixelConstantBuffer<PSMaterialConstant>>()->Update(gfx, pmc);
 }

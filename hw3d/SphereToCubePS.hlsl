@@ -4,7 +4,7 @@ SamplerState splr;
 static float2 invAtan = float2(0.1591f, 0.3182f);
 float2 SampleSphereicalMap(float3 tc)
 {
-	float2 uv = float2(atan2(tc.z, tc.x), asin(-tc.y));
+	float2 uv = float2(atan2(tc.z, -tc.x), asin(-tc.y));
 	uv *= invAtan;
 	uv += 0.5;
 	return uv;

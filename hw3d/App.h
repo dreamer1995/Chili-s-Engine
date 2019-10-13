@@ -36,14 +36,14 @@ private:
 	DirectionalLight directionallight;
 	//Model wall{ wnd.Gfx(),"Models\\brick_wall\\brick_wall.obj" };
 	//Model nano{ wnd.Gfx(),"Models\\nano_textured\\nanosuit.obj" };
-	//TestPlane plane;
+	TestPlane plane;
 	//TestCube
-	TestSphere cube{ wnd.Gfx(), 4.0f };
+	//TestSphere cube{ wnd.Gfx(), 4.0f };
 	SkyBox skyBox;
 	std::unique_ptr<PreSkyBox> preSkyBox;
 	std::unique_ptr<PreSkyBox> preSkyBoxBlur;
 	std::unique_ptr<PreSkyBox> preSkyBoxMip;
 	PrePlane prePlane;
 	std::unique_ptr<UVPannel> uvPannel;
-	MeshSingle gun{ wnd.Gfx(), "Models\\Cerberus_LP.FBX", 0.1f };
+	//MeshSingle gun{ wnd.Gfx(), "Models\\Cerberus_LP.FBX", 0.1f };
 };

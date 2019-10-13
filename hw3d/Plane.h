@@ -10,7 +10,8 @@
 class Plane
 {
 public:
-	static IndexedTriangleList MakeTesselatedTextured(Dvtx::VertexLayout layout, int divisions_x, int divisions_y, bool withNormal)
+	static IndexedTriangleList MakeTesselatedTextured(Dvtx::VertexLayout layout, int divisions_x, int divisions_y,
+		bool withNormal, bool withTangent = false)
 	{
 		namespace dx = DirectX;
 		assert( divisions_x >= 1 );
@@ -40,11 +41,24 @@ public:
 					const float x_pos_tc = float( x ) * divisionSize_x_tc;
 					if (withNormal)
 					{
-						vb.EmplaceBack(
-							dx::XMFLOAT3{ x_pos,y_pos,0.0f },
-							dx::XMFLOAT3{ 0.0f,0.0f,-1.0f },
-							dx::XMFLOAT2{ x_pos_tc,y_pos_tc }
-						);
+						if (withTangent)
+						{
+							vb.EmplaceBack(
+								dx::XMFLOAT3{ x_pos,y_pos,0.0f },
+								dx::XMFLOAT3{ 0.0f,0.0f,-1.0f },
+								dx::XMFLOAT3{ 1.0f,0.0f,0.0f },
+								dx::XMFLOAT3{ 0.0f,-1.0f,0.0f },
+								dx::XMFLOAT2{ x_pos_tc,y_pos_tc }
+							);
+						}
+						else
+						{
+							vb.EmplaceBack(
+								dx::XMFLOAT3{ x_pos,y_pos,0.0f },
+								dx::XMFLOAT3{ 0.0f,0.0f,-1.0f },
+								dx::XMFLOAT2{ x_pos_tc,y_pos_tc }
+							);
+						}
 					}
 					else
 					{
@@ -82,7 +96,7 @@ public:
 
 		return{ std::move( vb ),std::move( indices ) };
 	}
-	static IndexedTriangleList Make(bool withNormal = true)
+	static IndexedTriangleList Make(bool withTangent = false, bool withNormal = true)
 	{
 		using Dvtx::VertexLayout;
 		VertexLayout vl;
@@ -90,9 +104,14 @@ public:
 		if (withNormal)
 		{
 			vl.Append(VertexLayout::Normal);
+			if (withTangent)
+			{
+				vl.Append(VertexLayout::Tangent);
+				vl.Append(VertexLayout::Binormal);
+			}
 		}
 		vl.Append( VertexLayout::Texture2D );
 
-		return MakeTesselatedTextured(std::move(vl), 1, 1, withNormal);
+		return MakeTesselatedTextured(std::move(vl), 1, 1, withNormal, withTangent);
 	}
 };
