@@ -96,7 +96,24 @@ public:
 
 		return{ std::move( vb ),std::move( indices ) };
 	}
-	static IndexedTriangleList Make(bool withTangent = false, bool withNormal = true)
+
+	static IndexedTriangleList Make(char type = 'D')
+	{
+		if (type == 'T')
+		{
+			return MakeTessellation(false, false, 128);
+		}
+		else if (type == 'F')
+		{
+			return MakeTessellation();
+		}
+		else
+		{
+			return MakeTessellation(true);
+		}
+	}
+
+	static IndexedTriangleList MakeTessellation(bool withTangent = false, bool withNormal = true, int tessellation = 1)
 	{
 		using Dvtx::VertexLayout;
 		VertexLayout vl;
@@ -112,6 +129,6 @@ public:
 		}
 		vl.Append( VertexLayout::Texture2D );
 
-		return MakeTesselatedTextured(std::move(vl), 1, 1, withNormal, withTangent);
+		return MakeTesselatedTextured(std::move(vl), tessellation, tessellation, withNormal, withTangent);
 	}
 };

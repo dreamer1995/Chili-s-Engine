@@ -240,6 +240,29 @@ Graphics::Graphics( HWND hWnd,int width,int height )
 	//Set the Rasterizer
 	pContext->RSSetState(pRasterStateNoneSolid.Get());
 
+	D3D11_BLEND_DESC blendStateDesc{};
+
+	//initialize/clear description
+	blendStateDesc.RenderTarget[0].BlendEnable = TRUE;
+	//blendStateDesc.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;
+	blendStateDesc.RenderTarget[0].SrcBlend = D3D11_BLEND_ONE;
+	//blendStateDesc.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
+	blendStateDesc.RenderTarget[0].DestBlend = D3D11_BLEND_ONE;
+	blendStateDesc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
+	blendStateDesc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE;
+	blendStateDesc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ZERO;
+	blendStateDesc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
+	blendStateDesc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
+
+	//create the enabled blend state
+	GFX_THROW_INFO(pDevice->CreateBlendState(&blendStateDesc, &pAlphaEnable));
+
+	//Modify to create disabled alpha blend state
+	blendStateDesc.RenderTarget[0].BlendEnable = false;
+
+	//create the disabled blend state
+	GFX_THROW_INFO(pDevice->CreateBlendState(&blendStateDesc, &pAlphaDisable));
+
 	// init imgui d3d impl
 	ImGui_ImplDX11_Init( pDevice.Get(),pContext.Get() );
 }
@@ -463,6 +486,18 @@ void Graphics::SetLUTRT() noexcept
 	pContext->ClearDepthStencilView(pPreDSV.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0u);
 
 	pContext->OMSetRenderTargets(1u, pPreLUTTarget.GetAddressOf(), pPreDSV.Get());
+}
+
+void Graphics::SetAlphaBlendState() noexcept
+{
+	pContext->OMSetBlendState(pAlphaDisable.Get(), NULL, 0xffffffff);
+}
+void Graphics::SetAlphaBlendState(char type) noexcept
+{
+	if (type == 'A')
+	{
+		pContext->OMSetBlendState(pAlphaEnable.Get(), NULL, 0xffffffff);
+	}
 }
 
 // Graphics exception stuff

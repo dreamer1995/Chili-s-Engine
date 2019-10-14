@@ -189,6 +189,9 @@
     <ClCompile Include="MeshWall.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="CausticPlane.cpp">
+      <Filter>Source Files\Drawable</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="WindowsMessageMap.h">
@@ -386,6 +389,9 @@
     <ClInclude Include="MeshSingle.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="CausticPlane.h">
+      <Filter>Header Files\Drawable</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="hw3d.rc">
@@ -491,6 +497,18 @@
       <Filter>Shader</Filter>
     </FxCompile>
     <FxCompile Include="UVPannelVS.hlsl">
+      <Filter>Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="CausticVS.hlsl">
+      <Filter>Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="FluidPS.hlsl">
+      <Filter>Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="FluidVS.hlsl">
+      <Filter>Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="CausticPS.hlsl">
       <Filter>Shader</Filter>
     </FxCompile>
   </ItemGroup>

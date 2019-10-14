@@ -28,9 +28,9 @@ TestSphere::TestSphere(Graphics& gfx, float size)
 	//AddBind(Texture::Resolve(gfx, "Images\\rustediron2_basecolor.png"));
 	//AddBind(Texture::Resolve(gfx, "Images\\rustediron2_normal.png", 1u));
 	//AddBind(Texture::Resolve(gfx, "Images\\rustediron2_RMA.png", 2u));
-	AddBind(TexturePre::Resolve(gfx, 3u, gfx.GetShaderResourceView()));
-	AddBind(TexturePre::Resolve(gfx, 4u, gfx.GetShaderResourceView('M')));
-	AddBind(TexturePre::Resolve(gfx, 5u, gfx.GetShaderResourceView('L')));
+	AddBind(TexturePre::Resolve(gfx, 10u, gfx.GetShaderResourceView()));
+	AddBind(TexturePre::Resolve(gfx, 11u, gfx.GetShaderResourceView('M')));
+	AddBind(TexturePre::Resolve(gfx, 12u, gfx.GetShaderResourceView('L')));
 
 	auto pvs = VertexShader::Resolve(gfx, "PBRTestVS.cso");
 	auto pvsbc = pvs->GetBytecode();

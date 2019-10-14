@@ -58,8 +58,8 @@ void Camera::SpawnControlWindow() noexcept
 
 void Camera::Reset() noexcept
 {
-	pos = { 0.0f,0.0f,-14.0f };
-	pitch = 0.0f;
+	pos = { 0.0f,2.5f,-14.0f };
+	pitch = 21.0f * PI / 180.0f;
 	yaw = 0.0f;
 	yaw_ = 0;
 }

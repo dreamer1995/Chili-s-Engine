@@ -9,7 +9,7 @@ TestPlane::TestPlane( Graphics& gfx,float size )
 	using namespace Bind;
 	namespace dx = DirectX;
 
-	auto model = Plane::Make(true);
+	auto model = Plane::Make();
 	model.Transform( dx::XMMatrixScaling( size,size,1.0f ) );
 	const auto geometryTag = "$plane." + std::to_string( size );
 	AddBind( VertexBuffer::Resolve( gfx,geometryTag,model.vertices ) );
@@ -25,18 +25,18 @@ TestPlane::TestPlane( Graphics& gfx,float size )
 	//AddBind( PixelShader::Resolve( gfx,"PhongPSNormalMapObject.cso" ) );
 
 	//AddBind(Texture::Resolve(gfx, "Images\\jellybeans1.jpg", 0u, true));
-	//AddBind(Texture::Resolve(gfx, "Images\\rustediron2_basecolor.png"));
-	AddBind(Texture::Resolve(gfx, "Images\\rustediron2_normal.png", 1u));
-	//AddBind(Texture::Resolve(gfx, "Images\\rustediron2_RMA.png", 2u));
-	AddBind(TexturePre::Resolve(gfx, 3u, gfx.GetShaderResourceView()));
-	AddBind(TexturePre::Resolve(gfx, 4u, gfx.GetShaderResourceView('M')));
-	AddBind(TexturePre::Resolve(gfx, 5u, gfx.GetShaderResourceView('L')));
+	AddBind(Texture::Resolve(gfx, "Images\\T_MediumWaves_H.jpg"));
+	AddBind(Texture::Resolve(gfx, "Images\\T_MediumWaves_N.jpg", 1u));
+	AddBind(Texture::Resolve(gfx, "Images\\T_SmallWaves_N.jpg", 2u));
+	AddBind(TexturePre::Resolve(gfx, 10u, gfx.GetShaderResourceView()));
+	AddBind(TexturePre::Resolve(gfx, 11u, gfx.GetShaderResourceView('M')));
+	AddBind(TexturePre::Resolve(gfx, 12u, gfx.GetShaderResourceView('L')));
 
-	auto pvs = VertexShader::Resolve(gfx, "PBRTestVS.cso");
+	auto pvs = VertexShader::Resolve(gfx, "FluidVS.cso");
 	auto pvsbc = pvs->GetBytecode();
 	AddBind(std::move(pvs));
 
-	AddBind(PixelShader::Resolve(gfx, "PBRTestPS.cso"));
+	AddBind(PixelShader::Resolve(gfx, "FluidPS.cso"));
 
 	AddBind( PixelConstantBuffer<PSMaterialConstant>::Resolve( gfx,pmc,3u ) );
 
@@ -96,5 +96,11 @@ void TestPlane::SpawnControlWindow( Graphics& gfx ) noexcept
 void TestPlane::ChangeSphereMaterialState(Graphics& gfx, float pitch, float yaw, float roll) noexcept
 {
 	pmc.EVRotation = DirectX::XMMatrixRotationRollPitchYaw(pitch, yaw, roll);
+	QueryBindable<Bind::PixelConstantBuffer<PSMaterialConstant>>()->Update(gfx, pmc);
+}
+
+void TestPlane::Bind(Graphics& gfx, float deltaTime) noexcept
+{
+	pmc.time += deltaTime;
 	QueryBindable<Bind::PixelConstantBuffer<PSMaterialConstant>>()->Update(gfx, pmc);
 }

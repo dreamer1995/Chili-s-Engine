@@ -36,6 +36,7 @@ namespace Bind
 		{
 			slot = 1u;
 		}
+		GetContext(gfx)->VSSetSamplers(slot, 1, pSampler.GetAddressOf());
 		GetContext( gfx )->PSSetSamplers(slot,1,pSampler.GetAddressOf() );
 	}
 	std::shared_ptr<Sampler> Sampler::Resolve(Graphics& gfx, char type)

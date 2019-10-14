@@ -6,6 +6,7 @@ DirectionalLight::DirectionalLight(Graphics& gfx, float radius, float size)
 	:
 	sphere(gfx, radius),
 	arrow(gfx, size),
+	cbufVS(gfx, 1u),
 	cbuf(gfx, 1u)
 {
 	Reset();
@@ -56,8 +57,10 @@ void DirectionalLight::Reset() noexcept
 		1.0f,
 	};
 	pos = { 0.0f,10.0f,0.0f };
-	pitch = -PI / 4;
-	yaw = -PI / 4;
+	/*pitch = -PI / 4;
+	yaw = -PI / 4;*/
+	pitch = 0.0f;
+	yaw = 0.0f;
 	roll = 0.0f;
 }
 
@@ -76,11 +79,14 @@ void DirectionalLight::Bind(Graphics& gfx) const noexcept
 	namespace dx = DirectX;
 	using namespace dx;
 	XMStoreFloat3(&dataCopy.direction,
+		XMVector3Normalize(
 		XMVectorNegate(
 		XMVector3Transform(XMVectorSet(0.0f, -1.0f, 0.0f, 0.0f),
 		XMMatrixRotationRollPitchYaw(pitch, yaw, roll)
-	)));
+	))));
 
+	cbufVS.Update(gfx, dataCopy);
+	cbufVS.Bind(gfx);
 	cbuf.Update(gfx, dataCopy);
 	cbuf.Bind(gfx);
 }

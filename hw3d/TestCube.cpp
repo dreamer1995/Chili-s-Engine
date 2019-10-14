@@ -18,9 +18,9 @@ TestCube::TestCube( Graphics& gfx,float size )
 
 	AddBind(Texture::Resolve(gfx, "Images\\brickwall.jpg"));
 	AddBind(Texture::Resolve(gfx, "Images\\brickwall_normal.jpg", 1u));
-	AddBind(TexturePre::Resolve(gfx, 2u, gfx.GetShaderResourceView()));
-	AddBind(TexturePre::Resolve(gfx, 3u, gfx.GetShaderResourceView('M')));
-	AddBind(TexturePre::Resolve(gfx, 4u, gfx.GetShaderResourceView('L')));
+	AddBind(TexturePre::Resolve(gfx, 10u, gfx.GetShaderResourceView()));
+	AddBind(TexturePre::Resolve(gfx, 11u, gfx.GetShaderResourceView('M')));
+	AddBind(TexturePre::Resolve(gfx, 12u, gfx.GetShaderResourceView('L')));
 
 	auto pvs = VertexShader::Resolve( gfx,"PBRTestVS.cso" );
 	auto pvsbc = pvs->GetBytecode();

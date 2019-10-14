@@ -1,6 +1,6 @@
-TextureCube SkyMap : register(t3);
-TextureCube SkyMapMip : register(t4);
-Texture2D BRDFLUT : register(t5);
+TextureCube SkyMap : register(t10);
+TextureCube SkyMapMip : register(t11);
+Texture2D BRDFLUT : register(t12);
 
 SamplerState splr;
 SamplerState splrClamp : register(s1);
@@ -36,6 +36,7 @@ cbuffer ObjectCBuf : register(b3)
 	float _roughness;
 	bool normalMapEnabled;
 	matrix EVRotation;
+	float time;
 };
 
 cbuffer TransformCBuf : register(b4)
@@ -44,8 +45,8 @@ cbuffer TransformCBuf : register(b4)
 	matrix matrix_MV;
 	matrix matrix_V;
 	matrix matrix_P;
-	matrix matrixmatrix_VP;
-	matrix matrixmatrix_T_MV;
+	matrix matrix_VP;
+	matrix matrix_T_MV;
 	matrix matrix_IT_MV;
 	matrix matrix_M2W;
 	matrix matrix_W2M;

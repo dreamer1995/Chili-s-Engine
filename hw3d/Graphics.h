@@ -86,6 +86,8 @@ public:
 	void SaveHDCubemapSRV();
 	void SetCubemapSRVMip(short int i);
 	void SetLUTRT() noexcept;
+	void SetAlphaBlendState() noexcept;
+	void SetAlphaBlendState(char type) noexcept;
 private:
 	DirectX::XMMATRIX projection;
 	DirectX::XMMATRIX camera;
@@ -119,4 +121,6 @@ private:
 	D3D11_RENDER_TARGET_VIEW_DESC rtvDesc = {};
 	float preCubemapHeight;
 	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> pPreLUTTarget;
+	Microsoft::WRL::ComPtr<ID3D11BlendState> pAlphaEnable;
+	Microsoft::WRL::ComPtr<ID3D11BlendState> pAlphaDisable;
 };

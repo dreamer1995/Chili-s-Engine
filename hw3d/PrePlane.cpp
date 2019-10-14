@@ -9,7 +9,7 @@ PrePlane::PrePlane(Graphics& gfx, float size)
 	using namespace Bind;
 	namespace dx = DirectX;
 
-	auto model = Plane::Make(false);
+	auto model = Plane::Make('F');
 	model.Transform(dx::XMMatrixScaling(size, size, 1.0f));
 	const auto geometryTag = "$preplane." + std::to_string(size);
 	AddBind(VertexBuffer::Resolve(gfx, geometryTag, model.vertices));

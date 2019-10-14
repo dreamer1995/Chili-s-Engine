@@ -7,11 +7,12 @@ namespace Bind
 {
 	namespace wrl = Microsoft::WRL;
 
-	Texture::Texture( Graphics& gfx,const std::string& path,UINT slot,bool cubemap)
+	Texture::Texture( Graphics& gfx,const std::string& path,UINT slot,bool cubemap, bool toVS)
 		:
 		path( path ),
 		slot( slot ),
-		cubemap(cubemap)
+		cubemap(cubemap),
+		toVS(toVS)
 	{
 		INFOMAN( gfx );
 
@@ -91,19 +92,26 @@ namespace Bind
 
 	void Texture::Bind( Graphics& gfx ) noexcept
 	{
-		GetContext( gfx )->PSSetShaderResources( slot,1u,pTextureView.GetAddressOf() );
+		if (toVS)
+		{
+			GetContext(gfx)->VSSetShaderResources(slot, 1u, pTextureView.GetAddressOf());
+		}
+		else
+		{
+			GetContext( gfx )->PSSetShaderResources( slot,1u,pTextureView.GetAddressOf() );
+		}
 	}
-	std::shared_ptr<Texture> Texture::Resolve(Graphics& gfx, const std::string& path, UINT slot, bool cubemap)
+	std::shared_ptr<Texture> Texture::Resolve(Graphics& gfx, const std::string& path, UINT slot, bool cubemap, bool toVS)
 	{
-		return Codex::Resolve<Texture>(gfx, path, slot, cubemap);
+		return Codex::Resolve<Texture>(gfx, path, slot, cubemap, toVS);
 	}
-	std::string Texture::GenerateUID(const std::string& path, UINT slot, bool cubemap)
+	std::string Texture::GenerateUID(const std::string& path, UINT slot, bool cubemap, bool toVS)
 	{
 		using namespace std::string_literals;
 		return typeid(Texture).name() + "#"s + path + "#" + std::to_string( slot );
 	}
 	std::string Texture::GetUID() const noexcept
 	{
-		return GenerateUID(path, slot, cubemap);
+		return GenerateUID(path, slot, cubemap, toVS);
 	}
 }

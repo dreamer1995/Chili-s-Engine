@@ -66,9 +66,9 @@ MeshSingle::MeshSingle(Graphics& gfx, const std::string fileName, float size)
 	AddBind(Texture::Resolve(gfx, "Images\\Cerberus_D.jpg"));
 	AddBind(Texture::Resolve(gfx, "Images\\Cerberus_N.jpg", 1u));
 	AddBind(Texture::Resolve(gfx, "Images\\Cerberus_RMA.jpg", 2u));
-	AddBind(TexturePre::Resolve(gfx, 3u, gfx.GetShaderResourceView()));
-	AddBind(TexturePre::Resolve(gfx, 4u, gfx.GetShaderResourceView('M')));
-	AddBind(TexturePre::Resolve(gfx, 5u, gfx.GetShaderResourceView('L')));
+	AddBind(TexturePre::Resolve(gfx, 10u, gfx.GetShaderResourceView()));
+	AddBind(TexturePre::Resolve(gfx, 11u, gfx.GetShaderResourceView('M')));
+	AddBind(TexturePre::Resolve(gfx, 12u, gfx.GetShaderResourceView('L')));
 
 	auto pvs = VertexShader::Resolve(gfx, "PBRTestTexVS.cso");
 	auto pvsbc = pvs->GetBytecode();

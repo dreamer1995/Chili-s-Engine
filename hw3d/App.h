@@ -15,6 +15,8 @@
 #include "PrePlane.h"
 #include "UVPannel.h"
 #include "MeshSingle.h"
+#include "CausticPlane.h"
+
 class App
 {
 public:
@@ -36,7 +38,7 @@ private:
 	DirectionalLight directionallight;
 	//Model wall{ wnd.Gfx(),"Models\\brick_wall\\brick_wall.obj" };
 	//Model nano{ wnd.Gfx(),"Models\\nano_textured\\nanosuit.obj" };
-	TestPlane plane;
+	std::unique_ptr<TestPlane> plane;
 	//TestCube
 	//TestSphere cube{ wnd.Gfx(), 4.0f };
 	SkyBox skyBox;
@@ -46,4 +48,5 @@ private:
 	PrePlane prePlane;
 	std::unique_ptr<UVPannel> uvPannel;
 	//MeshSingle gun{ wnd.Gfx(), "Models\\Cerberus_LP.FBX", 0.1f };
+	std::unique_ptr<CausticPlane> causticPlane;
 };

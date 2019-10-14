@@ -17,10 +17,14 @@ App::App()
 	pointlight(wnd.Gfx()),
 	directionallight(wnd.Gfx()),
 	cam(wnd.Gfx()),
-	plane(wnd.Gfx(), 3.0f),
 	prePlane(wnd.Gfx(), 1.0f),
 	skyBox(wnd.Gfx(), 10.0f)
 {
+	plane = std::make_unique<TestPlane>(wnd.Gfx(), 5.0f);
+	plane->SetRotation(0.0f, PI * 0.5f, 0.0f);
+	causticPlane = std::make_unique<CausticPlane>(wnd.Gfx(), 5.0f);
+	causticPlane->SetRotation(0.0f, PI * 0.5f, 0.0f);
+	causticPlane->SetPos({ 0.0f, 0.0f, 0.0f });
 	//wall.SetRootTransform(dx::XMMatrixTranslation(pointlight.GetPos().x - 3.0f, pointlight.GetPos().y, pointlight.GetPos().z - 2.0f));
 	//plane.SetPos({ -5.0f,17.0f,-1.0f });
 	//uvPannel = std::make_unique<UVPannel>(wnd.Gfx(), 1, gun.UVPos, gun.indices);
@@ -31,7 +35,7 @@ App::App()
 	preSkyBoxBlur = std::make_unique<PreSkyBox>(wnd.Gfx(), 10.0f, 'B');
 	preSkyBoxMip= std::make_unique<PreSkyBox>(wnd.Gfx(), 10.0f, 'M');
 
-	wnd.Gfx().SetProjection(dx::XMMatrixPerspectiveLH(1.0f, 1.0f, 0.5f, 40.0f));
+	wnd.Gfx().SetProjection(dx::XMMatrixPerspectiveLH(1.0f, 1.0f, 0.5f, 400.0f));
 
 	dx::XMMATRIX viewmatrix[6] = 
 	{
@@ -79,16 +83,17 @@ App::App()
 	wnd.Gfx().SetRasterState();
 	wnd.Gfx().SetStencilState();
 
-	wnd.Gfx().SetProjection(dx::XMMatrixPerspectiveLH(1.0f, 9.0f / 16.0f, 0.5f, 40.0f));
+	wnd.Gfx().SetProjection(dx::XMMatrixPerspectiveLH(1.0f, 9.0f / 16.0f, 0.5f, 400.0f));
 
-	wnd.Gfx().SetViewPort('U');
+	//wnd.Gfx().SetViewPort('U');
 }
 
 void App::DoFrame()
 {
 	wnd.Gfx().SetViewPort();
 	const auto dt = timer.Mark() * speed_factor;
-	wnd.Gfx().BeginFrame( 0.07f,0.0f,0.12f );
+	//wnd.Gfx().BeginFrame( 0.07f,0.0f,0.12f );
+	wnd.Gfx().BeginFrame(0.0f, 0.0f, 0.0f);
 	wnd.Gfx().SetCamera( cam.GetMatrix() );
 	pointlight.Bind( wnd.Gfx() );
 	directionallight.Bind(wnd.Gfx());
@@ -109,13 +114,25 @@ void App::DoFrame()
 	{
 		wnd.Gfx().SetRasterState('N');
 	}
+
 	//plane.Draw( wnd.Gfx() );
+	plane->ChangeSphereMaterialState(wnd.Gfx(), skyBox.pitch, skyBox.yaw, skyBox.roll);
+	plane->Bind(wnd.Gfx(), dt);
+	plane->Draw(wnd.Gfx());
+
+	wnd.Gfx().SetAlphaBlendState('A');
+	causticPlane->Bind(wnd.Gfx(), dt);
+	causticPlane->Draw(wnd.Gfx());
+	wnd.Gfx().SetAlphaBlendState();
+
 	wnd.Gfx().SetStencilState('C');
+
 	if (skyBox.show)
 	{
 		skyBox.SetPos(cam.pos);
 		skyBox.Draw(wnd.Gfx());
 	}
+
 	if (isWireframe)
 	{
 		wnd.Gfx().SetRasterState('W');
@@ -124,10 +141,8 @@ void App::DoFrame()
 	{
 		wnd.Gfx().SetRasterState();
 	}
-	wnd.Gfx().SetStencilState();
 
-	plane.ChangeSphereMaterialState(wnd.Gfx(), skyBox.pitch, skyBox.yaw, skyBox.roll);
-	plane.Draw(wnd.Gfx());
+	wnd.Gfx().SetStencilState();
 
 	//if (uvPannel->showUV)
 	//{
@@ -345,7 +360,8 @@ void App::DoFrame()
 	//nano.ShowWindow( "Model 1" );
 	//nano2.ShowWindow( "Model 2" );
 	//plane.SpawnControlWindow( wnd.Gfx() );
-	plane.SpawnControlWindow(wnd.Gfx());
+	plane->SpawnControlWindow(wnd.Gfx());
+	causticPlane->SpawnControlWindow(wnd.Gfx());
 	skyBox.SpawnControlWindow(wnd.Gfx());
 
 	// present
