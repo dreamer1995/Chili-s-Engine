@@ -19,7 +19,7 @@ private:
 		BOOL normalMappingEnabled = TRUE;
 		float padding[1];*/
 		float metallic = 1.0f;
-		float roughness = 0.0f;
+		float roughness = 1.0f;
 		BOOL normalMappingEnabled = FALSE;
 		DirectX::XMMATRIX EVRotation = DirectX::XMMatrixIdentity();
 		float time = 0.0f;

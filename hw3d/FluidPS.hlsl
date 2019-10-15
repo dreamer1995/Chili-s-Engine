@@ -7,6 +7,8 @@ cbuffer ObjectCBuf : register(b5)
 Texture2D rmap;
 Texture2D mnmap : register(t1);
 Texture2D snmap : register(t2);
+Texture2D caumap : register(t3);
+Texture2D gmap : register(t4);
 
 struct PSIn {
 	float3 worldPos : Position;
@@ -18,16 +20,17 @@ struct PSIn {
 
 float Motion_4WayChaos(Texture2D textureIn, float2 uv, float speed);
 float3 Motion_4WayChaos_Normal(Texture2D textureIn, float2 uv, float speed);
+float2 UVRefractionDistorted(float3 Rv, float2 uv, float depth);
 
 float4 main(PSIn i) : SV_Target
 {
-	float fRoughness = _roughness * Motion_4WayChaos(rmap, i.uv * 4.0f, 0.05f);
+	float fRoughness = Motion_4WayChaos(rmap, i.uv * 4.0f, 0.05f);
 	float variationAmount;
 	fRoughness += 0.5f;
 	float variationSharpness = 13.0511389f;
 	fRoughness = pow(fRoughness, variationSharpness) * variationSharpness;
 	fRoughness = saturate(fRoughness);
-	fRoughness = lerp(0.164602f, 0.169983f, fRoughness);
+	fRoughness = _roughness * lerp(0.164602f, 0.169983f, fRoughness);
 	// sample normal from map if normal mapping enabled	
 	if (normalMapEnabled)
 	{
@@ -63,9 +66,17 @@ float4 main(PSIn i) : SV_Target
 	//float3(1.0f, 0.0f, 0.0f)
 	
 	float fresnel = 1 - NdotV;
+	//float3 albedo = lerp(pow(float3(0.018450f, 0.045000f, 0.042473f), 2.2f),
+	//					 pow(float3(0.162565f, 0.271166f, 0.325000f), 2.2f),
+	//					 fresnel);
+
+	const float t = lerp(0.225f, 0.465f, NdotV);
+	const float3 Rv = lerp(-viewDir, -i.normal, t);
+	const float2 distUV = UVRefractionDistorted(Rv, i.uv, 1.0f);
 	float3 albedo = lerp(pow(float3(0.018450f, 0.045000f, 0.042473f), 2.2f),
-						 pow(float3(0.162565f, 0.271166f, 0.325000f), 2.2f),
-						 fresnel);
+						 pow(gmap.Sample(splr, distUV).rgb, 2.2f),
+						 0.8f);
+	albedo += caumap.Sample(splr, distUV).rgb;
 	float3 F0 = float3(0.04f, 0.04f, 0.04f);
 	float fMetallic = metallic * 0.8f;
 	F0 = lerp(F0, albedo, fMetallic);
@@ -162,4 +173,9 @@ float3 Motion_4WayChaos_Normal(Texture2D textureIn, float2 uv, float speed)
 	}
 
 	return outPut * 0.25f;
+}
+
+float2 UVRefractionDistorted(float3 Rv, float2 uv, float depth)
+{
+	return float2(uv.x + Rv.x * depth, uv.y + Rv.z  *depth);
 }

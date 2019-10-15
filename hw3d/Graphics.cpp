@@ -98,18 +98,18 @@ Graphics::Graphics( HWND hWnd,int width,int height )
 
 	/////////////////////// Map's Render Target
     // Setup the description of the render target view.
-	rtvDesc.Format = texDesc.Format;
-	rtvDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2DARRAY;
-	rtvDesc.Texture2D.MipSlice = 0;
-	rtvDesc.Texture2DArray.ArraySize = 1;
+	texture3DRTVDesc.Format = texDesc.Format;
+	texture3DRTVDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2DARRAY;
+	texture3DRTVDesc.Texture2D.MipSlice = 0;
+	texture3DRTVDesc.Texture2DArray.ArraySize = 1;
 
     // Create the render target view.
 	
 	for (short int i = 0; i < 6; ++i)
 	{
 		// Create a render target view to the ith element.
-		rtvDesc.Texture2DArray.FirstArraySlice = i;
-		GFX_THROW_INFO(pDevice->CreateRenderTargetView(pPreCubeMapH.Get(), &rtvDesc, &pPreMapTarget[i]));
+		texture3DRTVDesc.Texture2DArray.FirstArraySlice = i;
+		GFX_THROW_INFO(pDevice->CreateRenderTargetView(pPreCubeMapH.Get(), &texture3DRTVDesc, &pMap3DTarget[i]));
 	}
 
 	/////////////////////// Map's Shader Resource View
@@ -131,19 +131,29 @@ Graphics::Graphics( HWND hWnd,int width,int height )
 	texDesc.Width = height;
 	texDesc.Height = height;
 	texDesc.MipLevels = 0;
+	texDesc.ArraySize = 1;
 	texDesc.Format = DXGI_FORMAT_R32G32_FLOAT;
 	texDesc.MiscFlags = 0;
-	GFX_THROW_INFO(pDevice->CreateTexture2D(&texDesc, NULL, &pPreCubeMapLUT));
+	GFX_THROW_INFO(pDevice->CreateTexture2D(&texDesc, NULL, &pPreMapLUT));
 
-	D3D11_RENDER_TARGET_VIEW_DESC brdfLUTRTVDesc = {};
-	brdfLUTRTVDesc.Format = texDesc.Format;
-	brdfLUTRTVDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
-	GFX_THROW_INFO(pDevice->CreateRenderTargetView(pPreCubeMapLUT.Get(), &brdfLUTRTVDesc, &pPreLUTTarget));
+	texture2DRTVDesc.Format = texDesc.Format;
+	texture2DRTVDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
+	texture2DRTVDesc.Texture2D.MipSlice = 0u;
+	GFX_THROW_INFO(pDevice->CreateRenderTargetView(pPreMapLUT.Get(), &texture2DRTVDesc, &pMap2DTarget));
 
 	srvDesc.Format = texDesc.Format;
 	srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
 	srvDesc.TextureCube.MipLevels = 1;
-	GFX_THROW_INFO(pDevice->CreateShaderResourceView(pPreCubeMapLUT.Get(), &srvDesc, &pPreMapShaderResourceViewLUT));
+	GFX_THROW_INFO(pDevice->CreateShaderResourceView(pPreMapLUT.Get(), &srvDesc, &pPreMapShaderResourceViewLUT));
+
+	texDesc.MipLevels = 1;
+	texDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
+	GFX_THROW_INFO(pDevice->CreateTexture2D(&texDesc, NULL, &pMapCaustics));
+
+	texture2DRTVDesc.Format = texDesc.Format;
+
+	srvDesc.Format = texDesc.Format;
+	GFX_THROW_INFO(pDevice->CreateShaderResourceView(pMapCaustics.Get(), &srvDesc, &pMapShaderResourceViewCaustics));
 
 	// create depth stensil state
 	D3D11_DEPTH_STENCIL_DESC dsDesc = {};
@@ -395,9 +405,8 @@ void Graphics::SetRenderTarget() noexcept
 void Graphics::SetPreRenderTarget(short int i) noexcept
 {
 	const float color[] = { 0.0f,0.0f,0.0f,1.0f };
-	pContext->ClearRenderTargetView(pPreMapTarget[i].Get(), color);
-	pContext->ClearDepthStencilView(pPreDSV.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0u);
-	pContext->OMSetRenderTargets(1u, pPreMapTarget[i].GetAddressOf(), pPreDSV.Get());
+	pContext->ClearRenderTargetView(pMap3DTarget[i].Get(), color);
+	pContext->OMSetRenderTargets(1u, pMap3DTarget[i].GetAddressOf(), nullptr);
 }
 
 void Graphics::SetViewPort() noexcept
@@ -415,30 +424,32 @@ void Graphics::SetViewPort(char type) noexcept
 	{
 		SetViewPort(9.0f / 16.0f, 9.0f / 16.0f);
 	}
+	if (type == 'C')
+	{
+		SetViewPort(1.0f, 1.0f);
+	}
 }
 
 void Graphics::SetViewPort(float x, float y) noexcept
 {
 	pPreMapVP.Width = preCubemapHeight / x;
 	pPreMapVP.Height = preCubemapHeight / y;
+	pContext->RSSetViewports(1u, &pPreMapVP);
 }
 
 Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> Graphics::GetShaderResourceView(char type) const noexcept
 {
-	if (type == 'H')
+	switch (type)
 	{
+	case 'H':
 		return pPreMapShaderResourceViewH;
-	}
-	else if (type == 'M')
-	{
+	case 'M':
 		return pPreMapShaderResourceViewM;
-	}
-	else if (type == 'L')
-	{
+	case 'L':
 		return pPreMapShaderResourceViewLUT;
-	}
-	else
-	{
+	case 'C':
+		return pMapShaderResourceViewCaustics;
+	default:
 		return pPreMapShaderResourceView;
 	}
 }
@@ -453,8 +464,8 @@ void Graphics::SaveHDCubemapSRV()
 	for (short int i = 0; i < 6; ++i)
 	{
 		// Create a render target view to the ith element.
-		rtvDesc.Texture2DArray.FirstArraySlice = i;
-		GFX_THROW_INFO(pDevice->CreateRenderTargetView(pPreCubeMap.Get(), &rtvDesc, &pPreMapTarget[i]));
+		texture3DRTVDesc.Texture2DArray.FirstArraySlice = i;
+		GFX_THROW_INFO(pDevice->CreateRenderTargetView(pPreCubeMap.Get(), &texture3DRTVDesc, &pMap3DTarget[i]));
 	}
 }
 
@@ -466,12 +477,12 @@ void Graphics::SetCubemapSRVMip(short int i)
 	pPreMapVP.Width = mipHeight;
 	pPreMapVP.Height = mipHeight;
 	pContext->RSSetViewports(1u, &pPreMapVP);
-	rtvDesc.Texture2DArray.MipSlice = i;
+	texture3DRTVDesc.Texture2DArray.MipSlice = i;
 	for (short int k = 0; k < 6; ++k)
 	{
 		// Create a render target view to the ith element.
-		rtvDesc.Texture2DArray.FirstArraySlice = k;
-		GFX_THROW_INFO(pDevice->CreateRenderTargetView(pPreCubeMapM.Get(), &rtvDesc, &pPreMapTarget[k]));
+		texture3DRTVDesc.Texture2DArray.FirstArraySlice = k;
+		GFX_THROW_INFO(pDevice->CreateRenderTargetView(pPreCubeMapM.Get(), &texture3DRTVDesc, &pMap3DTarget[k]));
 	}
 }
 
@@ -482,10 +493,8 @@ void Graphics::SetLUTRT() noexcept
 	pContext->RSSetViewports(1u, &pPreMapVP);
 
 	const float color[] = { 0.0f,0.0f,0.0f,1.0f };
-	pContext->ClearRenderTargetView(pPreLUTTarget.Get(), color);
-	pContext->ClearDepthStencilView(pPreDSV.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0u);
-
-	pContext->OMSetRenderTargets(1u, pPreLUTTarget.GetAddressOf(), pPreDSV.Get());
+	pContext->ClearRenderTargetView(pMap2DTarget.Get(), color);
+	pContext->OMSetRenderTargets(1u, pMap2DTarget.GetAddressOf(), nullptr);
 }
 
 void Graphics::SetAlphaBlendState() noexcept
@@ -500,6 +509,24 @@ void Graphics::SetAlphaBlendState(char type) noexcept
 	}
 }
 
+void Graphics::CreateMapRenderTarget()
+{
+	HRESULT hr;
+	GFX_THROW_INFO(pDevice->CreateRenderTargetView(pMapCaustics.Get(), &texture2DRTVDesc, &pMap2DTarget));
+}
+
+void Graphics::SetMapRenderTarget() noexcept
+{
+	const float color[] = { 0.0f,0.0f,0.0f,1.0f };
+	pContext->ClearRenderTargetView(pMap2DTarget.Get(), color);
+	pContext->OMSetRenderTargets(1u, pMap2DTarget.GetAddressOf(), nullptr);
+}
+
+void Graphics::UnbindShaderResource(UINT slot) noexcept
+{
+	ID3D11ShaderResourceView* nullSRV[1] = { nullptr };
+	pContext->PSSetShaderResources(slot, 1u, nullSRV);
+}
 // Graphics exception stuff
 Graphics::HrException::HrException( int line,const char * file,HRESULT hr,std::vector<std::string> infoMsgs ) noexcept
 	:

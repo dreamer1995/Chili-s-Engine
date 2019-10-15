@@ -22,9 +22,10 @@ App::App()
 {
 	plane = std::make_unique<TestPlane>(wnd.Gfx(), 5.0f);
 	plane->SetRotation(0.0f, PI * 0.5f, 0.0f);
-	causticPlane = std::make_unique<CausticPlane>(wnd.Gfx(), 5.0f);
+	//dx::XMFLOAT2 offsets[9] = { {} }
+	causticPlane = std::make_unique<CausticPlane>(wnd.Gfx(), 1.0f);
 	causticPlane->SetRotation(0.0f, PI * 0.5f, 0.0f);
-	causticPlane->SetPos({ 0.0f, 0.0f, 0.0f });
+
 	//wall.SetRootTransform(dx::XMMatrixTranslation(pointlight.GetPos().x - 3.0f, pointlight.GetPos().y, pointlight.GetPos().z - 2.0f));
 	//plane.SetPos({ -5.0f,17.0f,-1.0f });
 	//uvPannel = std::make_unique<UVPannel>(wnd.Gfx(), 1, gun.UVPos, gun.indices);
@@ -86,11 +87,13 @@ App::App()
 	wnd.Gfx().SetProjection(dx::XMMatrixPerspectiveLH(1.0f, 9.0f / 16.0f, 0.5f, 400.0f));
 
 	//wnd.Gfx().SetViewPort('U');
+	wnd.Gfx().SetViewPort();
+	wnd.Gfx().CreateMapRenderTarget();
 }
 
 void App::DoFrame()
 {
-	wnd.Gfx().SetViewPort();
+	//wnd.Gfx().SetViewPort();
 	const auto dt = timer.Mark() * speed_factor;
 	//wnd.Gfx().BeginFrame( 0.07f,0.0f,0.12f );
 	wnd.Gfx().BeginFrame(0.0f, 0.0f, 0.0f);
@@ -115,15 +118,36 @@ void App::DoFrame()
 		wnd.Gfx().SetRasterState('N');
 	}
 
+	wnd.Gfx().SetViewPort('C');
+
+	wnd.Gfx().SetAlphaBlendState('A');
+
+	wnd.Gfx().UnbindShaderResource(3u);
+	wnd.Gfx().SetMapRenderTarget();
+
+	static dx::XMFLOAT2 offsets[9] = { { -2.0f,2.0f }, { 0.0f,2.0f }, { 2.0f,2.0f },
+									   { -2.0f,0.0f }, { 0.0f,0.0f }, { 2.0f,0.0f },
+									   { -2.0f,-2.0f }, { 0.0f,-2.0f }, { 2.0f,-2.0f } };
+	causticPlane->Bind(wnd.Gfx(), dt);
+	for (short int i = 0; i < 9; i++)
+	{
+		causticPlane->Bind(wnd.Gfx(), offsets[i]);
+		causticPlane->Draw(wnd.Gfx());
+	}
+
+	//causticPlane->Bind(wnd.Gfx(), { -1.0f,0.0f });
+
+
+	wnd.Gfx().SetRenderTarget();
+
+	wnd.Gfx().SetAlphaBlendState();
+
+	wnd.Gfx().SetViewPort();
+
 	//plane.Draw( wnd.Gfx() );
 	plane->ChangeSphereMaterialState(wnd.Gfx(), skyBox.pitch, skyBox.yaw, skyBox.roll);
 	plane->Bind(wnd.Gfx(), dt);
 	plane->Draw(wnd.Gfx());
-
-	wnd.Gfx().SetAlphaBlendState('A');
-	causticPlane->Bind(wnd.Gfx(), dt);
-	causticPlane->Draw(wnd.Gfx());
-	wnd.Gfx().SetAlphaBlendState();
 
 	wnd.Gfx().SetStencilState('C');
 
@@ -143,6 +167,8 @@ void App::DoFrame()
 	}
 
 	wnd.Gfx().SetStencilState();
+
+	//cube.Draw(wnd.Gfx());
 
 	//if (uvPannel->showUV)
 	//{
@@ -360,9 +386,10 @@ void App::DoFrame()
 	//nano.ShowWindow( "Model 1" );
 	//nano2.ShowWindow( "Model 2" );
 	//plane.SpawnControlWindow( wnd.Gfx() );
-	plane->SpawnControlWindow(wnd.Gfx());
 	causticPlane->SpawnControlWindow(wnd.Gfx());
+	plane->SpawnControlWindow(wnd.Gfx());
 	skyBox.SpawnControlWindow(wnd.Gfx());
+	//cube.SpawnControlWindow(wnd.Gfx());
 
 	// present
 	wnd.Gfx().EndFrame();

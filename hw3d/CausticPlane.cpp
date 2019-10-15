@@ -15,9 +15,8 @@ CausticPlane::CausticPlane(Graphics& gfx, float size)
 	AddBind(VertexBuffer::Resolve(gfx, geometryTag, model.vertices));
 	AddBind(IndexBuffer::Resolve(gfx, geometryTag, model.indices));
 
-	AddBind(Texture::Resolve(gfx, "Images\\T_MediumWaves_H.jpg", 20u, false, true));
-	AddBind(Texture::Resolve(gfx, "Images\\T_MediumWaves_N.jpg", 21u, false, true));
-	AddBind(Texture::Resolve(gfx, "Images\\T_SmallWaves_N.jpg", 22u, false, true));
+	AddBind(Texture::Resolve(gfx, "Images\\T_MediumWaves_N.jpg", 20u, false, true));
+	AddBind(Texture::Resolve(gfx, "Images\\T_SmallWaves_N.jpg", 21u, false, true));
 
 	auto pvs = VertexShader::Resolve(gfx, "CausticVS.cso");
 	auto pvsbc = pvs->GetBytecode();
@@ -88,5 +87,11 @@ void CausticPlane::SpawnControlWindow(Graphics& gfx) noexcept
 void CausticPlane::Bind(Graphics& gfx, float deltaTime) noexcept
 {
 	pmc.time += deltaTime;
+	QueryBindable<Bind::VertexConstantBuffer<PSMaterialConstant>>()->Update(gfx, pmc);
+}
+
+void CausticPlane::Bind(Graphics& gfx, DirectX::XMFLOAT2 offset) noexcept
+{
+	pmc.offset = offset;
 	QueryBindable<Bind::VertexConstantBuffer<PSMaterialConstant>>()->Update(gfx, pmc);
 }

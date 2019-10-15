@@ -28,6 +28,8 @@ TestPlane::TestPlane( Graphics& gfx,float size )
 	AddBind(Texture::Resolve(gfx, "Images\\T_MediumWaves_H.jpg"));
 	AddBind(Texture::Resolve(gfx, "Images\\T_MediumWaves_N.jpg", 1u));
 	AddBind(Texture::Resolve(gfx, "Images\\T_SmallWaves_N.jpg", 2u));
+	AddBind(TexturePre::Resolve(gfx, 3u, gfx.GetShaderResourceView('C')));
+	AddBind(Texture::Resolve(gfx, "Images\\DesertSand_albedo.jpg", 4u));
 	AddBind(TexturePre::Resolve(gfx, 10u, gfx.GetShaderResourceView()));
 	AddBind(TexturePre::Resolve(gfx, 11u, gfx.GetShaderResourceView('M')));
 	AddBind(TexturePre::Resolve(gfx, 12u, gfx.GetShaderResourceView('L')));
@@ -80,8 +82,8 @@ void TestPlane::SpawnControlWindow( Graphics& gfx ) noexcept
 		ImGui::Text( "Shading" );
 		//bool changed0 = ImGui::SliderFloat( "Spec. Int.",&pmc.specularIntensity,0.0f,1.0f );
 		//bool changed1 = ImGui::SliderFloat( "Spec. Power",&pmc.specularPower,0.0f,100.0f );
-		bool changed0 = ImGui::SliderFloat("Metallic", &pmc.metallic, 0.0f, 1.0f);
-		bool changed1 = ImGui::SliderFloat("Roughness", &pmc.roughness, 0.0f, 1.0f);
+		bool changed0 = ImGui::SliderFloat("Metallic", &pmc.metallic, 0.0f, 2.0f);
+		bool changed1 = ImGui::SliderFloat("Roughness", &pmc.roughness, 0.0f, 10.0f);
 		bool checkState = pmc.normalMappingEnabled == TRUE;
 		bool changed2 = ImGui::Checkbox( "Enable Normal Map",&checkState );
 		pmc.normalMappingEnabled = checkState ? TRUE : FALSE;

@@ -10,13 +10,15 @@ public:
 	DirectX::XMMATRIX GetTransformXM() const noexcept override;
 	void SpawnControlWindow(Graphics& gfx) noexcept;
 	void Bind(Graphics& gfx, float deltaTime) noexcept;
+	void Bind(Graphics& gfx, DirectX::XMFLOAT2 offset) noexcept;
 private:
 	struct PSMaterialConstant
 	{
 		DirectX::XMFLOAT3 color = { 0.2f,0.2f,0.2f };
-		float depth = 0.0f;
+		float depth = 1.0f;
 		float time = 0.0f;
-		float padding[3];
+		DirectX::XMFLOAT2 offset = { 0.0f,0.0f };
+		float padding[1];
 	} pmc;
 	DirectX::XMFLOAT3 pos = { 0.0f,0.0f,0.0f };
 	float roll = 0.0f;

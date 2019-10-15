@@ -77,8 +77,11 @@ public:
 	void SetStencilState(char type) noexcept;
 	void SetRasterState() noexcept;
 	void SetRasterState(char type) noexcept;
+	void CreateMapRenderTarget();
+	void UnbindShaderResource(UINT slot) noexcept;
 	void SetRenderTarget() noexcept;
 	void SetPreRenderTarget(short int i) noexcept;
+	void SetMapRenderTarget() noexcept;
 	void SetViewPort() noexcept;
 	void SetViewPort(char type) noexcept;
 	void SetViewPort(float x, float y) noexcept;
@@ -99,28 +102,41 @@ private:
 	Microsoft::WRL::ComPtr<IDXGISwapChain> pSwap;
 	Microsoft::WRL::ComPtr<ID3D11DeviceContext> pContext;
 	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> pTarget;
+
 	Microsoft::WRL::ComPtr<ID3D11DepthStencilView> pDSV;
+	Microsoft::WRL::ComPtr<ID3D11DepthStencilView> pPreDSV;
+
 	Microsoft::WRL::ComPtr<ID3D11DepthStencilState> pDSStateDefault;
 	Microsoft::WRL::ComPtr<ID3D11DepthStencilState> pDSStateCube;
-	Microsoft::WRL::ComPtr<ID3D11DepthStencilView> pPreDSV;
+
 	Microsoft::WRL::ComPtr<ID3D11RasterizerState> pRasterStateDefault;
 	Microsoft::WRL::ComPtr<ID3D11RasterizerState> pRasterStateNoneSolid;
 	Microsoft::WRL::ComPtr<ID3D11RasterizerState> pRasterStateBackWireframe;
 	Microsoft::WRL::ComPtr<ID3D11RasterizerState> pRasterStateNoneWireframe;
+
 	Microsoft::WRL::ComPtr<ID3D11Texture2D> pPreCubeMap;
 	Microsoft::WRL::ComPtr<ID3D11Texture2D> pPreCubeMapH;
 	Microsoft::WRL::ComPtr<ID3D11Texture2D> pPreCubeMapM;
-	Microsoft::WRL::ComPtr<ID3D11Texture2D> pPreCubeMapLUT;
-	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> pPreMapTarget[6];
+	Microsoft::WRL::ComPtr<ID3D11Texture2D> pPreMapLUT;
+	Microsoft::WRL::ComPtr<ID3D11Texture2D> pMapCaustics;
+
+	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> pMap3DTarget[6];
+	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> pMap2DTarget;
+
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> pPreMapShaderResourceView;
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> pPreMapShaderResourceViewH;
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> pPreMapShaderResourceViewM;
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> pPreMapShaderResourceViewLUT;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> pMapShaderResourceViewCaustics;
+
+	float preCubemapHeight;
 	D3D11_VIEWPORT pDefaultVP;
 	D3D11_VIEWPORT pPreMapVP;
-	D3D11_RENDER_TARGET_VIEW_DESC rtvDesc = {};
-	float preCubemapHeight;
-	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> pPreLUTTarget;
+
+	D3D11_RENDER_TARGET_VIEW_DESC texture3DRTVDesc = {};
+	D3D11_RENDER_TARGET_VIEW_DESC texture2DRTVDesc = {};
+
 	Microsoft::WRL::ComPtr<ID3D11BlendState> pAlphaEnable;
 	Microsoft::WRL::ComPtr<ID3D11BlendState> pAlphaDisable;
+
 };
