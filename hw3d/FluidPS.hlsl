@@ -32,7 +32,7 @@ struct PSIn {
 
 float Motion_4WayChaos(Texture2D textureIn, float2 uv, float speed);
 float3 Motion_4WayChaos_Normal(Texture2D textureIn, float2 uv, float speed);
-float2 UVRefractionDistorted(float3 Rv, float2 uv);
+float2 UVRefractionDistorted(float3 Rv, float2 uv, float depth);
 
 float4 main(PSIn i) : SV_Target
 {
@@ -87,9 +87,10 @@ float4 main(PSIn i) : SV_Target
 
 	const float t = lerp(0.225f, 0.465f, max(dot(i.normal, -cameraDir), 0.0f));
 	const float3 Rv = lerp(cameraDir, -i.normal, t);
-	const float2 distUV = UVRefractionDistorted(Rv, i.uv);
+	const float2 distUV = UVRefractionDistorted(Rv, i.uv, depth);
+	const float2 subDistUV = UVRefractionDistorted(Rv, i.uv, depth * 0.5f);
 	float3 albedo = pow(gmap.Sample(splr, distUV).rgb, 2.2f);
-	albedo += caumap.Sample(splr, i.uv * tilling).rgb * (1 - depth * depthmap + 0.1f);
+	albedo += caumap.Sample(splr, subDistUV * tilling).rgb * (1 - depth * depthmap + 0.1f);
 	albedo *= i.outScattering + i.inScattering;
 	float3 F0 = float3(0.04f, 0.04f, 0.04f);
 	float fMetallic = _metallic * depth * depthmap;
@@ -189,7 +190,7 @@ float3 Motion_4WayChaos_Normal(Texture2D textureIn, float2 uv, float speed)
 	return outPut * 0.25f;
 }
 
-float2 UVRefractionDistorted(float3 Rv, float2 uv)
+float2 UVRefractionDistorted(float3 Rv, float2 uv, float depth)
 {
 	return float2(uv.x + Rv.x * depth, uv.y + Rv.z * depth);
 }

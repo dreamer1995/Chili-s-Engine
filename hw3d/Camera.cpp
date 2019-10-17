@@ -164,7 +164,7 @@ void Camera::Bind(Graphics& gfx) const noexcept
 	DirectX::XMFLOAT3 lookVector;
 	dx::XMStoreFloat3(&lookVector, XMVector3Transform(XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f),
 		XMMatrixRotationRollPitchYaw(45.0f / 180.0f*PI, 0.0f, 0.0f)));
-	CameraCBuf cbData = { pos,lookVector };
+	CameraCBuf cbData = { pos,{ 0.0f,1.0f,0.0f } };
 	cbufVS.Update(gfx, cbData);
 	cbufVS.Bind(gfx);
 	cbuf.Update(gfx, cbData);
