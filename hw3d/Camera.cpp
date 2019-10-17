@@ -6,6 +6,7 @@ namespace dx = DirectX;
 
 Camera::Camera(Graphics& gfx) noexcept
 	:
+	cbufVS(gfx, 1u),
 	cbuf(gfx, 2u)
 {
 	Reset();
@@ -58,8 +59,8 @@ void Camera::SpawnControlWindow() noexcept
 
 void Camera::Reset() noexcept
 {
-	pos = { 0.0f,2.5f,-14.0f };
-	pitch = 21.0f * PI / 180.0f;
+	pos = { 0.0f,7.0f,-9.0f };
+	pitch = 43.0f * PI / 180.0f;
 	yaw = 0.0f;
 	yaw_ = 0;
 }
@@ -159,7 +160,13 @@ void Camera::RotateAround(float dx, float dy, DirectX::XMFLOAT3 centralPoint) no
 
 void Camera::Bind(Graphics& gfx) const noexcept
 {
-	CameraCBuf cbData = { pos };
+	using namespace dx;
+	DirectX::XMFLOAT3 lookVector;
+	dx::XMStoreFloat3(&lookVector, XMVector3Transform(XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f),
+		XMMatrixRotationRollPitchYaw(45.0f / 180.0f*PI, 0.0f, 0.0f)));
+	CameraCBuf cbData = { pos,lookVector };
+	cbufVS.Update(gfx, cbData);
+	cbufVS.Bind(gfx);
 	cbuf.Update(gfx, cbData);
 	cbuf.Bind(gfx);
 }

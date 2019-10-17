@@ -13,7 +13,7 @@ GDIPlusManager gdipm;
 
 App::App()
 	:
-	wnd( 1280,720,"The Donkey Fart Box" ),
+	wnd( 1600,900,"The Donkey Fart Box" ),
 	pointlight(wnd.Gfx()),
 	directionallight(wnd.Gfx()),
 	cam(wnd.Gfx()),
@@ -129,14 +129,13 @@ void App::DoFrame()
 									   { -2.0f,0.0f }, { 0.0f,0.0f }, { 2.0f,0.0f },
 									   { -2.0f,-2.0f }, { 0.0f,-2.0f }, { 2.0f,-2.0f } };
 	causticPlane->Bind(wnd.Gfx(), dt);
+	causticPlane->Bind(wnd.Gfx(), plane->pmc.speed, plane->pmc.depth, plane->pmc.roughness, plane->pmc.flatten1, plane->pmc.flatten2);
 	for (short int i = 0; i < 9; i++)
 	{
 		causticPlane->Bind(wnd.Gfx(), offsets[i]);
 		causticPlane->Draw(wnd.Gfx());
 	}
-
-	//causticPlane->Bind(wnd.Gfx(), { -1.0f,0.0f });
-
+	wnd.Gfx().UnbindTessellationShader();
 
 	wnd.Gfx().SetRenderTarget();
 
@@ -145,6 +144,7 @@ void App::DoFrame()
 	wnd.Gfx().SetViewPort();
 
 	//plane.Draw( wnd.Gfx() );
+
 	plane->ChangeSphereMaterialState(wnd.Gfx(), skyBox.pitch, skyBox.yaw, skyBox.roll);
 	plane->Bind(wnd.Gfx(), dt);
 	plane->Draw(wnd.Gfx());
@@ -167,6 +167,16 @@ void App::DoFrame()
 	}
 
 	wnd.Gfx().SetStencilState();
+
+	//wnd.Gfx().SetRasterState('N');
+	//wnd.Gfx().SetAlphaBlendState('A');
+	//dx::XMFLOAT2 _offset = { 0.0f,0.0f };
+	//causticPlane->Bind(wnd.Gfx(), _offset);
+	//causticPlane->Draw(wnd.Gfx());
+
+	//wnd.Gfx().UnbindTessellationShader();
+	//wnd.Gfx().SetAlphaBlendState();
+	//wnd.Gfx().SetRasterState();
 
 	//cube.Draw(wnd.Gfx());
 

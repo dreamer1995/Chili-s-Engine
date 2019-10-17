@@ -28,7 +28,7 @@ private:
 	DirectionalLightCBuf cbData;
 	mutable PhongSphere sphere;
 	mutable SolidArrow arrow;
-	mutable Bind::VertexConstantBuffer<DirectionalLightCBuf> cbufVS;
+	mutable Bind::DomainConstantBuffer<DirectionalLightCBuf> cbufVS;
 	mutable Bind::PixelConstantBuffer<DirectionalLightCBuf> cbuf;
 	DirectX::XMFLOAT3 pos = { 0.0f,10.0f,0.0f };
 	float pitch = 0.0f;

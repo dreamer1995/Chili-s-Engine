@@ -28,6 +28,7 @@ cbuffer DirectionalLightCBuf : register(b1)
 cbuffer CameraCBuf : register(b2)
 {
 	float3 cameraPos;
+	float3 cameraDir;
 };
 
 cbuffer ObjectCBuf : register(b3)

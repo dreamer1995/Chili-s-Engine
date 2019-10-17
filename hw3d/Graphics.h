@@ -70,27 +70,37 @@ public:
 	DirectX::XMMATRIX GetProjection() const noexcept;
 	void SetCamera( DirectX::FXMMATRIX cam ) noexcept;
 	DirectX::XMMATRIX GetCamera() const noexcept;
+
 	void EnableImgui() noexcept;
 	void DisableImgui() noexcept;
 	bool IsImguiEnabled() const noexcept;
+
 	void SetStencilState() noexcept;
 	void SetStencilState(char type) noexcept;
+
 	void SetRasterState() noexcept;
 	void SetRasterState(char type) noexcept;
+
+	void SetAlphaBlendState() noexcept;
+	void SetAlphaBlendState(char type) noexcept;
+
 	void CreateMapRenderTarget();
-	void UnbindShaderResource(UINT slot) noexcept;
 	void SetRenderTarget() noexcept;
 	void SetPreRenderTarget(short int i) noexcept;
 	void SetMapRenderTarget() noexcept;
+
 	void SetViewPort() noexcept;
 	void SetViewPort(char type) noexcept;
 	void SetViewPort(float x, float y) noexcept;
+
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> GetShaderResourceView(char type = 'D') const noexcept;
+
 	void SaveHDCubemapSRV();
 	void SetCubemapSRVMip(short int i);
 	void SetLUTRT() noexcept;
-	void SetAlphaBlendState() noexcept;
-	void SetAlphaBlendState(char type) noexcept;
+
+	void UnbindTessellationShader() noexcept;
+	void UnbindShaderResource(UINT slot) noexcept;
 private:
 	DirectX::XMMATRIX projection;
 	DirectX::XMMATRIX camera;

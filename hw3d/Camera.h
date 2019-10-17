@@ -20,6 +20,7 @@ private:
 	struct CameraCBuf
 	{
 		alignas(16) DirectX::XMFLOAT3 pos;
+		alignas(16) DirectX::XMFLOAT3 direction;
 	};
 private:
 	float pitch;
@@ -27,5 +28,6 @@ private:
 	static constexpr float rotationSpeed = 0.004f;
 	void KeepLookFront(DirectX::XMFLOAT3 position) noexcept;
 	float yaw_;
+	mutable Bind::VertexConstantBuffer<CameraCBuf> cbufVS;
 	mutable Bind::PixelConstantBuffer<CameraCBuf> cbuf;
 };

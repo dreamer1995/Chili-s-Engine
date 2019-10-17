@@ -11,7 +11,7 @@ class Arrow
 {
 public:
 	//template<class V>
-	static IndexedLineList MakeDynamicArrow(Dvtx::VertexLayout layout, float length)
+	static IndexedTriangleList MakeDynamicArrow(Dvtx::VertexLayout layout, float length)
 	{
 		namespace dx = DirectX;
 		float expansion = 0.2;
@@ -32,7 +32,7 @@ public:
 		};
 	}
 
-	static IndexedLineList Make(float length)
+	static IndexedTriangleList Make(float length)
 	{
 		using Dvtx::VertexLayout;
 		VertexLayout vl;

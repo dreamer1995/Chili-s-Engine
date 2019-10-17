@@ -146,6 +146,8 @@ Graphics::Graphics( HWND hWnd,int width,int height )
 	srvDesc.TextureCube.MipLevels = 1;
 	GFX_THROW_INFO(pDevice->CreateShaderResourceView(pPreMapLUT.Get(), &srvDesc, &pPreMapShaderResourceViewLUT));
 
+	texDesc.Width = width;
+	texDesc.Height = width;
 	texDesc.MipLevels = 1;
 	texDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
 	GFX_THROW_INFO(pDevice->CreateTexture2D(&texDesc, NULL, &pMapCaustics));
@@ -426,7 +428,7 @@ void Graphics::SetViewPort(char type) noexcept
 	}
 	if (type == 'C')
 	{
-		SetViewPort(1.0f, 1.0f);
+		SetViewPort(9.0f / 16.0f, 9.0f / 16.0f);
 	}
 }
 
@@ -527,6 +529,13 @@ void Graphics::UnbindShaderResource(UINT slot) noexcept
 	ID3D11ShaderResourceView* nullSRV[1] = { nullptr };
 	pContext->PSSetShaderResources(slot, 1u, nullSRV);
 }
+
+void Graphics::UnbindTessellationShader() noexcept
+{
+	pContext->HSSetShader(NULL, nullptr, 0u);
+	pContext->DSSetShader(NULL, nullptr, 0u);
+}
+
 // Graphics exception stuff
 Graphics::HrException::HrException( int line,const char * file,HRESULT hr,std::vector<std::string> infoMsgs ) noexcept
 	:

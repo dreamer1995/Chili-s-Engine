@@ -11,3 +11,5 @@
 #include "Texture.h"
 #include "Sampler.h"
 #include "TexturePre.h"
+#include "HullShader.h"
+#include "DomainShader.h"

@@ -30,9 +30,11 @@ TestPlane::TestPlane( Graphics& gfx,float size )
 	AddBind(Texture::Resolve(gfx, "Images\\T_SmallWaves_N.jpg", 2u));
 	AddBind(TexturePre::Resolve(gfx, 3u, gfx.GetShaderResourceView('C')));
 	AddBind(Texture::Resolve(gfx, "Images\\DesertSand_albedo.jpg", 4u));
+	AddBind(Texture::Resolve(gfx, "Images\\heightmap_island.jpg", 5u));
 	AddBind(TexturePre::Resolve(gfx, 10u, gfx.GetShaderResourceView()));
 	AddBind(TexturePre::Resolve(gfx, 11u, gfx.GetShaderResourceView('M')));
 	AddBind(TexturePre::Resolve(gfx, 12u, gfx.GetShaderResourceView('L')));
+	AddBind(Texture::Resolve(gfx, "Images\\heightmap_island.jpg", 30u, false, true));
 
 	auto pvs = VertexShader::Resolve(gfx, "FluidVS.cso");
 	auto pvsbc = pvs->GetBytecode();
@@ -40,11 +42,13 @@ TestPlane::TestPlane( Graphics& gfx,float size )
 
 	AddBind(PixelShader::Resolve(gfx, "FluidPS.cso"));
 
-	AddBind( PixelConstantBuffer<PSMaterialConstant>::Resolve( gfx,pmc,3u ) );
+	AddBind(VertexConstantBuffer<VSMaterialConstant>::Resolve(gfx, vmc, 2u));
+
+	AddBind( PixelConstantBuffer<PSMaterialConstant>::Resolve( gfx,pmc,5u ) );
 
 	AddBind( InputLayout::Resolve( gfx,model.vertices.GetLayout(),pvsbc ) );
 
-	AddBind( Topology::Resolve( gfx,D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST ) );
+	AddBind( Topology::Resolve( gfx, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST) );
 
 	AddBind( std::make_shared<TransformCbufDoubleboi>( gfx,*this,0u,4u ) );
 }
@@ -87,9 +91,23 @@ void TestPlane::SpawnControlWindow( Graphics& gfx ) noexcept
 		bool checkState = pmc.normalMappingEnabled == TRUE;
 		bool changed2 = ImGui::Checkbox( "Enable Normal Map",&checkState );
 		pmc.normalMappingEnabled = checkState ? TRUE : FALSE;
-		if( changed0 || changed1 || changed2 )
+		bool changed3 = ImGui::SliderFloat("Speed", &pmc.speed, 0.0f, 1.0f);
+		bool changed4 = ImGui::SliderFloat("Depth", &pmc.depth, 0.0f, 2.0f);
+		bool changed5 = ImGui::SliderFloat("Tilling", &pmc.tilling, 0.0f, 2.0f);
+		bool changed6 = ImGui::SliderFloat("Flatten1", &pmc.flatten1, -1.0f, 1.0f);
+		bool changed7 = ImGui::SliderFloat("Flatten2", &pmc.flatten2, -1.0f, 1.0f);
+		bool changed8 = ImGui::ColorEdit3("Water Color", &vmc.color.x);
+		bool changed9 = ImGui::DragFloat3("Attenuation", &vmc.attenuation.x);
+		bool changed10 = ImGui::ColorEdit3("ScatteringKd", &vmc.scatteringKd.x);
+
+		if (changed0 || changed1 || changed2 || changed3 || changed4 || changed5 || changed6 || changed7)
 		{
 			QueryBindable<Bind::PixelConstantBuffer<PSMaterialConstant>>()->Update( gfx,pmc );
+		}
+		if (changed4 || changed8 || changed9 || changed10)
+		{
+			vmc.depth = pmc.depth;
+			QueryBindable<Bind::VertexConstantBuffer<VSMaterialConstant>>()->Update(gfx, vmc);
 		}
 	}
 	ImGui::End();

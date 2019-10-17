@@ -1,7 +1,16 @@
 #include <PBRHeader.hlsli>
 cbuffer ObjectCBuf : register(b5)
 {
-
+	float _metallic;
+	float __roughness;
+	bool _normalMapEnabled;
+	matrix _EVRotation;
+	float _time;
+	float speed;
+	float depth;
+	float tilling;
+	float flatten1;
+	float flatten2;
 };
 
 Texture2D rmap;
@@ -9,6 +18,7 @@ Texture2D mnmap : register(t1);
 Texture2D snmap : register(t2);
 Texture2D caumap : register(t3);
 Texture2D gmap : register(t4);
+Texture2D hmap : register(t5);
 
 struct PSIn {
 	float3 worldPos : Position;
@@ -16,11 +26,13 @@ struct PSIn {
 	float3 tangent : Tangent;
 	float3 binormal : Binormal;
 	float2 uv : Texcoord;
+	float3 outScattering : Position1;
+	float3 inScattering : Position2;
 };
 
 float Motion_4WayChaos(Texture2D textureIn, float2 uv, float speed);
 float3 Motion_4WayChaos_Normal(Texture2D textureIn, float2 uv, float speed);
-float2 UVRefractionDistorted(float3 Rv, float2 uv, float depth);
+float2 UVRefractionDistorted(float3 Rv, float2 uv);
 
 float4 main(PSIn i) : SV_Target
 {
@@ -30,15 +42,15 @@ float4 main(PSIn i) : SV_Target
 	float variationSharpness = 13.0511389f;
 	fRoughness = pow(fRoughness, variationSharpness) * variationSharpness;
 	fRoughness = saturate(fRoughness);
-	fRoughness = _roughness * lerp(0.164602f, 0.169983f, fRoughness);
+	fRoughness = __roughness * lerp(0.164602f, 0.169983f, fRoughness);
 	// sample normal from map if normal mapping enabled	
-	if (normalMapEnabled)
+	if (_normalMapEnabled)
 	{
-		float3 mediumWaves = Motion_4WayChaos_Normal(mnmap, i.uv, 0.5f);
-		float3 smallWaves = Motion_4WayChaos_Normal(snmap, i.uv, 0.5f);
+		float3 mediumWaves = lerp(Motion_4WayChaos_Normal(mnmap, i.uv * tilling, speed), float3(0.5f, 0.5f, 1.0f), flatten1);
+		float3 smallWaves = lerp(Motion_4WayChaos_Normal(snmap, i.uv * tilling, speed), float3(0.5f, 0.5f, 1.0f), flatten2);
 		float3 mixWaves = (mediumWaves + smallWaves) * 0.5f;
 		float waveletNormalStrength = 0.034862f;
-		float3 wavelet = lerp(float3(0.0f, 0.0f, 1.0f), Motion_4WayChaos_Normal(snmap, i.uv * 0.5f, 0.40708f), waveletNormalStrength);
+		float3 wavelet = lerp(float3(0.5f, 0.5f, 1.0f), Motion_4WayChaos_Normal(snmap, i.uv * 0.5f, 0.40708f), waveletNormalStrength);
 
 		float3 bumpNormal = lerp(mixWaves, wavelet, fRoughness);
 		bumpNormal = bumpNormal * 2.0f - 1.0f;
@@ -60,8 +72,8 @@ float4 main(PSIn i) : SV_Target
 	const float NdotL = max(dot(i.normal, direction), 0.0f);
 	const float3 halfDir = normalize(direction + viewDir);
 	float NdotH = max(dot(i.normal, halfDir), 0.0f);
-	float3 rotatedNormal = normalize(mul(i.normal, (float3x3)EVRotation));
-	float3 R = reflect(normalize(mul(-viewDir, (float3x3)EVRotation)), rotatedNormal);
+	float3 rotatedNormal = normalize(mul(i.normal, (float3x3)_EVRotation));
+	float3 R = reflect(normalize(mul(-viewDir, (float3x3)_EVRotation)), rotatedNormal);
 	//float3 albedo = tex.Sample(splr, i.uv).rgb * color;
 	//float3(1.0f, 0.0f, 0.0f)
 	
@@ -70,15 +82,17 @@ float4 main(PSIn i) : SV_Target
 	//					 pow(float3(0.162565f, 0.271166f, 0.325000f), 2.2f),
 	//					 fresnel);
 
-	const float t = lerp(0.225f, 0.465f, NdotV);
-	const float3 Rv = lerp(-viewDir, -i.normal, t);
-	const float2 distUV = UVRefractionDistorted(Rv, i.uv, 1.0f);
-	float3 albedo = lerp(pow(float3(0.018450f, 0.045000f, 0.042473f), 2.2f),
-						 pow(gmap.Sample(splr, distUV).rgb, 2.2f),
-						 0.8f);
-	albedo += caumap.Sample(splr, distUV).rgb;
+	//const float3 statVDir = normalize(cameraPos - (float3)mul(float4(0.0f, 0.0f, 0.0f, 1.0f), matrix_M2W));
+	float depthmap = hmap.Sample(splr, i.uv).r;
+
+	const float t = lerp(0.225f, 0.465f, max(dot(i.normal, -cameraDir), 0.0f));
+	const float3 Rv = lerp(cameraDir, -i.normal, t);
+	const float2 distUV = UVRefractionDistorted(Rv, i.uv);
+	float3 albedo = pow(gmap.Sample(splr, distUV).rgb, 2.2f);
+	albedo += caumap.Sample(splr, i.uv * tilling).rgb * (1 - depth * depthmap + 0.1f);
+	albedo *= i.outScattering + i.inScattering;
 	float3 F0 = float3(0.04f, 0.04f, 0.04f);
-	float fMetallic = metallic * 0.8f;
+	float fMetallic = _metallic * depth * depthmap;
 	F0 = lerp(F0, albedo, fMetallic);
 	//fixed3 ambient = UNITY_LIGHTMODEL_AMBIENT.xyz * albedo;
 
@@ -148,7 +162,7 @@ float Motion_4WayChaos(Texture2D textureIn, float2 uv, float speed)
 	float outPut = 0.0f;
 	for (int i = 0; i < 4; i++)
 	{
-		float textureSample = textureIn.Sample(splr, uv + offset[i] + pannerDir[i] * time * speed).r;
+		float textureSample = textureIn.Sample(splr, uv + offset[i] + pannerDir[i] * _time * speed).r;
 		outPut += textureSample;
 	}
 
@@ -168,14 +182,14 @@ float3 Motion_4WayChaos_Normal(Texture2D textureIn, float2 uv, float speed)
 	float3 outPut = float3(0.0f, 0.0f, 0.0f);
 	for (int i = 0; i < 4; i++)
 	{
-		float3 textureSample = textureIn.Sample(splr, uv + offset[i] + pannerDir[i] * time * speed).rgb;
+		float3 textureSample = textureIn.Sample(splr, uv + offset[i] + pannerDir[i] * _time * speed).rgb;
 		outPut += textureSample;
 	}
 
 	return outPut * 0.25f;
 }
 
-float2 UVRefractionDistorted(float3 Rv, float2 uv, float depth)
+float2 UVRefractionDistorted(float3 Rv, float2 uv)
 {
-	return float2(uv.x + Rv.x * depth, uv.y + Rv.z  *depth);
+	return float2(uv.x + Rv.x * depth, uv.y + Rv.z * depth);
 }

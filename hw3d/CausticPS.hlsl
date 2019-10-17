@@ -5,7 +5,7 @@ cbuffer CBuf : register(b3)
 
 struct PSIn {
 	float3 oldPos : Position;
-	float3 newPos : Normal;
+	float3 newPos : Position1;
 };
 
 float4 main(PSIn i) : SV_Target
