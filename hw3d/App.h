@@ -7,15 +7,16 @@
 #include "TestPlane.h"
 #include "TestCube.h"
 #include "TestSphere.h"
-#include "Mesh.h"
+//#include "Mesh.h"
 #include <set>
 #include "SkyBox.h"
 #include "DirectionalLight.h"
 #include "PreSkyBox.h"
 #include "PrePlane.h"
 #include "UVPannel.h"
-#include "MeshSingle.h"
+//#include "MeshSingle.h"
 #include "CausticPlane.h"
+#include "CausticPlaneNormal.h"
 
 class App
 {
@@ -49,4 +50,5 @@ private:
 	std::unique_ptr<UVPannel> uvPannel;
 	//MeshSingle gun{ wnd.Gfx(), "Models\\Cerberus_LP.FBX", 0.1f };
 	std::unique_ptr<CausticPlane> causticPlane;
+	std::unique_ptr<CausticPlaneNormal> causticPlaneNormal;
 };

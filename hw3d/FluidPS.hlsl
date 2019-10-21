@@ -19,6 +19,7 @@ Texture2D snmap : register(t2);
 Texture2D caumap : register(t3);
 Texture2D gmap : register(t4);
 Texture2D hmap : register(t5);
+Texture2D nmap : register(t6);
 
 struct PSIn {
 	float3 worldPos : Position;
@@ -83,17 +84,18 @@ float4 main(PSIn i) : SV_Target
 	//					 fresnel);
 
 	//const float3 statVDir = normalize(cameraPos - (float3)mul(float4(0.0f, 0.0f, 0.0f, 1.0f), matrix_M2W));
-	float depthmap = hmap.Sample(splr, i.uv).r;
+	float depthmap = (i.worldPos.z * 0.1f + 1.0f) * 0.5f;
 
 	const float t = lerp(0.225f, 0.465f, max(dot(i.normal, -cameraDir), 0.0f));
 	const float3 Rv = lerp(cameraDir, -i.normal, t);
-	const float2 distUV = UVRefractionDistorted(Rv, i.uv, depth);
-	const float2 subDistUV = UVRefractionDistorted(Rv, i.uv, depth * 0.5f);
+	float depthR = depth + i.worldPos.y;
+	const float2 distUV = UVRefractionDistorted(Rv, i.uv, depthR * depthmap);
+	const float2 subDistUV = UVRefractionDistorted(Rv, i.uv, depthR * depthmap * 0.5f);
 	float3 albedo = pow(gmap.Sample(splr, distUV).rgb, 2.2f);
-	albedo += caumap.Sample(splr, subDistUV * tilling).rgb * (1 - depth * depthmap + 0.1f);
+	albedo += caumap.Sample(splr, subDistUV * tilling).rgb * saturate(1 - depthR * depthmap);
 	albedo *= i.outScattering + i.inScattering;
 	float3 F0 = float3(0.04f, 0.04f, 0.04f);
-	float fMetallic = _metallic * depth * depthmap;
+	float fMetallic = saturate(_metallic * depthR * depthmap);
 	F0 = lerp(F0, albedo, fMetallic);
 	//fixed3 ambient = UNITY_LIGHTMODEL_AMBIENT.xyz * albedo;
 

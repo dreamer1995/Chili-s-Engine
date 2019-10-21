@@ -23,6 +23,7 @@ App::App()
 	plane = std::make_unique<TestPlane>(wnd.Gfx(), 5.0f);
 	plane->SetRotation(0.0f, PI * 0.5f, 0.0f);
 	//dx::XMFLOAT2 offsets[9] = { {} }
+	causticPlaneNormal = std::make_unique<CausticPlaneNormal>(wnd.Gfx(), 5.0f);
 	causticPlane = std::make_unique<CausticPlane>(wnd.Gfx(), 1.0f);
 	causticPlane->SetRotation(0.0f, PI * 0.5f, 0.0f);
 
@@ -88,7 +89,6 @@ App::App()
 
 	//wnd.Gfx().SetViewPort('U');
 	wnd.Gfx().SetViewPort();
-	wnd.Gfx().CreateMapRenderTarget();
 }
 
 void App::DoFrame()
@@ -120,26 +120,34 @@ void App::DoFrame()
 
 	wnd.Gfx().SetViewPort('C');
 
-	wnd.Gfx().SetAlphaBlendState('A');
-
-	wnd.Gfx().UnbindShaderResource(3u);
+	wnd.Gfx().CreateMapRenderTarget('N');
+	wnd.Gfx().UnbindShaderResource(3u, 21u);
+	wnd.Gfx().UnbindShaderResource(6u, 21u);
 	wnd.Gfx().SetMapRenderTarget();
 
-	static dx::XMFLOAT2 offsets[9] = { { -2.0f,2.0f }, { 0.0f,2.0f }, { 2.0f,2.0f },
-									   { -2.0f,0.0f }, { 0.0f,0.0f }, { 2.0f,0.0f },
-									   { -2.0f,-2.0f }, { 0.0f,-2.0f }, { 2.0f,-2.0f } };
+	causticPlaneNormal->Bind(wnd.Gfx(), dt);
+	causticPlaneNormal->Bind(wnd.Gfx(), plane->pmc.speed, plane->pmc.roughness, plane->pmc.flatten1, plane->pmc.flatten2,
+		plane->vmc.amplitude, plane->vmc.speed, plane->vmc.wavelength, plane->vmc.omega, plane->vmc.Q,
+		plane->vmc.directionX, plane->vmc.directionZ,
+		plane->pmc.normalMappingEnabled);
+	causticPlaneNormal->Draw(wnd.Gfx());
+
+	wnd.Gfx().CreateMapRenderTarget('D');
+	wnd.Gfx().SetMapRenderTarget();
+
+	wnd.Gfx().SetAlphaBlendState('A');
+
 	causticPlane->Bind(wnd.Gfx(), dt);
-	causticPlane->Bind(wnd.Gfx(), plane->pmc.speed, plane->pmc.depth, plane->pmc.roughness, plane->pmc.flatten1, plane->pmc.flatten2);
-	for (short int i = 0; i < 9; i++)
-	{
-		causticPlane->Bind(wnd.Gfx(), offsets[i]);
-		causticPlane->Draw(wnd.Gfx());
-	}
+	causticPlane->Bind(wnd.Gfx(), plane->pmc.depth,
+		plane->vmc.amplitude, plane->vmc.speed, plane->vmc.wavelength, plane->vmc.omega, plane->vmc.Q,
+		plane->vmc.directionX, plane->vmc.directionZ);
+	causticPlane->Draw(wnd.Gfx());
+
 	wnd.Gfx().UnbindTessellationShader();
 
-	wnd.Gfx().SetRenderTarget();
-
 	wnd.Gfx().SetAlphaBlendState();
+
+	wnd.Gfx().SetRenderTarget();
 
 	wnd.Gfx().SetViewPort();
 
@@ -170,8 +178,6 @@ void App::DoFrame()
 
 	//wnd.Gfx().SetRasterState('N');
 	//wnd.Gfx().SetAlphaBlendState('A');
-	//dx::XMFLOAT2 _offset = { 0.0f,0.0f };
-	//causticPlane->Bind(wnd.Gfx(), _offset);
 	//causticPlane->Draw(wnd.Gfx());
 
 	//wnd.Gfx().UnbindTessellationShader();

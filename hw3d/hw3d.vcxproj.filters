@@ -183,12 +183,6 @@
     <ClCompile Include="UVPannel.cpp">
       <Filter>Source Files\Drawable</Filter>
     </ClCompile>
-    <ClCompile Include="MeshSingle.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="MeshWall.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="CausticPlane.cpp">
       <Filter>Source Files\Drawable</Filter>
     </ClCompile>
@@ -200,6 +194,9 @@
     </ClCompile>
     <ClCompile Include="TransformCbufTripleboi.cpp">
       <Filter>Source Files\Bindable</Filter>
+    </ClCompile>
+    <ClCompile Include="CausticPlaneNormal.cpp">
+      <Filter>Source Files\Drawable</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -338,9 +335,6 @@
     <ClInclude Include="BindableCommon.h">
       <Filter>Header Files\Bindable</Filter>
     </ClInclude>
-    <ClInclude Include="Mesh.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Color.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -395,9 +389,6 @@
     <ClInclude Include="UVPannel.h">
       <Filter>Header Files\Drawable</Filter>
     </ClInclude>
-    <ClInclude Include="MeshSingle.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="CausticPlane.h">
       <Filter>Header Files\Drawable</Filter>
     </ClInclude>
@@ -410,6 +401,9 @@
     <ClInclude Include="TransformCbufTripleboi.h">
       <Filter>Header Files\Bindable</Filter>
     </ClInclude>
+    <ClInclude Include="CausticPlaneNormal.h">
+      <Filter>Header Files\Drawable</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="hw3d.rc">
@@ -418,6 +412,12 @@
   </ItemGroup>
   <ItemGroup>
     <Image Include="chili.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="X-Laws.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="bitmap1.bmp">
       <Filter>Resource Files</Filter>
     </Image>
   </ItemGroup>
@@ -533,6 +533,12 @@
       <Filter>Shader</Filter>
     </FxCompile>
     <FxCompile Include="CausticHS.hlsl">
+      <Filter>Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="CausticBakeNPS.hlsl">
+      <Filter>Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="CausticBakeNVS.hlsl">
       <Filter>Shader</Filter>
     </FxCompile>
   </ItemGroup>

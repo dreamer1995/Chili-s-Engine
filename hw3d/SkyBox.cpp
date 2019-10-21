@@ -5,6 +5,7 @@
 
 SkyBox::SkyBox(Graphics& gfx, float size)
 {
+	Reset();
 	using namespace Bind;
 	namespace dx = DirectX;
 
@@ -53,7 +54,7 @@ DirectX::XMMATRIX SkyBox::GetTransformXM() const noexcept
 void SkyBox::Reset() noexcept
 {
 	pitch = 0.0f;
-	yaw = 0.0f;
+	yaw = 76.0f * PI / 180.0f;
 	roll = 0.0f;
 }
 

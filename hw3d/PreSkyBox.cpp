@@ -34,7 +34,7 @@ PreSkyBox::PreSkyBox(Graphics& gfx, float size, char type)
 	}
 	else
 	{
-		AddBind(Texture::Resolve(gfx, "Images\\EpicQuadPanorama_CC+EV1.jpg"));
+		AddBind(Texture::Resolve(gfx, "Images\\secluded_beach_4k.jpg"));
 
 		AddBind(PixelShader::Resolve(gfx, "SphereToCubePS.cso"));
 	}

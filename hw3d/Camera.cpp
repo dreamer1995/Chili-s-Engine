@@ -59,9 +59,9 @@ void Camera::SpawnControlWindow() noexcept
 
 void Camera::Reset() noexcept
 {
-	pos = { 0.0f,7.0f,-9.0f };
-	pitch = 43.0f * PI / 180.0f;
-	yaw = 0.0f;
+	pos = { -11.f,9.6f,-12.8f };
+	pitch = 46.0f * PI / 180.0f;
+	yaw = 47.0f * PI / 180.0f;
 	yaw_ = 0;
 }
 
@@ -163,7 +163,7 @@ void Camera::Bind(Graphics& gfx) const noexcept
 	using namespace dx;
 	DirectX::XMFLOAT3 lookVector;
 	dx::XMStoreFloat3(&lookVector, XMVector3Transform(XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f),
-		XMMatrixRotationRollPitchYaw(45.0f / 180.0f*PI, 0.0f, 0.0f)));
+		XMMatrixRotationRollPitchYaw(45.0f / 180.0f * PI, 0.0f, 0.0f)));
 	CameraCBuf cbData = { pos,{ 0.0f,1.0f,0.0f } };
 	cbufVS.Update(gfx, cbData);
 	cbufVS.Bind(gfx);

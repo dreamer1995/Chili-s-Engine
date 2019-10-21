@@ -95,6 +95,7 @@
     <ClCompile Include="Bindable.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="CausticPlane.cpp" />
+    <ClCompile Include="CausticPlaneNormal.cpp" />
     <ClCompile Include="ChiliException.cpp" />
     <ClCompile Include="ChiliTimer.cpp" />
     <ClCompile Include="DirectionalLight.cpp" />
@@ -115,8 +116,6 @@
     <ClCompile Include="IndexBuffer.cpp" />
     <ClCompile Include="InputLayout.cpp" />
     <ClCompile Include="Keyboard.cpp" />
-    <ClCompile Include="MeshSingle.cpp" />
-    <ClCompile Include="MeshWall.cpp" />
     <ClCompile Include="PhongSphere.cpp" />
     <ClCompile Include="PointLight.cpp" />
     <ClCompile Include="Mouse.cpp" />
@@ -153,6 +152,7 @@
     <ClInclude Include="BindableCommon.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="CausticPlane.h" />
+    <ClInclude Include="CausticPlaneNormal.h" />
     <ClInclude Include="ChiliException.h" />
     <ClInclude Include="ChiliMath.h" />
     <ClInclude Include="ChiliTimer.h" />
@@ -170,7 +170,6 @@
     <ClInclude Include="Graphics.h" />
     <ClInclude Include="GraphicsThrowMacros.h" />
     <ClInclude Include="HullShader.h" />
-    <ClInclude Include="MeshSingle.h" />
     <ClInclude Include="PhongSphere.h" />
     <ClInclude Include="PrePlane.h" />
     <ClInclude Include="PreSkyBox.h" />
@@ -188,7 +187,6 @@
     <ClInclude Include="IndexedTriangleList.h" />
     <ClInclude Include="InputLayout.h" />
     <ClInclude Include="Keyboard.h" />
-    <ClInclude Include="Mesh.h" />
     <ClInclude Include="Plane.h" />
     <ClInclude Include="PointLight.h" />
     <ClInclude Include="Mouse.h" />
@@ -220,7 +218,9 @@
     <ResourceCompile Include="hw3d.rc" />
   </ItemGroup>
   <ItemGroup>
+    <Image Include="bitmap1.bmp" />
     <Image Include="chili.ico" />
+    <Image Include="X-Laws.ico" />
   </ItemGroup>
   <ItemGroup>
     <None Include="DXGetErrorDescription.inl" />
@@ -229,6 +229,22 @@
     <None Include="PBRHeader.hlsli" />
   </ItemGroup>
   <ItemGroup>
+    <FxCompile Include="CausticBakeNPS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ProjectDir)%(Filename).cso</ObjectFileOutput>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ProjectDir)%(Filename).cso</ObjectFileOutput>
+    </FxCompile>
+    <FxCompile Include="CausticBakeNVS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ProjectDir)%(Filename).cso</ObjectFileOutput>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ProjectDir)%(Filename).cso</ObjectFileOutput>
+    </FxCompile>
     <FxCompile Include="CausticDS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Domain</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>

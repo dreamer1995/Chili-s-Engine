@@ -84,7 +84,7 @@ public:
 	void SetAlphaBlendState() noexcept;
 	void SetAlphaBlendState(char type) noexcept;
 
-	void CreateMapRenderTarget();
+	void CreateMapRenderTarget(char type);
 	void SetRenderTarget() noexcept;
 	void SetPreRenderTarget(short int i) noexcept;
 	void SetMapRenderTarget() noexcept;
@@ -100,7 +100,7 @@ public:
 	void SetLUTRT() noexcept;
 
 	void UnbindTessellationShader() noexcept;
-	void UnbindShaderResource(UINT slot) noexcept;
+	void UnbindShaderResource(UINT slotP, UINT slotD) noexcept;
 private:
 	DirectX::XMMATRIX projection;
 	DirectX::XMMATRIX camera;
@@ -129,6 +129,7 @@ private:
 	Microsoft::WRL::ComPtr<ID3D11Texture2D> pPreCubeMapM;
 	Microsoft::WRL::ComPtr<ID3D11Texture2D> pPreMapLUT;
 	Microsoft::WRL::ComPtr<ID3D11Texture2D> pMapCaustics;
+	Microsoft::WRL::ComPtr<ID3D11Texture2D> pMapCausticsNormal;
 
 	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> pMap3DTarget[6];
 	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> pMap2DTarget;
@@ -138,6 +139,7 @@ private:
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> pPreMapShaderResourceViewM;
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> pPreMapShaderResourceViewLUT;
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> pMapShaderResourceViewCaustics;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> pMapShaderResourceViewCausticsNormal;
 
 	float preCubemapHeight;
 	D3D11_VIEWPORT pDefaultVP;

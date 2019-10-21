@@ -30,13 +30,14 @@ TestPlane::TestPlane( Graphics& gfx,float size )
 	AddBind(Texture::Resolve(gfx, "Images\\T_SmallWaves_N.jpg", 2u));
 	AddBind(TexturePre::Resolve(gfx, 3u, gfx.GetShaderResourceView('C')));
 	AddBind(Texture::Resolve(gfx, "Images\\DesertSand_albedo.jpg", 4u));
-	AddBind(Texture::Resolve(gfx, "Images\\heightmap_island.jpg", 5u));
+	AddBind(Texture::Resolve(gfx, "Images\\white.jpg", 5u));
+	AddBind(TexturePre::Resolve(gfx, 6u, gfx.GetShaderResourceView('N')));
 	AddBind(TexturePre::Resolve(gfx, 10u, gfx.GetShaderResourceView()));
 	AddBind(TexturePre::Resolve(gfx, 11u, gfx.GetShaderResourceView('M')));
 	AddBind(TexturePre::Resolve(gfx, 12u, gfx.GetShaderResourceView('L')));
-	AddBind(Texture::Resolve(gfx, "Images\\heightmap_island.jpg", 30u, false, true));
+	AddBind(Texture::Resolve(gfx, "Images\\white.jpg", 30u, false, true));
 
-	auto pvs = VertexShader::Resolve(gfx, "FluidVS.cso");
+	auto pvs = VertexShader::Resolve(gfx, "FluidVS.cso");	
 	auto pvsbc = pvs->GetBytecode();
 	AddBind(std::move(pvs));
 
@@ -92,19 +93,25 @@ void TestPlane::SpawnControlWindow( Graphics& gfx ) noexcept
 		bool changed2 = ImGui::Checkbox( "Enable Normal Map",&checkState );
 		pmc.normalMappingEnabled = checkState ? TRUE : FALSE;
 		bool changed3 = ImGui::SliderFloat("Speed", &pmc.speed, 0.0f, 1.0f);
-		bool changed4 = ImGui::SliderFloat("Depth", &pmc.depth, 0.0f, 2.0f);
+		bool changed4 = ImGui::SliderFloat("Depth", &pmc.depth, 0.0f, 4.0f);
 		bool changed5 = ImGui::SliderFloat("Tilling", &pmc.tilling, 0.0f, 2.0f);
 		bool changed6 = ImGui::SliderFloat("Flatten1", &pmc.flatten1, -1.0f, 1.0f);
 		bool changed7 = ImGui::SliderFloat("Flatten2", &pmc.flatten2, -1.0f, 1.0f);
 		bool changed8 = ImGui::ColorEdit3("Water Color", &vmc.color.x);
 		bool changed9 = ImGui::DragFloat3("Attenuation", &vmc.attenuation.x);
-		bool changed10 = ImGui::ColorEdit3("ScatteringKd", &vmc.scatteringKd.x);
+		bool changed10 = ImGui::DragFloat3("ScatteringKd", &vmc.scatteringKd.x);
+		bool changed11 = ImGui::SliderFloat4("Amplitude", &vmc.amplitude.x, 0.0f, 1.0f);
+		bool changed12 = ImGui::SliderFloat4("Speed", &vmc.speed.x, 0.0f, 1.0f);
+		bool changed13 = ImGui::SliderFloat4("Wavelength", &vmc.wavelength.x, 0.0f, 1.0f);
+		bool changed14 = ImGui::SliderFloat4("Q", &vmc.Q.x, 0.0f, 1.0f);
+		bool changed15 = ImGui::SliderFloat4("DirectionX", &vmc.directionX.x, -1.0f, 1.0f);
+		bool changed16 = ImGui::SliderFloat4("DirectionZ", &vmc.directionZ.x, -1.0f, 1.0f);
 
 		if (changed0 || changed1 || changed2 || changed3 || changed4 || changed5 || changed6 || changed7)
 		{
 			QueryBindable<Bind::PixelConstantBuffer<PSMaterialConstant>>()->Update( gfx,pmc );
 		}
-		if (changed4 || changed8 || changed9 || changed10)
+		if (changed4 || changed8 || changed9 || changed10 || changed11 || changed12 || changed13 || changed14 || changed15 || changed16)
 		{
 			vmc.depth = pmc.depth;
 			QueryBindable<Bind::VertexConstantBuffer<VSMaterialConstant>>()->Update(gfx, vmc);
@@ -123,4 +130,7 @@ void TestPlane::Bind(Graphics& gfx, float deltaTime) noexcept
 {
 	pmc.time += deltaTime;
 	QueryBindable<Bind::PixelConstantBuffer<PSMaterialConstant>>()->Update(gfx, pmc);
+	vmc.time += deltaTime;
+	vmc.omega = { 2 * PI / vmc.wavelength.x,2 * PI / vmc.wavelength.y,2 * PI / vmc.wavelength.z,2 * PI / vmc.wavelength.w };
+	QueryBindable<Bind::VertexConstantBuffer<VSMaterialConstant>>()->Update(gfx, vmc);
 }

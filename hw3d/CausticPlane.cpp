@@ -15,10 +15,8 @@ CausticPlane::CausticPlane(Graphics& gfx, float size)
 	AddBind(VertexBuffer::Resolve(gfx, geometryTag, model.vertices));
 	AddBind(IndexBuffer::Resolve(gfx, geometryTag, model.indices));
 
-	AddBind(Texture::Resolve(gfx, "Images\\T_MediumWaves_H.jpg", 20u, false, false, true));
-	AddBind(Texture::Resolve(gfx, "Images\\T_MediumWaves_N.jpg", 21u, false, false, true));
-	AddBind(Texture::Resolve(gfx, "Images\\T_SmallWaves_N.jpg", 22u, false, false, true));
-	AddBind(Texture::Resolve(gfx, "Images\\heightmap_island.jpg", 23u, false, false, true));
+	AddBind(Texture::Resolve(gfx, "Images\\white.jpg", 20u, false, false, true));
+	AddBind(TexturePre::Resolve(gfx, 21u, gfx.GetShaderResourceView('N'), true));
 
 	auto pvs = VertexShader::Resolve(gfx, "CausticVS.cso");
 	auto pvsbc = pvs->GetBytecode();
@@ -101,18 +99,17 @@ void CausticPlane::Bind(Graphics& gfx, float deltaTime) noexcept
 	QueryBindable<Bind::DomainConstantBuffer<DSMaterialConstant>>()->Update(gfx, dmc);
 }
 
-void CausticPlane::Bind(Graphics& gfx, DirectX::XMFLOAT2 offset) noexcept
+void CausticPlane::Bind(Graphics& gfx, float depth,
+	DirectX::XMFLOAT4 amplitude, DirectX::XMFLOAT4 _speed, DirectX::XMFLOAT4 wavelength, DirectX::XMFLOAT4 omega,
+	DirectX::XMFLOAT4 Q, DirectX::XMFLOAT4 directionX, DirectX::XMFLOAT4 directionZ) noexcept
 {
-	dmc.offset = offset;
-	QueryBindable<Bind::DomainConstantBuffer<DSMaterialConstant>>()->Update(gfx, dmc);
-}
-
-void CausticPlane::Bind(Graphics& gfx, float speed, float depth, float roughness, float flatten1, float flatten2) noexcept
-{
-	dmc.speed = speed;
 	dmc.depth = depth;
-	dmc.roughness = roughness;
-	dmc.flatten1 = flatten1;
-	dmc.flatten2 = flatten2;
+	dmc.amplitude = amplitude;
+	dmc._speed = _speed;
+	dmc.wavelength = wavelength;
+	dmc.omega = omega;
+	dmc.Q = Q;
+	dmc.directionX = directionX;
+	dmc.directionZ = directionZ;
 	QueryBindable<Bind::DomainConstantBuffer<DSMaterialConstant>>()->Update(gfx, dmc);
 }

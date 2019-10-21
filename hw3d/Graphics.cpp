@@ -151,11 +151,13 @@ Graphics::Graphics( HWND hWnd,int width,int height )
 	texDesc.MipLevels = 1;
 	texDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
 	GFX_THROW_INFO(pDevice->CreateTexture2D(&texDesc, NULL, &pMapCaustics));
+	GFX_THROW_INFO(pDevice->CreateTexture2D(&texDesc, NULL, &pMapCausticsNormal));
 
 	texture2DRTVDesc.Format = texDesc.Format;
 
 	srvDesc.Format = texDesc.Format;
 	GFX_THROW_INFO(pDevice->CreateShaderResourceView(pMapCaustics.Get(), &srvDesc, &pMapShaderResourceViewCaustics));
+	GFX_THROW_INFO(pDevice->CreateShaderResourceView(pMapCausticsNormal.Get(), &srvDesc, &pMapShaderResourceViewCausticsNormal));
 
 	// create depth stensil state
 	D3D11_DEPTH_STENCIL_DESC dsDesc = {};
@@ -451,6 +453,8 @@ Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> Graphics::GetShaderResourceView
 		return pPreMapShaderResourceViewLUT;
 	case 'C':
 		return pMapShaderResourceViewCaustics;
+	case 'N':
+		return pMapShaderResourceViewCausticsNormal;
 	default:
 		return pPreMapShaderResourceView;
 	}
@@ -511,10 +515,18 @@ void Graphics::SetAlphaBlendState(char type) noexcept
 	}
 }
 
-void Graphics::CreateMapRenderTarget()
+void Graphics::CreateMapRenderTarget(char type)
 {
 	HRESULT hr;
-	GFX_THROW_INFO(pDevice->CreateRenderTargetView(pMapCaustics.Get(), &texture2DRTVDesc, &pMap2DTarget));
+	switch (type)
+	{
+	case 'N':
+		GFX_THROW_INFO(pDevice->CreateRenderTargetView(pMapCausticsNormal.Get(), &texture2DRTVDesc, &pMap2DTarget));
+		break;
+	default:
+		GFX_THROW_INFO(pDevice->CreateRenderTargetView(pMapCaustics.Get(), &texture2DRTVDesc, &pMap2DTarget));
+	}
+	
 }
 
 void Graphics::SetMapRenderTarget() noexcept
@@ -524,10 +536,11 @@ void Graphics::SetMapRenderTarget() noexcept
 	pContext->OMSetRenderTargets(1u, pMap2DTarget.GetAddressOf(), nullptr);
 }
 
-void Graphics::UnbindShaderResource(UINT slot) noexcept
+void Graphics::UnbindShaderResource(UINT slotP, UINT slotD) noexcept
 {
 	ID3D11ShaderResourceView* nullSRV[1] = { nullptr };
-	pContext->PSSetShaderResources(slot, 1u, nullSRV);
+	pContext->PSSetShaderResources(slotP, 1u, nullSRV);
+	pContext->DSSetShaderResources(slotD, 1u, nullSRV);
 }
 
 void Graphics::UnbindTessellationShader() noexcept
