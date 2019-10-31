@@ -17,6 +17,8 @@
 //#include "MeshSingle.h"
 #include "CausticPlane.h"
 #include "CausticPlaneNormal.h"
+#include "WaterPlane.h"
+#include "Ground.h"
 
 class App
 {
@@ -39,9 +41,10 @@ private:
 	DirectionalLight directionallight;
 	//Model wall{ wnd.Gfx(),"Models\\brick_wall\\brick_wall.obj" };
 	//Model nano{ wnd.Gfx(),"Models\\nano_textured\\nanosuit.obj" };
-	std::unique_ptr<TestPlane> plane;
+	//std::unique_ptr<WaterPlane> plane;
 	//TestCube
-	//TestSphere cube{ wnd.Gfx(), 4.0f };
+	TestSphere cube{ wnd.Gfx(), 4.0f };
+	Ground ground{ wnd.Gfx(), 15.0f };
 	SkyBox skyBox;
 	std::unique_ptr<PreSkyBox> preSkyBox;
 	std::unique_ptr<PreSkyBox> preSkyBoxBlur;
@@ -49,6 +52,6 @@ private:
 	PrePlane prePlane;
 	std::unique_ptr<UVPannel> uvPannel;
 	//MeshSingle gun{ wnd.Gfx(), "Models\\Cerberus_LP.FBX", 0.1f };
-	std::unique_ptr<CausticPlane> causticPlane;
-	std::unique_ptr<CausticPlaneNormal> causticPlaneNormal;
+	//std::unique_ptr<CausticPlane> causticPlane;
+	//std::unique_ptr<CausticPlaneNormal> causticPlaneNormal;
 };

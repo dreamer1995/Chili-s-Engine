@@ -167,8 +167,10 @@ public:
 			return MakeTessellation();
 		case 'Q':
 			return MakeTessellation(false, false, 128, true);
-		default:
+		case 'W':
 			return MakeTessellation(true, true, 128);
+		default:
+			return MakeTessellation(true, true, 1);
 		}
 	}
 

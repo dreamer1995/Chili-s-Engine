@@ -26,7 +26,6 @@ cbuffer ObjectCBuf : register(b3)
 	float specularIntensity;
 	float specularPower;
 	bool normalMapEnabled;
-	float padding[1];
 };
 
 cbuffer TransformCBuf : register(b4)

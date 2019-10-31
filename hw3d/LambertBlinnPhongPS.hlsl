@@ -1,7 +1,16 @@
 #include <PhongHeader.hlsli>
 
-Texture2D tex;
-Texture2D nmap;
+cbuffer ObjectCBuf : register(b5)
+{
+	float _specularIntensity;
+	float _specularPower;
+	float3 color;
+	bool _normalMapEnabled;
+	bool basecolorMapEnabled;
+};
+
+//Texture2D tex;
+//Texture2D nmap;
 
 SamplerState splr;
 
@@ -16,13 +25,17 @@ struct PSIn {
 float4 main(PSIn i) : SV_Target
 {
 	// sample normal from map if normal mapping enabled	
-	if (normalMapEnabled)
+	//if (_normalMapEnabled)
+	//{
+	//	float3 bumpNormal;
+	//	bumpNormal = nmap.Sample(splr, i.uv).xyz;
+	//	bumpNormal = bumpNormal * 2.0f - 1.0f;
+	//	bumpNormal = (bumpNormal.x * i.tangent) + (bumpNormal.y * i.binormal) + (bumpNormal.z * i.normal);
+	//	i.normal = normalize(bumpNormal);
+	//}
+	//else 
 	{
-		float3 bumpNormal;
-		bumpNormal = nmap.Sample(splr, i.uv).xyz;
-		bumpNormal = bumpNormal * 2.0f - 1.0f;
-		bumpNormal = (bumpNormal.x * i.tangent) + (bumpNormal.y * i.binormal) + (bumpNormal.z * i.normal);
-		i.normal = normalize(bumpNormal);
+		i.normal = normalize(i.normal);
 	}
 	const float3 PlightDir = normalize(lightPos - i.worldPos);
 
@@ -31,7 +44,17 @@ float4 main(PSIn i) : SV_Target
 	const float3 viewDir = normalize(cameraPos - i.worldPos);
 
 	//float3 albedo = tex.Sample(splr, i.uv).rgb * color;
-	const float3 albedo = tex.Sample(splr, i.uv).rgb;
+
+	float3 albedo;
+
+	//if (basecolorMapEnabled)
+	{
+		//albedo = tex.Sample(splr, i.uv).rgb;
+	}
+	//else
+	{
+		albedo = color;
+	}
 
 	//fixed3 ambient = UNITY_LIGHTMODEL_AMBIENT.xyz * albedo;
 
@@ -43,8 +66,8 @@ float4 main(PSIn i) : SV_Target
 	const float3 PhalfDir = normalize(PlightDir + viewDir);
 	const float3 DhalfDir = normalize(direction + viewDir);
 
-	const float3 specular = PdiffuseColor * PdiffuseIntensity * att * specularIntensity * pow(max(0, dot(i.normal, PhalfDir)), specularPower) +
-							DdiffuseColor * DdiffuseIntensity* specularIntensity * pow(max(0, dot(i.normal, DhalfDir)), specularPower);
+	const float3 specular = PdiffuseColor * PdiffuseIntensity * att * _specularIntensity * pow(max(0, dot(i.normal, PhalfDir)), _specularPower) +
+							DdiffuseColor * DdiffuseIntensity* _specularIntensity * pow(max(0, dot(i.normal, DhalfDir)), _specularPower);
 
 	return float4(ambient + diffuse * albedo + specular, 1.0);
 }

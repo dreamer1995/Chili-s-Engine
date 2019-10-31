@@ -20,12 +20,12 @@ App::App()
 	prePlane(wnd.Gfx(), 1.0f),
 	skyBox(wnd.Gfx(), 10.0f)
 {
-	plane = std::make_unique<TestPlane>(wnd.Gfx(), 5.0f);
-	plane->SetRotation(0.0f, PI * 0.5f, 0.0f);
-	//dx::XMFLOAT2 offsets[9] = { {} }
-	causticPlaneNormal = std::make_unique<CausticPlaneNormal>(wnd.Gfx(), 5.0f);
-	causticPlane = std::make_unique<CausticPlane>(wnd.Gfx(), 1.0f);
-	causticPlane->SetRotation(0.0f, PI * 0.5f, 0.0f);
+	ground.SetRotation(0.0f, PI * 0.5f, 0.0f);
+	//plane = std::make_unique<WaterPlane>(wnd.Gfx(), 5.0f);
+	//plane->SetRotation(0.0f, PI * 0.5f, 0.0f);
+	//causticPlaneNormal = std::make_unique<CausticPlaneNormal>(wnd.Gfx(), 5.0f);
+	//causticPlane = std::make_unique<CausticPlane>(wnd.Gfx(), 1.0f);
+	//causticPlane->SetRotation(0.0f, PI * 0.5f, 0.0f);
 
 	//wall.SetRootTransform(dx::XMMatrixTranslation(pointlight.GetPos().x - 3.0f, pointlight.GetPos().y, pointlight.GetPos().z - 2.0f));
 	//plane.SetPos({ -5.0f,17.0f,-1.0f });
@@ -118,44 +118,45 @@ void App::DoFrame()
 		wnd.Gfx().SetRasterState('N');
 	}
 
-	wnd.Gfx().SetViewPort('C');
+	ground.Draw(wnd.Gfx());
 
-	wnd.Gfx().CreateMapRenderTarget('N');
-	wnd.Gfx().UnbindShaderResource(3u, 21u);
-	wnd.Gfx().UnbindShaderResource(6u, 21u);
-	wnd.Gfx().SetMapRenderTarget();
+	////Render Water Plane
+	//wnd.Gfx().SetViewPort('C');
 
-	causticPlaneNormal->Bind(wnd.Gfx(), dt);
-	causticPlaneNormal->Bind(wnd.Gfx(), plane->pmc.speed, plane->pmc.roughness, plane->pmc.flatten1, plane->pmc.flatten2,
-		plane->vmc.amplitude, plane->vmc.speed, plane->vmc.wavelength, plane->vmc.omega, plane->vmc.Q,
-		plane->vmc.directionX, plane->vmc.directionZ,
-		plane->pmc.normalMappingEnabled);
-	causticPlaneNormal->Draw(wnd.Gfx());
+	//wnd.Gfx().CreateMapRenderTarget('N');
+	//wnd.Gfx().UnbindShaderResource(3u, 21u);
+	//wnd.Gfx().UnbindShaderResource(6u, 21u);
+	//wnd.Gfx().SetMapRenderTarget();
 
-	wnd.Gfx().CreateMapRenderTarget('D');
-	wnd.Gfx().SetMapRenderTarget();
+	//causticPlaneNormal->Bind(wnd.Gfx(), dt);
+	//causticPlaneNormal->Bind(wnd.Gfx(), plane->pmc.speed, plane->pmc.roughness, plane->pmc.flatten1, plane->pmc.flatten2,
+	//	plane->vmc.amplitude, plane->vmc.speed, plane->vmc.wavelength, plane->vmc.omega, plane->vmc.Q,
+	//	plane->vmc.directionX, plane->vmc.directionZ,
+	//	plane->pmc.normalMappingEnabled);
+	//causticPlaneNormal->Draw(wnd.Gfx());
 
-	wnd.Gfx().SetAlphaBlendState('A');
+	//wnd.Gfx().CreateMapRenderTarget('D');
+	//wnd.Gfx().SetMapRenderTarget();
 
-	causticPlane->Bind(wnd.Gfx(), dt);
-	causticPlane->Bind(wnd.Gfx(), plane->pmc.depth,
-		plane->vmc.amplitude, plane->vmc.speed, plane->vmc.wavelength, plane->vmc.omega, plane->vmc.Q,
-		plane->vmc.directionX, plane->vmc.directionZ);
-	causticPlane->Draw(wnd.Gfx());
+	//wnd.Gfx().SetAlphaBlendState('A');
 
-	wnd.Gfx().UnbindTessellationShader();
+	//causticPlane->Bind(wnd.Gfx(), dt);
+	//causticPlane->Bind(wnd.Gfx(), plane->pmc.depth,
+	//	plane->vmc.amplitude, plane->vmc.speed, plane->vmc.wavelength, plane->vmc.omega, plane->vmc.Q,
+	//	plane->vmc.directionX, plane->vmc.directionZ);
+	//causticPlane->Draw(wnd.Gfx());
 
-	wnd.Gfx().SetAlphaBlendState();
+	//wnd.Gfx().UnbindTessellationShader();
 
-	wnd.Gfx().SetRenderTarget();
+	//wnd.Gfx().SetAlphaBlendState();
 
-	wnd.Gfx().SetViewPort();
+	//wnd.Gfx().SetRenderTarget();
 
-	//plane.Draw( wnd.Gfx() );
+	//wnd.Gfx().SetViewPort();
 
-	plane->ChangeSphereMaterialState(wnd.Gfx(), skyBox.pitch, skyBox.yaw, skyBox.roll);
-	plane->Bind(wnd.Gfx(), dt);
-	plane->Draw(wnd.Gfx());
+	//plane->ChangeSphereMaterialState(wnd.Gfx(), skyBox.pitch, skyBox.yaw, skyBox.roll);
+	//plane->Bind(wnd.Gfx(), dt);
+	//plane->Draw(wnd.Gfx());
 
 	wnd.Gfx().SetStencilState('C');
 
@@ -176,6 +177,9 @@ void App::DoFrame()
 
 	wnd.Gfx().SetStencilState();
 
+	cube.ChangeSphereMaterialState(wnd.Gfx(), skyBox.pitch, skyBox.yaw, skyBox.roll);
+	cube.Draw(wnd.Gfx());
+
 	//wnd.Gfx().SetRasterState('N');
 	//wnd.Gfx().SetAlphaBlendState('A');
 	//causticPlane->Draw(wnd.Gfx());
@@ -183,8 +187,6 @@ void App::DoFrame()
 	//wnd.Gfx().UnbindTessellationShader();
 	//wnd.Gfx().SetAlphaBlendState();
 	//wnd.Gfx().SetRasterState();
-
-	//cube.Draw(wnd.Gfx());
 
 	//if (uvPannel->showUV)
 	//{
@@ -402,10 +404,11 @@ void App::DoFrame()
 	//nano.ShowWindow( "Model 1" );
 	//nano2.ShowWindow( "Model 2" );
 	//plane.SpawnControlWindow( wnd.Gfx() );
-	causticPlane->SpawnControlWindow(wnd.Gfx());
-	plane->SpawnControlWindow(wnd.Gfx());
+	//causticPlane->SpawnControlWindow(wnd.Gfx());
+	//plane->SpawnControlWindow(wnd.Gfx());
 	skyBox.SpawnControlWindow(wnd.Gfx());
-	//cube.SpawnControlWindow(wnd.Gfx());
+	cube.SpawnControlWindow(wnd.Gfx());
+	ground.SpawnControlWindow(wnd.Gfx());
 
 	// present
 	wnd.Gfx().EndFrame();

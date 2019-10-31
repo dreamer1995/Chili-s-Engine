@@ -105,6 +105,7 @@
     <ClCompile Include="DxgiInfoManager.cpp" />
     <ClCompile Include="GDIPlusManager.cpp" />
     <ClCompile Include="Graphics.cpp" />
+    <ClCompile Include="Ground.cpp" />
     <ClCompile Include="HullShader.cpp" />
     <ClCompile Include="ImguiManager.cpp" />
     <ClCompile Include="imgui\imgui.cpp" />
@@ -169,6 +170,7 @@
     <ClInclude Include="GDIPlusManager.h" />
     <ClInclude Include="Graphics.h" />
     <ClInclude Include="GraphicsThrowMacros.h" />
+    <ClInclude Include="Ground.h" />
     <ClInclude Include="HullShader.h" />
     <ClInclude Include="PhongSphere.h" />
     <ClInclude Include="PrePlane.h" />
