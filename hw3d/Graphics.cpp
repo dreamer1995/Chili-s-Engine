@@ -143,7 +143,8 @@ Graphics::Graphics( HWND hWnd,int width,int height )
 
 	srvDesc.Format = texDesc.Format;
 	srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
-	srvDesc.TextureCube.MipLevels = 1;
+	srvDesc.Texture2D.MostDetailedMip = 0;
+	srvDesc.Texture2D.MipLevels = 1;
 	GFX_THROW_INFO(pDevice->CreateShaderResourceView(pPreMapLUT.Get(), &srvDesc, &pPreMapShaderResourceViewLUT));
 
 	texDesc.Width = width;
@@ -196,21 +197,36 @@ Graphics::Graphics( HWND hWnd,int width,int height )
 
 	// create view of depth stensil texture
 	D3D11_DEPTH_STENCIL_VIEW_DESC descDSV = {};
-	descDSV.Format = DXGI_FORMAT_D32_FLOAT;
+	descDSV.Format = descDepth.Format;
 	descDSV.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
 	descDSV.Texture2D.MipSlice = 0u;
+	descDSV.Flags = 0;
 	GFX_THROW_INFO( pDevice->CreateDepthStencilView(
 		pDepthStencil.Get(),&descDSV,&pDSV
 	) );
 
-	descDSV.Flags = 0;
 	GFX_THROW_INFO(pDevice->CreateDepthStencilView(
 		pPreDepthStencil.Get(), &descDSV, &pPreDSV
 	));
 
+	descDepth.Width = width;
+	descDepth.Height = width;
+	descDepth.Format = DXGI_FORMAT_R24G8_TYPELESS;
+	descDepth.BindFlags = D3D11_BIND_DEPTH_STENCIL | D3D11_BIND_SHADER_RESOURCE;
+	wrl::ComPtr<ID3D11Texture2D> pShadowDepthStencil;
+	GFX_THROW_INFO(pDevice->CreateTexture2D(&descDepth, nullptr, &pShadowDepthStencil));
+
+	descDSV.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+	GFX_THROW_INFO(pDevice->CreateDepthStencilView(
+		pShadowDepthStencil.Get(), &descDSV, &pShadowDSV
+	));
+
 	// bind depth stensil view to OM
 	pContext->OMSetRenderTargets( 1u,pTarget.GetAddressOf(),pDSV.Get() );
-	   
+	
+	srvDesc.Format = DXGI_FORMAT_R24_UNORM_X8_TYPELESS;
+	GFX_THROW_INFO(pDevice->CreateShaderResourceView(pShadowDepthStencil.Get(), &srvDesc, &pMapShaderResourceViewShadow));
+
 	// configure viewport
 	pDefaultVP.Width = (float)width;
 	pDefaultVP.Height = (float)height;
@@ -241,6 +257,8 @@ Graphics::Graphics( HWND hWnd,int width,int height )
 
 	GFX_THROW_INFO(pDevice->CreateRasterizerState(&rasterDesc, &pRasterStateDefault));
 
+	rasterDesc.CullMode = D3D11_CULL_FRONT;
+	GFX_THROW_INFO(pDevice->CreateRasterizerState(&rasterDesc, &pRasterStateBackSolid));
 	rasterDesc.CullMode = D3D11_CULL_NONE;
 	GFX_THROW_INFO(pDevice->CreateRasterizerState(&rasterDesc, &pRasterStateNoneSolid));
 
@@ -391,6 +409,10 @@ void Graphics::SetRasterState(char type) noexcept
 	{
 		pContext->RSSetState(pRasterStateNoneSolid.Get());
 	}
+	if (type == 'B')
+	{
+		pContext->RSSetState(pRasterStateBackSolid.Get());
+	}
 	if (type == 'W')
 	{
 		pContext->RSSetState(pRasterStateBackWireframe.Get());
@@ -455,6 +477,8 @@ Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> Graphics::GetShaderResourceView
 		return pMapShaderResourceViewCaustics;
 	case 'N':
 		return pMapShaderResourceViewCausticsNormal;
+	case 'S':
+		return pMapShaderResourceViewShadow;
 	default:
 		return pPreMapShaderResourceView;
 	}
@@ -529,11 +553,20 @@ void Graphics::CreateMapRenderTarget(char type)
 	
 }
 
-void Graphics::SetMapRenderTarget() noexcept
+void Graphics::SetMapRenderTarget(char type) noexcept
 {
 	const float color[] = { 0.0f,0.0f,0.0f,1.0f };
-	pContext->ClearRenderTargetView(pMap2DTarget.Get(), color);
-	pContext->OMSetRenderTargets(1u, pMap2DTarget.GetAddressOf(), nullptr);
+	ID3D11RenderTargetView* renderTarget[1] = { 0 };
+	switch (type)
+	{
+	case 'S':
+		pContext->ClearDepthStencilView(pShadowDSV.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0u);
+		pContext->OMSetRenderTargets(1, renderTarget, pShadowDSV.Get());
+		break;
+	default:
+		pContext->ClearRenderTargetView(pMap2DTarget.Get(), color);
+		pContext->OMSetRenderTargets(1u, pMap2DTarget.GetAddressOf(), nullptr);
+	}
 }
 
 void Graphics::UnbindShaderResource(UINT slotP, UINT slotD) noexcept

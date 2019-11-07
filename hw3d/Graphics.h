@@ -87,7 +87,7 @@ public:
 	void CreateMapRenderTarget(char type);
 	void SetRenderTarget() noexcept;
 	void SetPreRenderTarget(short int i) noexcept;
-	void SetMapRenderTarget() noexcept;
+	void SetMapRenderTarget(char type = 'D') noexcept;
 
 	void SetViewPort() noexcept;
 	void SetViewPort(char type) noexcept;
@@ -115,11 +115,13 @@ private:
 
 	Microsoft::WRL::ComPtr<ID3D11DepthStencilView> pDSV;
 	Microsoft::WRL::ComPtr<ID3D11DepthStencilView> pPreDSV;
+	Microsoft::WRL::ComPtr<ID3D11DepthStencilView> pShadowDSV;
 
 	Microsoft::WRL::ComPtr<ID3D11DepthStencilState> pDSStateDefault;
 	Microsoft::WRL::ComPtr<ID3D11DepthStencilState> pDSStateCube;
 
 	Microsoft::WRL::ComPtr<ID3D11RasterizerState> pRasterStateDefault;
+	Microsoft::WRL::ComPtr<ID3D11RasterizerState> pRasterStateBackSolid;
 	Microsoft::WRL::ComPtr<ID3D11RasterizerState> pRasterStateNoneSolid;
 	Microsoft::WRL::ComPtr<ID3D11RasterizerState> pRasterStateBackWireframe;
 	Microsoft::WRL::ComPtr<ID3D11RasterizerState> pRasterStateNoneWireframe;
@@ -140,6 +142,7 @@ private:
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> pPreMapShaderResourceViewLUT;
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> pMapShaderResourceViewCaustics;
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> pMapShaderResourceViewCausticsNormal;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> pMapShaderResourceViewShadow;
 
 	float preCubemapHeight;
 	D3D11_VIEWPORT pDefaultVP;
