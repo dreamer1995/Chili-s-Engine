@@ -84,6 +84,10 @@ void DirectionalLight::Bind(Graphics& gfx) const noexcept
 		XMVector3Transform(XMVectorSet(0.0f, -1.0f, 0.0f, 0.0f),
 		XMMatrixRotationRollPitchYaw(pitch, yaw, roll)
 	))));
+	const auto lightPos = XMVectorSet(pos.x, pos.y, pos.z, 0.0f);
+
+	/*const auto lightTarget = lightPos + XMVectorNegate(XMVectorSet(dataCopy.direction.x, dataCopy.direction.y, dataCopy.direction.z, 0.0f));
+	dataCopy.lightSpaceVP = XMMatrixTranspose(projection) * XMMatrixTranspose(XMMatrixLookAtLH(lightPos, lightTarget, XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f)));*/
 
 	cbufVS.Update(gfx, dataCopy);
 	cbufVS.Bind(gfx);

@@ -105,7 +105,7 @@ void App::DoFrame()
 	//wall.Draw( wnd.Gfx() );
 	//nano.Draw( wnd.Gfx() );
 	//nano2.Draw( wnd.Gfx() );
-	//pointlight.Draw( wnd.Gfx() );
+	pointlight.Draw( wnd.Gfx() );
 	directionallight.Draw(wnd.Gfx());
 
 	static bool isWireframe = false;

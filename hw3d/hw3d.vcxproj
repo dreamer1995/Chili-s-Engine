@@ -124,6 +124,7 @@
     <ClCompile Include="PrePlane.cpp" />
     <ClCompile Include="PreSkyBox.cpp" />
     <ClCompile Include="Sampler.cpp" />
+    <ClCompile Include="ShadowSphere.cpp" />
     <ClCompile Include="SolidArrow.cpp" />
     <ClCompile Include="SolidSphere.cpp" />
     <ClCompile Include="Surface.cpp" />
@@ -175,6 +176,7 @@
     <ClInclude Include="PhongSphere.h" />
     <ClInclude Include="PrePlane.h" />
     <ClInclude Include="PreSkyBox.h" />
+    <ClInclude Include="ShadowSphere.h" />
     <ClInclude Include="SolidArrow.h" />
     <ClInclude Include="ImguiManager.h" />
     <ClInclude Include="imgui\imconfig.h" />
@@ -422,6 +424,16 @@
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ProjectDir)%(Filename).cso</ObjectFileOutput>
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ProjectDir)%(Filename).cso</ObjectFileOutput>
+    </FxCompile>
+    <FxCompile Include="ShadowPS.hlsl">
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ProjectDir)%(Filename).cso</ObjectFileOutput>
+    </FxCompile>
+    <FxCompile Include="ShadowVS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ProjectDir)%(Filename).cso</ObjectFileOutput>
     </FxCompile>
     <FxCompile Include="SkyboxConvolutionPS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>

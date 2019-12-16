@@ -201,6 +201,9 @@
     <ClCompile Include="Ground.cpp">
       <Filter>Source Files\Drawable</Filter>
     </ClCompile>
+    <ClCompile Include="ShadowSphere.cpp">
+      <Filter>Source Files\Drawable</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="WindowsMessageMap.h">
@@ -410,6 +413,9 @@
     <ClInclude Include="Ground.h">
       <Filter>Header Files\Drawable</Filter>
     </ClInclude>
+    <ClInclude Include="ShadowSphere.h">
+      <Filter>Header Files\Drawable</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="hw3d.rc">
@@ -545,6 +551,12 @@
       <Filter>Shader</Filter>
     </FxCompile>
     <FxCompile Include="CausticBakeNVS.hlsl">
+      <Filter>Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="ShadowPS.hlsl">
+      <Filter>Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="ShadowVS.hlsl">
       <Filter>Shader</Filter>
     </FxCompile>
   </ItemGroup>

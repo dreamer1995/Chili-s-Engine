@@ -21,6 +21,7 @@ private:
 		alignas(16) DirectX::XMFLOAT3 direction;
 		alignas(16) DirectX::XMFLOAT3 diffuseColor;
 		float diffuseIntensity;
+		//DirectX::XMMATRIX lightSpaceVP;
 		float padding[3];
 	};
 private:
@@ -35,4 +36,5 @@ private:
 	float yaw = 0.0f;
 	float roll = 0.0f;
 	static constexpr float rotationSpeed = 0.004f;
+	DirectX::XMMATRIX projection = DirectX::XMMatrixOrthographicLH(1.0f, 1.0f, 0.5f, 400.0f);
 };

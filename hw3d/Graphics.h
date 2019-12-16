@@ -10,8 +10,8 @@
 #include <memory>
 #include <random>
 #include "ConditionalNoexcept.h"
-#include "C:\Program Files (x86)\Microsoft DirectX SDK (June 2010)\Include\D3DX11.h"
-#pragma comment(lib, "C:\\Program Files (x86)\\Microsoft DirectX SDK (June 2010)\\Lib\\x64\\d3dx11.lib")
+//#include "C:\Program Files (x86)\Microsoft DirectX SDK (June 2010)\Include\D3DX11.h"
+//#pragma comment(lib, "C:\\Program Files (x86)\\Microsoft DirectX SDK (June 2010)\\Lib\\x64\\d3dx11.lib")
 
 namespace Bind
 {
